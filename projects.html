@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Projects Page</title>
-    <!-- <link rel="stylesheet" href="CSS/debug-borders.css"> -->
     <link rel="stylesheet" href="CSS/menu-nav.css">
     <link rel="stylesheet" href="CSS/extras-navbar.css">
     <link rel="stylesheet" href="CSS/style.css">
@@ -223,7 +222,7 @@
                     <p>+</p>
                 </div>
                 <!-- Create Project Form -->
-                <div class="create-card-container-parent" id="create-post-card">
+                <div class="create-card-container-parent">
                     <div class="create-project-container">
                         <div class="create-project-form-container">
                             <div class="create-project-header">
@@ -423,229 +422,155 @@
         </div>
     </div>
 
-    <script src="JS/navbar-menu-script.js"></script>
-    <script src="JS/theme-toggle.js"></script>
+    <!-- Firebase + Cloudinary Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import {
+            getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    <script>
-        // create post toggle
-        document.getElementById('create-new-post').addEventListener('click', function () {
-            const postCard = document.getElementById('create-post-card');
-            postCard.style.display = 'grid';
-        });
+        // 🔹 CONFIGURE THESE
+        const firebaseConfig = {
+            apiKey: "AIzaSyAqIrj2qzOCCH-121R7bKTC7V7txPm7yl8",
+            authDomain: "my-socmed-bea3a.firebaseapp.com",
+            projectId: "my-socmed-bea3a",
+            storageBucket: "my-socmed-bea3a.firebasestorage.app",
+            messagingSenderId: "530230105836",
+            appId: "1:530230105836:web:e329797c9ed468d0ef77c9"
+        };
+        const CLOUD_NAME = "dglegfflv";
+        const UPLOAD_PRESET = "mysocmed_projects"; // must be unsigned & set to folder "projects"
 
+        // Init Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-    </script>
-
-    <script>
-        document.addEventListener('click', function (e) {
-            const pinLabel = e.target.closest('label[for^="pin-post"]');
-            const editLabel = e.target.closest('label[for^="edit-post"]');
-            const removeLabel = e.target.closest('label[for^="remove-post"]');
-
-            if (pinLabel || editLabel || removeLabel) {
-                const projectCard = e.target.closest('.project-container-parent');
-                const postList = projectCard.parentElement;
-                const pinnedIndicator = projectCard.querySelector('#pinned-post-indicator');
-                const postExtraList = projectCard.querySelector('.post-extra-list-container');
-
-                if (postExtraList) postExtraList.classList.remove('open');
-
-                const popupCheckbox = projectCard.querySelector('input[type="checkbox"]');
-                if (popupCheckbox) popupCheckbox.checked = false;
-
-                // Handle Pin/Unpin
-                if (pinLabel) {
-                    const span = pinLabel.querySelector('span');
-                    const currentText = span ? span.textContent.trim() : pinLabel.textContent.trim();
-                    const pinnedPosts = postList.querySelectorAll('[data-pinned="true"]');
-                    const createPostBox = postList.querySelector('.create-post-toggle-container-parent');
-
-                    if (currentText === 'Pin Project') {
-                        if (span) span.textContent = 'Unpin Project';
-                        if (pinnedIndicator) pinnedIndicator.style.display = 'block';
-
-                        if (createPostBox) {
-                            createPostBox.insertAdjacentElement('afterend', projectCard);
-                        }
-                        projectCard.dataset.pinned = "true";
-                    } else {
-                        if (span) span.textContent = 'Pin Project';
-                        if (pinnedIndicator) pinnedIndicator.style.display = 'none';
-
-                        projectCard.removeAttribute('data-pinned');
-
-                        // Insert new post: after pinned posts but before older unpinned ones
-const postList = document.querySelector('.project-section');
-const pinnedPosts = postList.querySelectorAll('[data-pinned="true"]');
-const unpinnedPosts = postList.querySelectorAll('.project-container-parent:not([data-pinned="true"])');
-const endIndicator = postList.querySelector('.end-indicator');
-
-if (pinnedPosts.length > 0) {
-    if (unpinnedPosts.length > 0) {
-        // Insert before the first unpinned post
-        postList.insertBefore(clone, unpinnedPosts[0]);
-    } else {
-        // No unpinned posts yet, so place after last pinned
-        pinnedPosts[pinnedPosts.length - 1].insertAdjacentElement('afterend', clone);
-    }
-} else {
-    if (unpinnedPosts.length > 0) {
-        // No pinned posts, but there are old unpinned ones → insert before first one
-        postList.insertBefore(clone, unpinnedPosts[0]);
-    } else {
-        // No posts at all yet → insert before end indicator
-        postList.insertBefore(clone, endIndicator);
-    }
-}
-
-                    }
-                }
-
-                const endIndicator = postList.querySelector('.end-indicator');
-                if (endIndicator) postList.appendChild(endIndicator);
-            }
-        });
-
-        document.addEventListener('click', function (e) {
-            const btn = e.target.closest('.post-extra-btn');
-            if (btn) {
-                const popup = btn.parentElement.querySelector('.post-extra-list-container');
-                popup.classList.toggle('open');
-            }
-        });
-
-        document.getElementById('close-error').addEventListener('click', function () {
-            const error = document.getElementById('form-warning');
-            error.style.display = 'none';
-        });
-
-        document.querySelector('.project-section').addEventListener('click', function (e) {
-            if (e.target.classList.contains('toggle-desc')) {
-                const container = e.target.closest('.project-desc-container');
-                const text = container.querySelector('.desc-text');
-                text.classList.toggle('expanded');
-                e.target.textContent = text.classList.contains('expanded') ? 'See Less' : 'See More';
-            }
-        });
-
-        const fileInput = document.getElementById('file');
-        const previewContainer = document.getElementById('file-preview-container');
-        let selectedFiles = [];
-
-        fileInput.addEventListener('change', function () {
-            const newFiles = Array.from(fileInput.files);
-            selectedFiles = [...selectedFiles, ...newFiles];
-            fileInput.value = '';
-            renderPreviews();
-        });
-
-        function renderPreviews() {
-            previewContainer.innerHTML = '';
-            selectedFiles.forEach((file, index) => {
-                const previewDiv = document.createElement('div');
-                previewDiv.classList.add('file-preview');
-
-                const img = document.createElement('img');
-                const reader = new FileReader();
-                reader.onload = e => img.src = e.target.result;
-                reader.readAsDataURL(file);
-
-                const removeBtn = document.createElement('button');
-                removeBtn.textContent = '×';
-                removeBtn.classList.add('remove-preview');
-                removeBtn.onclick = () => {
-                    selectedFiles.splice(index, 1);
-                    renderPreviews();
-                };
-
-                previewDiv.appendChild(img);
-                previewDiv.appendChild(removeBtn);
-                previewContainer.appendChild(previewDiv);
-            });
+        // Upload to Cloudinary
+        async function uploadImage(file) {
+            const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("upload_preset", UPLOAD_PRESET);
+            const res = await fetch(url, { method: "POST", body: formData });
+            return res.json(); // returns { public_id, secure_url, ... }
         }
 
-        function loadAllImages(files, callback) {
-            const images = [];
-            let loaded = 0;
-            if (files.length === 0) callback([]);
-            files.forEach((file, index) => {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    images[index] = e.target.result;
-                    loaded++;
-                    if (loaded === files.length) callback(images);
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        document.getElementById('cancel-btn').addEventListener('click', function () {
-            const postCard = document.getElementById('create-post-card');
-            postCard.style.display = 'none';
+        // Toggle Create Form
+        document.getElementById('create-new-post').addEventListener('click', () => {
+            document.querySelector('.create-card-container-parent').style.display = 'grid';
+        });
+        document.getElementById('cancel-btn').addEventListener('click', () => {
+            document.querySelector('.create-card-container-parent').style.display = 'none';
+        });
+        document.getElementById('close-error').addEventListener('click', () => {
+            document.getElementById('form-warning').style.display = 'none';
         });
 
-        document.getElementById('post-btn').addEventListener('click', function () {
-            const warningBox = document.getElementById('form-warning');
-            warningBox.style.display = 'none';
-
-            const title = document.getElementById('input-project-title').value.trim().toUpperCase();
+        // Post Project
+        document.getElementById('post-btn').addEventListener('click', async () => {
+            const title = document.getElementById('input-project-title').value.trim();
             const description = document.getElementById('input-project-description').value.trim();
-            const date = document.querySelector('input[type="date"]').value;
-            const status = document.querySelector('select').value;
+            const date = document.getElementById('input-project-date').value;
+            const status = document.getElementById('input-project-status').value;
             const tagsInput = document.getElementById('input-project-tags').value.trim();
             const tags = tagsInput ? tagsInput.split(',').map(t => t.trim()) : [];
+            const files = Array.from(document.getElementById('file').files);
+            const warningBox = document.getElementById('form-warning');
 
+            // Hide any previous warning
+            warningBox.style.display = 'none';
+
+            // Validate required fields
             if (!title || !description || !date || !status) {
                 warningBox.style.display = 'flex';
                 return;
-            } else {
-                const postCard = document.getElementById('create-post-card');
-                postCard.style.display = 'none';
             }
 
-            loadAllImages(selectedFiles, function (imageUrls) {
-                const template = document.getElementById('project-template');
+            // Upload all selected images to Cloudinary
+            const uploadedImages = [];
+            for (let file of files) {
+                const result = await uploadImage(file);
+                uploadedImages.push(result.public_id);
+            }
+
+            // Save project in Firestore
+            await addDoc(collection(db, "projects"), {
+                title,
+                description,
+                startDate: date,
+                status,
+                tags,
+                imageIds: uploadedImages,
+                createdAt: serverTimestamp(),
+                isPinned: false
+            });
+
+            alert("✅ Project posted!");
+            document.getElementById('create-project-form').reset();
+            document.getElementById('file').value = '';
+            document.querySelector('.create-card-container-parent').style.display = 'none';
+
+            // Reload the list
+            await loadProjects();
+        });
+
+        // Load Projects from Firestore
+        async function loadProjects() {
+            const q = query(
+                collection(db, "projects"),
+                orderBy("isPinned", "desc"),
+                orderBy("createdAt", "desc")
+            );
+            const snap = await getDocs(q);
+            const postList = document.querySelector('.project-section');
+            const template = document.getElementById('project-template');
+            const endIndicator = document.querySelector('.end-indicator');
+
+            // Remove any old project cards except the template
+            document.querySelectorAll('.project-container-parent:not(#project-template)')
+                .forEach(el => el.remove());
+
+            snap.forEach(docSnap => {
+                const p = docSnap.data();
                 const clone = template.cloneNode(true);
                 clone.style.display = '';
                 clone.removeAttribute('id');
 
-                clone.querySelector('#project-title').textContent = title;
-                clone.querySelector('#project-description').textContent = description;
-                clone.querySelector('#project-date').textContent = date;
-                clone.querySelector('#project-status').textContent = status;
+                // Fill in project details
+                clone.querySelector('#project-title').textContent = p.title;
+                clone.querySelector('#project-description').textContent = p.description;
+                clone.querySelector('#project-date').textContent = p.startDate;
+                clone.querySelector('#project-status').textContent = p.status;
 
+                // Tags
                 const tagContainer = clone.querySelector('#project-tags');
                 tagContainer.innerHTML = '';
-                tags.forEach(tag => {
+                p.tags?.forEach(tag => {
                     const div = document.createElement('div');
                     div.textContent = tag;
                     tagContainer.appendChild(div);
                 });
 
-                const imgElement = clone.querySelector('#project-image');
-                if (imageUrls.length > 0) {
-                    startCarousel(imgElement, imageUrls);
-                } else {
-                    imgElement.src = "Assets/Images/placeholder.svg";
+                // Images (single or carousel)
+                if (p.imageIds?.length > 0) {
+                    const imgElement = clone.querySelector('#project-image');
+                    const imageUrls = p.imageIds.map(id =>
+                        `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/f_auto,q_auto,w_800/${id}`
+                    );
+
+                    if (imageUrls.length === 1) {
+                        imgElement.src = imageUrls[0];
+                    } else {
+                        startCarousel(imgElement, imageUrls);
+                    }
                 }
 
-                // Insert new post right below pinned posts or at the top
-                const postList = document.querySelector('.project-section');
-                const pinnedPosts = postList.querySelectorAll('[data-pinned="true"]');
-                const endIndicator = postList.querySelector('.end-indicator');
-
-                if (pinnedPosts.length > 0) {
-                    pinnedPosts[pinnedPosts.length - 1].insertAdjacentElement('afterend', clone);
-                } else {
-                    postList.insertBefore(clone, endIndicator);
-                }
-
-                document.getElementById('create-project-form').reset();
-                selectedFiles = [];
-                renderPreviews();
+                // Insert before end-indicator
+                postList.insertBefore(clone, endIndicator);
             });
-        });
+        }
 
+        // Carousel Function
         function startCarousel(imgElement, images) {
             let currentIndex = 0;
             imgElement.src = images[currentIndex];
@@ -661,9 +586,10 @@ if (pinnedPosts.length > 0) {
                 }, 3000);
             }
         }
+
+        // Initial load
+        await loadProjects();
     </script>
-
-
 
 </body>
 
