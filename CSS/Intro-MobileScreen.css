@@ -1,0 +1,153 @@
+@media only screen and (max-width: 768px)
+{
+    section.intro 
+    {
+        height: 85vw;
+        width: 100%;
+    }
+
+    .intro-container
+    {
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .coverphoto-container
+    {
+        height: 50%;
+        border-radius: 0%;
+    }
+
+    .ppc-container
+    {
+        width: 100%;
+        position: absolute;
+        display: grid;
+        bottom: 25%;
+        z-index: 58;
+    }
+
+    .profilephoto-container
+    {
+        height: 35svw;
+        width: 35svw;
+        border-radius: 100%;
+        border: 0.5rem solid #242526;
+        overflow: hidden;
+        margin: auto;
+        left: 0%;
+        bottom: 5%;
+        aspect-ratio: 1 / 1;
+    }
+        
+    .name-text-container
+    {
+        position: relative;
+        margin: auto;
+        /*border: 1px solid green;*/
+        display: grid;
+        top: 20vw;
+    }
+
+    .name-text-container-cont
+    {
+        /*border: 1px solid yellow;*/
+        margin: auto;
+        position: relative;
+    }
+
+    .name-text-container h1 
+    {
+        margin: auto;
+        font-size: 8vw;
+    }
+
+    .name-text-container p
+    {
+        color: #b0b3b8;
+        text-align: center;
+        margin: auto;
+        font-size: 3vw;
+    }
+
+    .download-button-container
+    {
+        width: 100%;
+        /*border: 1px solid orange;*/
+        position: relative;
+        top: 22vw;
+        display: grid;
+        justify-items: center;
+    }
+
+    .download-button
+    {
+        width: 28vw;
+        height: 5vw;
+        display: grid;
+        margin: auto;
+    }
+
+    .download-button p 
+    {
+        margin: auto;
+        color: #e4e6eb;
+        font-size: 2.5vw;
+        position: relative;
+    }
+
+    .line-one
+    {
+        width: 100%;
+        border: 1px solid #3A3B3C;
+        height: 0%;
+        position: absolute;
+        margin: 0px;
+        bottom: 0%;
+    }
+        
+    .navigation-bar-container    /* Navigation bar class */
+    {
+        height: 9vw;
+        width: 100%;
+        display: grid;
+    }
+
+    #navigation-bar
+    {
+        width: 98%;
+        height: 90%;
+        margin: auto;
+        overflow: hidden;
+        display: flex;
+        position: relative;
+        top: 0px;
+    }
+
+    #navigation-bar a
+    {
+        display: block;
+        color: #b0b3b8;
+        text-align: center;
+        padding: 2vw 2.5vw; 
+        text-decoration: none;
+        font-size: 2.4vw;
+        border-radius: 0%;
+        position: relative;
+        top: 0px;
+
+    }
+
+    #navigation-bar a:hover 
+    {
+        background-color: #3A3B3C;
+        transition: background-color 0.5s, color 0.5s, transform 0.5s;
+    }
+    
+    #navigation-bar a.active 
+    {
+        background-color: #1c6cbb;
+        color: white;
+    }
+}

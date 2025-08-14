@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="CSS/debug-borders.css">
+</head>
+
+<style>
+
+.admin-page-parent {
+    display: grid;
+    grid-template-rows: 5rem auto;
+    grid-auto-flow: row;
+    grid-template-areas:
+        "admin-menu-container"
+        "admin-main-content-parent";
+    height: 100vh;
+}
+
+.admin-main-content-parent {
+    display: grid;
+    grid-template-columns: 30% auto;
+    grid-template-rows: 100%;
+    grid-template-areas:
+        "admin-side-panel-section"
+        "admin-main-section";
+    height: 100%;
+    border: 5px dotted red;
+}
+</style>
+
+<body>
+    <div class="admin-page-parent blue-bordered">
+        <div class="admin-menu-container red-bordered">
+            <div class="logo-container-parent"></div>
+            <div class="r"></div>
+            <div class="r"></div>
+        </div>
+        <div class="admin-main-content-parent yellow-bordered">
+            <section class="admin-side-panel-section white-bordered"></section>
+            <section class="admin-main-section green-bordered"></section>
+        </div>
+    </div>
+</body>
+
+</html>

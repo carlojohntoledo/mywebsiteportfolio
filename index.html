@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Potfolio Website Layout</title>
+    <!-- <link rel="stylesheet" href="CSS/debug-borders.css"> -->
+    <link rel="stylesheet" href="CSS/menu-nav.css">
+    <link rel="stylesheet" href="CSS/extras-navbar.css">
+    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="CSS/shortcut-section.css">
+    <link rel="stylesheet" href="CSS/contacts-section.css">
+    <link rel="stylesheet" href="CSS/thumbnail.css">
+    <link rel="stylesheet" href="CSS/activity-panel.css">
+    <link rel="stylesheet" href="CSS/logo.css">
+    <link rel="stylesheet" href="CSS/download-cv.css">
+</head>
+
+<body>
+    <div class="content-parent">
+        <div class="thumbnail red-bordered">
+            <img src="Assets/Images/thumbnail-background/pngegg.png" alt="thumbnail.png">
+        </div>
+        <nav class="menu-nav yellow-bordered">
+            <div class="logo-panel blue-bordered">
+                <!-- From Uiverse.io by satyamchaudharydev -->
+                <button class="logo" data-text="Awesome">
+                    <span class="actual-text">&nbsp;KOALO&nbsp;</span>
+                    <span aria-hidden="true" class="hover-text">&nbsp;KOALO&nbsp;</span>
+                </button>
+            </div>
+            <div class="menu-btn-panel blue-bordered">
+                <div class="radio-inputs">
+                    <label class="menu-radio" data-href="index.html">
+                        <input name="radio" type="radio" checked />
+                        <span class="name">Activity</span>
+                    </label>
+                    <label class="menu-radio" data-href="profile.html">
+                        <input name="radio" type="radio" />
+                        <span class="name">Profile</span>
+                    </label>
+                    <label class="menu-radio" data-href="services.html">
+                        <input name="radio" type="radio" />
+                        <span class="name">Services</span>
+                    </label>
+                    <label class="menu-radio" data-href="projects.html">
+                        <input name="radio" type="radio" />
+                        <span class="name">Projects</span>
+                    </label>
+                </div>
+
+            </div>
+            <div class="extras-panel blue-bordered">
+
+                <div class="extras-dropdown-button-container">
+                    <input hidden="" class="check-icon" id="check-icon" name="check-icon" type="checkbox">
+                    <label class="icon-menu" for="check-icon">
+                        <div class="bar bar--1"></div>
+                        <div class="bar bar--2"></div>
+                        <div class="bar bar--3"></div>
+                    </label>
+                    <!-- Popup -->
+                    <div class="extras-popup">
+                        <h2>MENU</h2>
+                        <ul>
+                            <div class="search-section red-bordered" style="background-color: transparent;">
+                                <div class="search-container">
+                                    <svg class="search_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"
+                                        alt="search icon">
+                                        <path
+                                            d="M46.599 46.599a4.498 4.498 0 0 1-6.363 0l-7.941-7.941C29.028 40.749 25.167 42 21 42 9.402 42 0 32.598 0 21S9.402 0 21 0s21 9.402 21 21c0 4.167-1.251 8.028-3.342 11.295l7.941 7.941a4.498 4.498 0 0 1 0 6.363zM21 6C12.717 6 6 12.714 6 21s6.717 15 15 15c8.286 0 15-6.714 15-15S29.286 6 21 6z">
+                                        </path>
+                                    </svg>
+                                    <input class="inputBox" id="inputBox" type="text" placeholder="Search">
+                                </div>
+                            </div>
+                            <a href="#">
+                                <li>Option 1</li>
+                            </a>
+                            <a href="#">
+                                <li>Option 1</li>
+                            </a>
+                            <a href="#">
+                                <li>Option 1</li>
+                            </a>
+                            <hr>
+                            </hr>
+                            <a href="#">
+                                <li>Option 1</li>
+                            </a>
+                            <a href="#">
+                                <li>Option 1</li>
+                            </a>
+                            <a href="#">
+                                <li>Option 1</li>
+                            </a>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </nav>
+        <div class="main-content blue-bordered">
+            <section class="shortcuts-section white-bordered scroll-fade">
+                <div class="search-section red-bordered">
+                    <div class="search-container">
+                        <svg class="search_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"
+                            alt="search icon">
+                            <path
+                                d="M46.599 46.599a4.498 4.498 0 0 1-6.363 0l-7.941-7.941C29.028 40.749 25.167 42 21 42 9.402 42 0 32.598 0 21S9.402 0 21 0s21 9.402 21 21c0 4.167-1.251 8.028-3.342 11.295l7.941 7.941a4.498 4.498 0 0 1 0 6.363zM21 6C12.717 6 6 12.714 6 21s6.717 15 15 15c8.286 0 15-6.714 15-15S29.286 6 21 6z">
+                            </path>
+                        </svg>
+                        <input class="inputBox" id="inputBox" type="text" placeholder="Search">
+                    </div>
+                </div>
+                <div class="pinned-section red-bordered">
+                    <div class="pinned-activities-panel blue-bordered">
+                        <h2>Pinned Activities</h2>
+                        <ul class="pinned-activities-list">
+                            <a href="#">
+                                <li>Pinned Activity Title 1</li>
+                            </a>
+                            <a href="#">
+                                <li>Pinned Activity Title 2</li>
+                            </a>
+                            <a href="#">
+                                <li>Pinned Activity Title 3</li>
+                            </a>
+                            <a href="#">
+                                <li>Pinned Activity Title 4</li>
+                            </a>
+                        </ul>
+                    </div>
+                    <div class="pinned-projects-panel blue-bordered">
+                        <h2>Pinned Projects</h2>
+                        <ul class="pinned-projects-list">
+                            <a href="#">
+                                <li>Pinned Projects Title 1</li>
+                            </a>
+                            <a href="#">
+                                <li>Pinned Projects Title 2</li>
+                            </a>
+                            <a href="#">
+                                <li>Pinned Projects Title 3</li>
+                            </a>
+                            <a href="#">
+                                <li>Pinned Projects Title 4</li>
+                            </a>
+                        </ul>
+                    </div>
+                    <div class="pinned-skills-panel blue-bordered">
+                        <h2>Pinned Skills</h2>
+                        <ul class="pinned-skills-list">
+                            <a href="#">
+                                <li>Pinned Skills Title 1</li>
+                            </a>
+                            <a href="#">
+                                <li>Pinned Skills Title 2</li>
+                            </a>
+                            <a href="#">
+                                <li>Pinned Skills Title 3</li>
+                            </a>
+                            <a href="#">
+                                <li>Pinned Skills Title 4</li>
+                            </a>
+                        </ul>
+                    </div>
+                </div>
+                <div class="recent-section red-bordered">
+                    <div class="recent-activities-panel blue-bordered">
+                        <h2>Recent Activities</h2>
+                        <ul class="recent-activities-list">
+                            <a href="#">
+                                <li>Recent Activities Title 1</li>
+                            </a>
+                            <a href="#">
+                                <li>Recent Activities Title 2</li>
+                            </a>
+                            <a href="#">
+                                <li>Recent Activities Title 3</li>
+                            </a>
+                            <a href="#">
+                                <li>Recent Activities Title 4</li>
+                            </a>
+                        </ul>
+                    </div>
+                    <div class="recent-projects-panel blue-bordered">
+                        <h2>Recent Projects</h2>
+                        <ul class="recent-projects-list">
+                            <a href="#">
+                                <li>Recent Projects Title 1</li>
+                            </a>
+                            <a href="#">
+                                <li>Recent Projects Title 2</li>
+                            </a>
+                            <a href="#">
+                                <li>Recent Projects Title 3</li>
+                            </a>
+                            <a href="#">
+                                <li>Recent Projects Title 4</li>
+                            </a>
+                        </ul>
+                    </div>
+                    <div class="recent-search-panel blue-bordered">
+                        <h2>Recent Search</h2>
+                        <ul class="recent-search-list">
+                            <a href="#">
+                                <li>Recent Search Title 1</li>
+                            </a>
+                            <a href="#">
+                                <li>Recent Search Title 2</li>
+                            </a>
+                            <a href="#">
+                                <li>Recent Search Title 3</li>
+                            </a>
+                            <a href="#">
+                                <li>Recent Search Title 4</li>
+                            </a>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <section class="main-section white-bordered scroll-fade">
+                <div class="activity-container">
+                    <div class="activity-header-panel yellow-bordered">
+                        <div class="activity-profile-pic"><img src="Assets/Images/Profile Pictures/profilepic1.jpg"
+                                alt="ProfilePicture"></div>
+                        <div class="activity-info-panel">
+                            <div class="activity-user-name">USER NAME</div>
+                            <div class="activity-post-date">Just now.</div>
+                        </div>
+                        <div class="activity-extras-panel">Extras here</div>
+                    </div>
+                    <div class="activity-description-panel green-bordered">Lorem ipsum dolor sit amet consectetur
+                        adipisicing elit. Perspiciatis debitis sunt illo natus. Suscipit omnis praesentium ea assumenda
+                        ipsum illo repellat fugiat? Amet recusandae eum eos reiciendis, illo pariatur esse.</div>
+                    <div class="activity-attachment-panel white-bordered">
+                        <div class="frame"></div>
+                        <div class="frame"></div>
+                        <div class="frame"></div>
+                        <div class="frame"></div>
+                    </div>
+                    <div class="activity-reaction-panel red-bordered">
+                        <div class="reaction-counts-panel">reaction counts</div>
+                        <div class="reaction-panel">
+                            <div class="reaction-button">Like</div>
+                            <div class="reaction-button">Heart</div>
+                            <div class="reaction-button">Cheers</div>
+                            <div class="reaction-button">Sad</div>
+                            <div class="reaction-button">Dislike</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="activity-container">
+                    <div class="activity-header-panel yellow-bordered">
+                        <div class="activity-profile-pic"><img src="Assets/Images/Profile Pictures/profilepic1.jpg"
+                                alt="ProfilePicture"></div>
+                        <div class="activity-info-panel">
+                            <div class="activity-user-name">USER NAME</div>
+                            <div class="activity-post-date">Just now.</div>
+                        </div>
+                        <div class="activity-extras-panel">Extras here</div>
+                    </div>
+                    <div class="activity-description-panel green-bordered">Lorem ipsum dolor sit amet consectetur
+                        adipisicing elit. Perspiciatis debitis sunt illo natus. Suscipit omnis praesentium ea assumenda
+                        ipsum illo repellat fugiat? Amet recusandae eum eos reiciendis, illo pariatur esse.</div>
+                    <div class="activity-attachment-panel white-bordered">
+                        <div class="frame"></div>
+                        <div class="frame"></div>
+                        <div class="frame"></div>
+                        <div class="frame"></div>
+                    </div>
+                    <div class="activity-reaction-panel red-bordered">
+                        <div class="reaction-counts-panel">reaction counts</div>
+                        <div class="reaction-panel">
+                            <div class="reaction-button">Like</div>
+                            <div class="reaction-button">Heart</div>
+                            <div class="reaction-button">Cheers</div>
+                            <div class="reaction-button">Sad</div>
+                            <div class="reaction-button">Dislike</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="activity-container">
+                    <div class="activity-header-panel yellow-bordered">
+                        <div class="activity-profile-pic"><img src="Assets/Images/Profile Pictures/profilepic1.jpg"
+                                alt="ProfilePicture"></div>
+                        <div class="activity-info-panel">
+                            <div class="activity-user-name">USER NAME</div>
+                            <div class="activity-post-date">Just now.</div>
+                        </div>
+                        <div class="activity-extras-panel">Extras here</div>
+                    </div>
+                    <div class="activity-description-panel green-bordered">Lorem ipsum dolor sit amet consectetur
+                        adipisicing elit. Perspiciatis debitis sunt illo natus. Suscipit omnis praesentium ea assumenda
+                        ipsum illo repellat fugiat? Amet recusandae eum eos reiciendis, illo pariatur esse.</div>
+                    <div class="activity-attachment-panel white-bordered">
+                        <div class="frame"></div>
+                        <div class="frame"></div>
+                        <div class="frame"></div>
+                        <div class="frame"></div>
+                    </div>
+                    <div class="activity-reaction-panel red-bordered">
+                        <div class="reaction-counts-panel">reaction counts</div>
+                        <div class="reaction-panel">
+                            <div class="reaction-button">Like</div>
+                            <div class="reaction-button">Heart</div>
+                            <div class="reaction-button">Cheers</div>
+                            <div class="reaction-button">Sad</div>
+                            <div class="reaction-button">Dislike</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="contacts-section white-bordered scroll-fade">
+                <div class="download-cv-section red-bordered">
+                    <h2>Download Resume</h2>
+                    <div class="folder-container">
+                        <div class="folder">
+                            <img src="Assets/Images/folder-rear.png" alt="">
+                            <a href="Assets/Images/cv.pdf" download class="folder-inner">
+                                <img src="Assets/Images/CV Image.jpg" alt="Download CV">
+                            </a>
+                            <div class="cover">
+                                <img src="Assets/Images/folder-front.png" alt="">
+                                <p class="folder-text">Download Resume</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-info-section red-bordered">
+                    <div class="recent-activities-panel blue-bordered">
+                        <h2>Contact</h2>
+                        <ul class="recent-activities-list">
+                            <a href="#">
+                                <li>toledocarlojohn@gmail.com</li>
+                            </a>
+                            <a href="#">
+                                <li>github.io/carlojohntoledo</li>
+                            </a>
+                            <a href="#">
+                                <li>instagram@koalo</li>
+                            </a>
+                            <a href="#">
+                                <li>ytchannel@koalomusic.ph</li>
+                            </a>
+                            <a href="#">
+                                <li>tiktok/koalo</li>
+                            </a>
+                        </ul>
+                    </div>
+                </div>
+                <div class="email-me-section red-bordered">email me</div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.menu-radio').forEach(radio => {
+            radio.addEventListener('click', () => {
+                const href = radio.getAttribute('data-href');
+                if (href) window.location.href = href;
+            });
+        });
+    </script>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-analytics.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyCkA1gDtO6hnTa7DiZOhl0kpPoK7ytHZ8M",
+            authDomain: "koalo-s-portfolio.firebaseapp.com",
+            projectId: "koalo-s-portfolio",
+            storageBucket: "koalo-s-portfolio.firebasestorage.app",
+            messagingSenderId: "1031041712427",
+            appId: "1:1031041712427:web:d09c605b22edd7b8fa856e",
+            measurementId: "G-GK926KS268"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+    </script>
+</body>
+
+</html>

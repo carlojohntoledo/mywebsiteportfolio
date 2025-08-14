@@ -1,0 +1,621 @@
+section.certificates-section {
+    width: 100%;
+    height: max-content;
+    gap: 20px;
+    display: grid;
+    align-items: start;
+    /* justify-content: center; */
+    /* padding-bottom: 1rem; */
+    /* border: 1px solid red; */
+}
+
+.certificates-container {
+    width: 65vw;
+    min-width: 65vw;
+    height: max-content;
+    margin: auto;
+    background-color: var(--tertiary-color);
+    border-radius: 1rem;
+    position: relative;
+    padding-bottom: 2rem;
+    display: grid;
+    overflow: hidden;
+    /* border: 1px solid; */
+}
+
+.certificates-title-container {
+    margin: 1rem;
+    /*border: 1px solid red;*/
+}
+
+.certificates-title-container h1 {
+    font-size: var(--font-xl);
+    margin: auto;
+    position: relative;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.certificates-menu-container {
+    display: flex;
+    padding: 1rem;
+    /* grid-template-columns: 25% 25% 25% 25%;
+    grid-template-rows: 1fr; */
+    /* border: 1px solid red; */
+    /* gap: 0.5rem;
+    /* color: var(--text-color); */
+    border-bottom: 0.1rem solid var(--primary-color);
+}
+
+.certificates-menu-container label {
+    /* margin: auto; */
+    /* border: 1px solid; */
+    width: max-content;
+    flex-wrap: nowrap;
+}
+
+.certificates-menu-container input {
+    display: none;
+}
+
+.certificates-menu-container span {
+    /* display: inline-block; */
+    padding: 0.5rem 1rem;
+    font-size: var(--font-sm);
+    color: #777;
+    transition: all 0.3s ease;
+    color: var(--text-color);
+}
+
+.certificates-menu-container span:hover {
+    background-color: var(--primary-color);
+}
+
+.certificates-menu-container input[type="radio"]:checked+span {
+    color: var(--accent-color);
+    /* Yellow text */
+    border-bottom: 3px solid var(--accent-color);
+    /* Yellow underline */
+}
+
+.certificates-content-container {
+    width: 90%;
+    height: max-content;
+    margin: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 1rem;
+    display: flex;
+    gap: 1.5rem;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    /* snap scroll */
+    scrollbar-width: none;
+    /* Firefox */
+    /* border: 1px solid yellow; */
+    margin-top: 1rem;
+}
+
+.certificates-content-container::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari */
+}
+
+.certificate-card {
+    flex: 0 0 auto;
+    scroll-snap-align: center;
+    width: 100%;
+    /* border: 1px solid; */
+    aspect-ratio: 16/9;
+}
+
+.certificate-container {
+    position: relative;
+    width: calc(100% * 1vw);
+    height: 100%;
+    transition: 200ms;
+    /* border: 1px solid red; */
+}
+
+.certificate-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: 200ms;
+}
+
+.certificate-container:active {
+    width: 100%;
+    height: 100%;
+}
+
+#card {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 0;
+    display: inline-grid;
+    align-items: center;
+    border-radius: 0.25rem;
+    transition: 700ms;
+    background: #191919;
+}
+
+.certificate-image {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    border-radius: 0.25rem;
+    display: none;
+    margin: auto;
+    /* border: 1px solid red; */
+    background-position: center;
+    background-repeat: no-repeat;
+    aspect-ratio: 16/9;
+}
+
+.tracker:hover~#card .certificate-image {
+    display: grid;
+    transition: 300ms ease-in-out-out;
+}
+
+.prompt-container {
+    margin: auto;
+    /* border: 1px solid; */
+    max-width: 70%;
+}
+
+#prompt-title {
+    text-align: center;
+    z-index: 20;
+    font-size: var(--font-xl);
+    font-weight: bold;
+    transition: 300ms ease-in-out-out;
+    max-width: 100%;
+    color: var(--text-color);
+    /* border: 1px solid red; */
+}
+
+#prompt-description {
+    text-align: center;
+    z-index: 20;
+    font-size: var(--font-md);
+    transition: 300ms ease-in-out-out;
+    max-width: 100%;
+    color: var(--text-color);
+    /* color: #191919; */
+    /* border: 1px solid red; */
+}
+
+#prompt-date {
+    z-index: 20;
+    font-size: var(--font-sm);
+    font-weight: bold;
+    transition: 300ms ease-in-out-out;
+    max-width: 100%;
+    color: var(--text-color-sub);
+    text-align: center;
+    /* border: 1px solid red; */
+}
+
+.cert-background {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    background-position: center;
+    background-repeat: no-repeat;
+    aspect-ratio: 16/9;
+    border-radius: 0.25rem;
+    z-index: -1;
+    transition: 300ms ease-in-out-out;
+    filter: blur(0.25rem);
+    opacity: 0.5;
+}
+
+.tracker {
+    position: absolute;
+    z-index: 200;
+    width: 100%;
+    height: 100%;
+}
+
+.tracker:hover {
+    cursor: pointer;
+}
+
+.tracker:hover~#card #prompt-title {
+    display: none;
+}
+
+.tracker:hover~#card #prompt-description {
+    display: none;
+}
+
+.tracker:hover~#card #prompt-date {
+    display: none;
+}
+
+.tracker:hover~#card .cert-background {
+    display: none;
+}
+
+.tracker:hover~#card {
+    transition: 300ms;
+    filter: brightness(1.1);
+}
+
+.certificate-container:hover #card::before {
+    transition: 200ms;
+    content: "";
+    opacity: 80%;
+}
+
+.canvas {
+    perspective: 200vw;
+    inset: 0;
+    z-index: 200;
+    position: absolute;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+    gap: 0px 0px;
+    grid-template-areas:
+        "tr-1 tr-2 tr-3 tr-4 tr-5"
+        "tr-6 tr-7 tr-8 tr-9 tr-10"
+        "tr-11 tr-12 tr-13 tr-14 tr-15"
+        "tr-16 tr-17 tr-18 tr-19 tr-20"
+        "tr-21 tr-22 tr-23 tr-24 tr-25";
+}
+
+#card::before {
+    background: #ffcc00;
+    opacity: 0%;
+    width: 100%;
+    height: 100%;
+    border-radius: 0.25rem;
+    position: absolute;
+    z-index: -1;
+    transition: 200ms;
+}
+
+.tr-1 {
+    grid-area: tr-1;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-2 {
+    grid-area: tr-2;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-3 {
+    grid-area: tr-3;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-4 {
+    grid-area: tr-4;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-5 {
+    grid-area: tr-5;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-6 {
+    grid-area: tr-6;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-7 {
+    grid-area: tr-7;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-8 {
+    grid-area: tr-8;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-9 {
+    grid-area: tr-9;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-10 {
+    grid-area: tr-10;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-11 {
+    grid-area: tr-11;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-12 {
+    grid-area: tr-12;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-13 {
+    grid-area: tr-13;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-14 {
+    grid-area: tr-14;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-15 {
+    grid-area: tr-15;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-16 {
+    grid-area: tr-16;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-17 {
+    grid-area: tr-17;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-18 {
+    grid-area: tr-18;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-19 {
+    grid-area: tr-19;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-20 {
+    grid-area: tr-20;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-21 {
+    grid-area: tr-21;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-22 {
+    grid-area: tr-22;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-23 {
+    grid-area: tr-23;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-24 {
+    grid-area: tr-24;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-25 {
+    grid-area: tr-25;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.tr-1:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(20deg) rotateY(-10deg) rotateZ(0deg);
+}
+
+.tr-2:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(20deg) rotateY(-5deg) rotateZ(0deg);
+}
+
+.tr-3:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(20deg) rotateY(0deg) rotateZ(0deg);
+}
+
+.tr-4:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(20deg) rotateY(5deg) rotateZ(0deg);
+}
+
+.tr-5:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(20deg) rotateY(10deg) rotateZ(0deg);
+}
+
+.tr-6:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(10deg) rotateY(-10deg) rotateZ(0deg);
+}
+
+.tr-7:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(10deg) rotateY(-5deg) rotateZ(0deg);
+}
+
+.tr-8:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(10deg) rotateY(0deg) rotateZ(0deg);
+}
+
+.tr-9:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(10deg) rotateY(5deg) rotateZ(0deg);
+}
+
+.tr-10:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(10deg) rotateY(10deg) rotateZ(0deg);
+}
+
+.tr-11:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(0deg) rotateY(-10deg) rotateZ(0deg);
+}
+
+.tr-12:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(0deg) rotateY(-5deg) rotateZ(0deg);
+}
+
+.tr-13:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+}
+
+.tr-14:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(0deg) rotateY(5deg) rotateZ(0deg);
+}
+
+.tr-15:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(0deg) rotateY(10deg) rotateZ(0deg);
+}
+
+.tr-16:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(-10deg) rotateY(-10deg) rotateZ(0deg);
+}
+
+.tr-17:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(-10deg) rotateY(-5deg) rotateZ(0deg);
+}
+
+.tr-18:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(-10deg) rotateY(0deg) rotateZ(0deg);
+}
+
+.tr-19:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(-10deg) rotateY(5deg) rotateZ(0deg);
+}
+
+.tr-20:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(-10deg) rotateY(10deg) rotateZ(0deg);
+}
+
+.tr-21:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(-20deg) rotateY(-10deg) rotateZ(0deg);
+}
+
+.tr-22:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(-20deg) rotateY(-5deg) rotateZ(0deg);
+}
+
+.tr-23:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(-20deg) rotateY(0deg) rotateZ(0deg);
+}
+
+.tr-24:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(-20deg) rotateY(5deg) rotateZ(0deg);
+}
+
+.tr-25:hover~#card {
+    transition: 125ms ease-in-out;
+    transform: rotateX(-20deg) rotateY(10deg) rotateZ(0deg);
+}
+
+.noselect {
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Safari */
+    /* Konqueror HTML */
+    -moz-user-select: none;
+    /* Old versions of Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently
+									supported by Chrome, Edge, Opera and Firefox */
+}
+
+.scroll-guide {
+    color: var(--text-color-sub);
+    font-size: var(--font-md);
+    font-weight: bold;
+    pointer-events: none;
+    margin: auto;
+}
+
+
+
+
+
+
+@media only screen and (max-width: 768px) {
+    .certificates-container {
+        width: 100%;
+        border-radius: 0;
+    }
+
+
+
+}

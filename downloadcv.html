@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<style>
+    .folder-container
+    {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        /* border: 1px solid red; */
+        /* padding: 2%; */
+        width: 180px;
+        height: 250px;
+        /* transform: rotate(-70deg); */
+
+        
+    }
+    .folder {
+        position: relative;
+        border-radius: 10px;
+        width: 100%;
+        height: 100%;
+        /* background-color: whitesmoke; */
+        /* -webkit-box-shadow: 1px 1px 12px #000; */
+        /* box-shadow: 1px 1px 12px #000; */
+        filter: drop-shadow(1px 1px 5px #000);
+        -webkit-transform: preserve-3d;
+        -ms-transform: preserve-3d;
+        transform: preserve-3d;
+        -webkit-perspective: 2000px;
+        perspective: 600px;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        color: #000;
+        transition-duration: 0.5s;
+    }
+
+    .folder img {
+        width: 100%;
+        height: 100%;
+        object-fit: fill;
+    }
+
+    .cover,
+    .folder-inner {
+        top: 0;
+        position: absolute;
+        /* background-color: lightgray; */
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+        cursor: pointer;
+        -webkit-transition: all 0.5s;
+        transition: all 0.5s;
+        -webkit-transform-origin: 0;
+        -ms-transform-origin: 0;
+        transform-origin: 0;
+        /* -webkit-box-shadow: 1px 1px 12px #000; */
+        /* box-shadow: 1px 1px 12px #000; */
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        filter: drop-shadow(1px 1px 3px #000);
+    }
+
+    .folder:hover .cover {
+        -webkit-transition: all 0.5s;
+        transition: all 0.5s;
+        -webkit-transform: rotatey(70deg);
+        -ms-transform: rotatey(70deg);
+        transform: rotatey(-70deg);
+    }
+
+    .folder-inner {
+        transform-origin: 100%;
+        width: 85%;
+    }
+    .folder-inner img {
+        width: 100%;
+        height: 100%;
+        border-radius: 1px;
+    }
+
+    .folder:hover .folder-inner {
+        -webkit-transition: all 0.5s;
+        transition: all 0.5s;
+        -webkit-transform: rotateZ(25deg) rotateX(-30deg) rotateY(-10deg) translateX(100px);
+        -ms-transform: rotateZ(25deg) rotateX(-30deg) rotateY(-10deg) translateX(100px);
+        transform: rotateZ(25deg) rotateX(-30deg) rotateY(-10deg) translateX(100px);
+        /* -webkit-box-shadow: 1px 1px 20px #000a; */
+        /* box-shadow: 1px 1px 20px #000a; */
+        filter: drop-shadow(1px 1px 5px #000);
+    }
+
+    .folder:hover {
+        transform: rotateZ(-10deg) translateX(-50px);
+    }
+
+    .folder-text {
+        position: absolute;
+        top: 45%;
+        left: 50%;
+        transform: translate(-55%, -100%);
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #b2851d;
+        text-shadow: 1px 1px 2px #fffffd;
+        width: 70%;
+        text-align: center;
+        /* border: 1px solid saddlebrown; */
+    }
+
+</style>
+
+<body>
+    <div class="folder-container">
+        <div class="folder">
+            <img src="folder-rear.png" alt="">
+            
+            <a href="Assets/Images/cv.pdf" download class="folder-inner">
+                <img src="Assets/Images/CV Image.jpg" alt="Download Resume">
+            </a>
+            
+            <div class="cover">
+                <img src="folder-front.png" alt="">
+                <p class="folder-text">Download Resume</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+</html>

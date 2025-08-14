@@ -1,0 +1,184 @@
+/* ----- ACTIVITY CONTENT STYLESHEET ----- */
+
+.activity-container {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 10% auto minmax(auto, 70%) minmax(auto, 15%);
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        "activity-header-panel activity-header-panel"
+        "activity-description-panel activity-description-panel"
+        "activity-attachment-panel activity-attachment-panel"
+        "activity-reaction-panel activity-reaction-panel";
+    width: 95%;
+    height: max-content;
+    margin: auto;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    background-color: var(--tertiary-color);
+    border-radius: 2rem;
+    padding-top: 1rem;
+}
+
+.activity-header-panel {
+    display: grid;
+    grid-template-columns: minmax(auto, 10%) minmax(auto, auto) 20%;
+    grid-template-rows: 100%;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        "activity-profile-pic activity-info-panel activity-extras-panel";
+    grid-area: activity-header-panel;
+    padding: 1rem;
+    padding-top: 0;
+}
+
+.activity-profile-pic {
+    grid-area: activity-profile-pic;
+    display: grid;
+    border: 0.1rem solid;
+    border-radius: 50%;
+    overflow: hidden;
+    font-size: var(--font-xs);
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    aspect-ratio: 1 / 1;
+}
+.activity-profile-pic img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+.activity-info-panel {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 60% 40%;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        "activity-user-name"
+        "activity-post-date";
+    grid-area: activity-info-panel;
+}
+
+.activity-user-name {
+    grid-area: activity-user-name;
+    margin-left: 0.5rem;
+    margin-top: auto;
+    margin-bottom: auto;
+    font-size: var(--font-md);
+}
+
+.activity-post-date {
+    grid-area: activity-post-date;
+    margin-left: 0.5rem;
+    font-size: var(--font-xs);
+}
+
+.activity-extras-panel {
+    grid-area: activity-extras-panel;
+}
+
+.activity-description-panel {
+    grid-area: activity-description-panel;
+    padding: 1rem;
+    font-size: var(--font-sm);
+}
+
+.activity-attachment-panel {
+    display: grid;
+    gap: 0.3rem;
+    grid-area: activity-attachment-panel;
+    width: 100%;
+    height: auto;
+    grid-template-columns: 1fr;
+    overflow: hidden;
+}
+
+/* 2 frames = 2 columns */
+.activity-attachment-panel:has(.frame:nth-child(2):nth-last-child(1)) {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.activity-attachment-panel .frame {
+    background-color: var(--primary-color);
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    aspect-ratio: 1 / 1;
+    max-height: max-content;
+}
+
+/* 3 frames = 3 columns */
+.activity-attachment-panel:has(.frame:nth-child(3):nth-last-child(1)) {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* 4 or more frames = 2 columns and auto rows */
+.activity-attachment-panel:has(.frame:nth-child(4):nth-last-child(1)),
+.activity-attachment-panel:has(.frame:nth-child(5)) {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+
+.activity-reaction-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 40% 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        "reaction-counts-panel reaction-counts-panel"
+        "reaction-panel reaction-panel";
+    grid-area: activity-reaction-panel;
+    padding: 1rem;
+    padding-bottom: 0;
+}
+
+.reaction-counts-panel {
+    grid-area: reaction-counts-panel;
+    border-bottom: 0.1px solid var(--secondary-color);
+    padding-bottom: 1rem;
+}
+
+.reaction-panel {
+    grid-area: reaction-panel;
+    display: grid;
+    grid-template-columns: 20% 20% 20% 20% 20%;
+    grid-template-rows: 1fr;
+    box-sizing: border-box;
+    width: 100%;
+    height: max-content;
+    font-size: calc(var(--font-md) + 0.1rem);
+    margin: auto;
+    align-items: center;
+    /* border: 1px solid; */
+    
+}
+
+.reaction-button {
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: var(--font-md)
+}
+
+
+@media screen and (max-width: 768px) {
+    .activity-container {
+        width: 100%;  
+        border-radius: 0;  
+        padding-bottom: 1rem;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    .reaction-button {
+    font-size: var(--font-sm)
+}
+    
+}

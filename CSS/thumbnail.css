@@ -1,0 +1,30 @@
+/* ---------- THUMBNAIL CONTAINER CSS ---------- */
+
+.thumbnail-container {
+    grid-column: span 5;
+    /* border: 1px solid #fff; */
+}
+
+.roles-container {
+    background: #333;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    margin: 4px;
+    font-size: 0.9rem;
+    text-align: center;
+    display: inline-block;
+}
+
+.thumbnail {
+    overflow: hidden;
+}
+
+.thumbnail img {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    object-fit: cover;
+    opacity: 0.5;
+}

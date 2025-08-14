@@ -1,0 +1,150 @@
+/* Shortcuts Section Scrollbar Fade-in on Hover */
+.shortcuts-section {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 5% auto auto;
+    grid-auto-flow: row;
+    grid-template-areas:
+        "search-section"
+        "pinned-section"
+        "recent-section";
+    grid-area: shortcuts-section;
+
+    position: sticky;
+    height: 100%;
+    overflow-y: auto;
+}
+
+/* === SEARCH SECTION === */
+.search-section {
+    grid-area: search-section;
+    display: grid;
+    margin: auto;
+    margin-top: 1rem;
+    width: 90%;
+}
+
+/* === UL + LI Styling (Lists in pinned/recent) === */
+.shortcuts-section li {
+    font-size: var(--font-xs);
+}
+
+ul {
+    font-size: var(--font-sm);
+    width: 70%;
+}
+
+li {
+    padding: 0.3rem;
+    background-color: var(--primary-color);
+    border-radius: 0.2rem;
+    margin: 0.2rem 0;
+}
+
+ul :hover {
+    background-color: var(--accent-color);
+}
+
+a {
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+/* === SEARCH BOX CONTAINER === */
+.search-container {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    background-color: var(--primary-color);
+    border-radius: 0.8em;
+    overflow: hidden;
+}
+
+/* === Search box hover styling === */
+.search-container:hover,
+.search_icon:hover,
+.inputBox:hover {
+    background-color: var(--secondary-color);
+    fill: var(--text-color);
+}
+
+/* === SEARCH ICON === */
+.search_icon {
+    height: 1em;
+    padding: 0 0.5em 0 0.8em;
+    fill: var(--text-color);
+}
+
+/* === SEARCH INPUT === */
+.inputBox {
+    background-color: transparent;
+    color: #ffffff;
+    outline: none;
+    width: 100%;
+    border: 0;
+    padding: 0.5em 1.5em 0.5em 0;
+    font-size: 1em;
+}
+
+.inputBox::placeholder,
+::placeholder {
+    color: #abb2bf;
+}
+
+/* === PINNED SECTION === */
+.pinned-section {
+    display: grid;
+    grid-template-rows: auto auto auto;
+    grid-auto-columns: 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-area: pinned-section;
+    margin: 0.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 0.1rem solid var(--primary-color);
+    height: max-content;
+}
+
+/* === Pinned content panels === */
+.pinned-activities-panel {
+    grid-area: 1 / 1 / 2 / 2;
+    display: grid;
+    margin: 0.25rem;
+}
+
+.pinned-projects-panel {
+    grid-area: 2 / 1 / 3 / 2;
+    display: grid;
+    margin: 0.25rem;
+}
+
+.pinned-skills-panel {
+    grid-area: 3 / 1 / 4 / 2;
+    display: grid;
+    margin: 0.25rem;
+}
+
+/* === RECENT SECTION === */
+.recent-section {
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-auto-columns: 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-area: recent-section;
+}
+
+/* === Recent content panels === */
+.recent-activities-panel {
+    grid-area: 1 / 1 / 2 / 2;
+}
+
+.recent-projects-panel {
+    grid-area: 2 / 1 / 3 / 2;
+}
+
+.recent-search-panel {
+    grid-area: 3 / 1 / 4 / 2;
+}

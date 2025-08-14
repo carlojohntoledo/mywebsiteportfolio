@@ -1,0 +1,133 @@
+.activity-container {
+    width: 95%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffffff;
+    gap: 1rem;
+    margin: 1rem auto;
+}
+
+.activity-container-title {
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    /* border: 1px solid white; */
+    padding: 8px 16px;
+}
+
+.activity-card {
+    display: grid;
+    grid-template-areas:
+        "name pin"
+        "id date"
+        "desc desc"
+        "img img";
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    background-color: #2b2b2b;
+    padding: 1rem;
+    border-radius: 5px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 900px;
+    /* border: 1px solid orange; */
+    border-radius: 1rem;
+    margin: auto;
+    padding-bottom: 2rem;
+    padding-top: 2rem;
+}
+
+.activity-name {
+    grid-area: name;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #fff;
+}
+
+.activity-pin {
+    grid-area: pin;
+    text-align: right;
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+.activity-date {
+    grid-area: date;
+    text-align: right;
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.activity-id {
+    grid-area: id;
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.activity-description {
+    grid-area: desc;
+    color: #eee;
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+/* Flexible image layout */
+.activity-image {
+    grid-area: img;
+    display: grid;
+    gap: 0.2rem;
+    border: 0.08rem solid rgb(245, 245, 245);
+    /* padding: 1%; */
+    border-radius: 1rem;
+    overflow: hidden;
+    width: 100%;
+}
+
+/* Default: fallback 2 columns */
+.activity-image {
+    grid-template-columns: 1fr 1fr;
+}
+
+/* Dynamic grid with CSS :has() for modern browsers */
+.activity-image:has(img:nth-child(1)):not(:has(img:nth-child(2))) {
+    grid-template-columns: 1fr;
+}
+.activity-image:has(img:nth-child(2)):not(:has(img:nth-child(3))) {
+    grid-template-columns: repeat(2, 1fr);
+}
+.activity-image:has(img:nth-child(3)):not(:has(img:nth-child(4))) {
+    grid-template-columns: repeat(3, 1fr);
+}
+.activity-image:has(img:nth-child(4)) {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, auto);
+}
+
+.activity-image img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    /* border-radius: 4px; */
+    /* border: 1px solid white; */
+    cursor: pointer;
+}
+
+@media (max-width: 600px) {
+    .activity-card {
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+            "name pin"
+            "id date"
+            "desc desc"
+            "img img";
+    }
+
+    .activity-image {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+}

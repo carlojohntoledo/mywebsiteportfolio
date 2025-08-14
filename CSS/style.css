@@ -1,0 +1,233 @@
+/* ---------- MAIN STYLE CSS ---------- */
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+:root {
+
+    /* ===== PRIMARY COLORS ===== */
+    --primary-color: #333334;
+    --secondary-color: #484849;
+    --tertiary-color: #252728;
+    --background-color: #1C1C1D;
+    --small-logo-color: rgba(24, 24, 24, 0.263);
+    --accent-color: #ffe602;
+    --bubble-color: #f1e573;
+    --text-color: white;
+    --text-color-sub: #b0b3b8;
+    --font-family: 'Arial', sans-serif;
+
+
+    /* ===== FONT SIZES ===== */
+    --font-xs: 0.75rem;
+    /* 12px */
+    --font-sm: 0.875rem;
+    /* 14px */
+    --font-md: 1rem;
+    /* 16px */
+    --font-lg: 1.25rem;
+    /* 20px */
+    --font-xl: 1.5rem;
+    /* 24px */
+    --font-xxl: 2rem;
+    /* 32px */
+    --font-xxxl: 3rem;
+    /* 48px */
+}
+
+/* Light Theme */
+.light-theme {
+    --primary-color: #D6D9DD;
+    --secondary-color: #e6e6e6;
+    --tertiary-color: #ffffff;
+    --background-color: #F2F4F7;
+    --small-logo-color: rgba(200, 200, 200, 0.3);
+    --bubble-color: #ffe602;
+    --text-color: #111;
+    --text-color-sub: #65686C;
+}
+
+/* Shared scrollbar that fades in on hover */
+.scroll-fade {
+    overflow-y: auto;
+    
+    scrollbar-gutter: stable overlay;
+    scrollbar-width: thin;
+    
+    /* Firefox */
+    scrollbar-color: transparent transparent;
+}
+
+.scroll-fade:hover {
+    scrollbar-color: rgba(255, 255, 255, 0.4) transparent;
+}
+
+/* Webkit (Chrome, Safari, Edge) */
+.scroll-fade::-webkit-scrollbar {
+    width: 8px;
+    background: transparent;
+    position: absolute;
+}
+
+.scroll-fade::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scroll-fade::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.scroll-fade:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: brightness(0) saturate(100%) invert(29%) sepia(1%) saturate(214%) hue-rotate(182deg) brightness(92%) contrast(87%);
+}
+
+.red-btn {
+    background-color: #fe4f60;
+}
+
+.green-btn {
+    background-color: #5de349;
+}
+
+.red-btn:hover {
+    background-color: #a52f3b;
+}
+
+.green-btn:hover {
+    background-color: #409b32;
+}
+
+.main-section,
+.contacts-section,
+.shortcuts-section {
+    /* Use shared scroll fade style */
+    overflow-y: auto;
+}
+
+
+body {
+    background-color: var(--background-color);
+    margin: 0;
+    font-family: "Roboto", monospace;
+    font-optical-sizing: auto;
+    color: var(--text-color);
+    font-style: normal;
+    scroll-padding-top: 10rem;
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+    /* background-color: #252728; */
+    
+}
+
+textarea {
+    font-family: "Roboto", monospace;
+    font-optical-sizing: auto;
+}
+
+.content-parent {
+    display: grid;
+    grid-template-columns: 25% 50% 25%;
+    grid-template-rows: 0 4rem auto;
+    gap: 0% 0%;
+    grid-auto-flow: row;
+    grid-template-areas:
+        "thumbnail thumbnail thumbnail"
+        "menu-nav menu-nav menu-nav"
+        "main-content main-content main-content";
+    height: 100vh;
+}
+
+.thumbnail {
+    /* grid-area: thumbnail; */
+    overflow: hidden;
+    display: none;
+}
+
+.menu-nav {
+    display: grid;
+    grid-template-columns: 25% 50% 25%;
+    grid-template-rows: 100%;
+    gap: 0px 0px;
+    grid-area: menu-nav;
+    z-index: 10;
+}
+
+.logo-panel {
+    grid-area: 1 / 1 / 2 / 2;
+    display: grid;
+    margin: auto;
+}
+
+.menu-btn-panel {
+    grid-area: 1 / 2 / 2 / 3;
+}
+
+
+
+.main-content {
+    display: grid;
+    grid-template-columns: 25% 50% 25%;
+    grid-template-rows: 100%;
+    gap: 0% 0%;
+    grid-auto-flow: row;
+    grid-template-areas:
+        "shortcuts-section main-section contacts-section";
+    grid-area: main-content;
+    overflow-y: auto;
+}
+
+
+.main-section {
+    grid-area: main-section;
+    overflow-y: auto;
+}
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 768px) {
+
+    .content-parent {
+        grid-template-rows: 0 7dvh 93dvh;
+
+    }
+
+    .shortcuts-section,
+    .contacts-section,
+    .logo-panel {
+        display: none;
+    }
+
+    .main-content {
+        grid-template-columns: 100%;
+        grid-template-areas: "main-section";
+    }
+
+    .menu-nav {
+        grid-template-columns: 0% 75% 25%;
+        grid-template-areas: "menu-nav";
+    }
+}
+
+/* Tablet Responsive Adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+
+    .shortcuts-section,
+    .logo-panel {
+        display: none;
+    }
+
+    .main-content {
+        grid-template-columns: 75% 25%;
+        grid-template-areas: "main-section contacts-section";
+    }
+
+    .menu-nav {
+        grid-template-columns: 0% 75% 25%;
+        grid-template-areas: "menu-nav";
+    }
+}
