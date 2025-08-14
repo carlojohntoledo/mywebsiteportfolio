@@ -79,3 +79,9 @@ uploads/
 # OS-specific files
 .DS_Store
 Thumbs.db
+
+# firebase service account key
+serviceAccountKey.json
+
+# Important Notes on README.md
+README.md

@@ -80,13 +80,13 @@ Post menu: {pin, edit, remove}
 //-------------------------------------------------------------------------//
 
 
-ACTIVITIES POST
----
+### ACTIVITIES POST
+
 
 
 
 Activities: 	{user-input: activity-title, activity-description, activity-tags, activity attachments}
-		{automatic value: activity-date-posted (Just Now, 4m ago, 1h ago, 2d ago, 3w ago, July 4 (if months ago), July 4, 2024 (if years ago))}
+				{automatic value: activity-date-posted (Just Now, 4m ago, 1h ago, 2d ago, 3w ago, July 4 (if months ago), July 4, 2024 (if years ago))}
 
 
 
