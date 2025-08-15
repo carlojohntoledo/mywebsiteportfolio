@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Projects Page</title>
+    <!-- <link rel="stylesheet" href="CSS/debug-borders.css"> -->
     <link rel="stylesheet" href="CSS/menu-nav.css">
     <link rel="stylesheet" href="CSS/extras-navbar.css">
     <link rel="stylesheet" href="CSS/style.css">
@@ -254,30 +255,30 @@
                             <div class="create-project-form-viewport scroll-fade">
                                 <form id="create-project-form">
                                     <div class="create-project-containers project-label">
-                                        <input id="input-project-title" type="text" required>
+                                        <input class="input-project-title" type="text" required>
                                         <label for="input-project-title">Project Title*</label>
                                     </div>
                                     <div class="create-project-containers project-label">
-                                        <textarea id="input-project-description" required></textarea>
+                                        <textarea class="input-project-description" required></textarea>
                                         <label for="input-project-description">Project Description*</label>
                                     </div>
                                     <div class="flex-container">
                                         <div class="create-project-containers project-label">
-                                            <input placeholder="" type="date" required>
-                                            <label for="project-date">Project Start Date*</label>
+                                            <input class="input-project-date" placeholder="" type="date" required>
+                                            <label for="input-project-date">Project Start Date*</label>
                                         </div>
                                         <div class="create-project-containers project-label">
-                                            <select required>
+                                            <select class="input-project-status" required>
                                                 <option value="Published">Published</option>
                                                 <option value="Under Development">Under Development</option>
                                                 <option value="Planned">Planned</option>
                                             </select>
-                                            <label for="project-status">Project Status*</label>
+                                            <label for="input-project-status">Project Status*</label>
                                         </div>
                                     </div>
 
                                     <div class="create-project-containers project-label">
-                                        <input id="input-project-tags" placeholder="html, css, js..." type="text">
+                                        <input class="input-project-tags" placeholder="html, css, js..." type="text">
                                         <label for="input-project-tags">Project Tags</label>
                                     </div>
                                     <!-- PREVIEW CONTAINER -->
@@ -295,83 +296,28 @@
                                                     <p>Drag and Drop</p>
                                                     <p>or</p>
                                                     <span class="browse-button">Browse file</span>
-                                                    <input id="file" type="file" multiple accept="image/*" />
+                                                    <input class=".project-image-upload" id="file" type="file" multiple
+                                                        accept="image/*" onchange="previewImages(event)">
                                                 </div>
-                                                <input id="file" type="file" />
                                             </label>
                                         </div>
                                     </div>
-                                    <div id="file-preview-container" class="file-preview-container"></div>
+                                    <div id="image-preview-container" class="image-preview-container"></div>
+
                                 </form>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- This is where the pinned project will be placed -->
+                <div class="project-container-parent pinned" style="display: none;">
 
-                <!-- Template project card (hidden for cloning) -->
-                <div class="project-container-parent" id="project-template" style="display: none;">
-                    <div class="project-container">
-                        <div class="project-card">
-                            <div class="project-content" style="position: relative;">
-                                <div class="post-extra-popup">
-                                    <input type="radio" name="post-extra" id="pin-post">
-                                    <input type="radio" name="post-extra" id="edit-post">
-                                    <input type="radio" name="post-extra" id="remove-post">
-                                    <input type="checkbox" id="checkbox">
-                                    <label for="checkbox" class="post-extra-btn"><strong>. . .</strong></label>
-                                    <div class="post-extra-list-container">
-                                        <ul class="post-extra-list">
-                                            <li><label for="pin-post"><span>Pin Project</span></label></li>
-                                            <li><label for="edit-post"><span>Edit Project</span></label></li>
-                                            <li><label for="remove-post"><span>Remove Project</span></label></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="project-image-container">
-                                    <div class="post-indicators">
-                                        <h1 class="srv" id="theme-toggle">Projects</h1>
-                                        <h1 class="srv" id="project-status">Planned</h1>
-                                        <h1 class="srv" id="pinned-post-indicator" style="display: none;">Pinned</h1>
-                                    </div>
-                                    <div class="project-logo-container">
-                                        <h1 class="project-logo-panel">KOALO</h1>
-                                    </div>
-                                    <img src="Assets/Images/placeholder.svg" alt="project image" class="project-image"
-                                        id="project-image">
-                                </div>
-                                <div class="project-title-container">
-                                    <h1 id="project-title">PROJECT TITLE</h1>
-                                    <div class="project-details-container">
-                                        <div class="project-name-container">
-                                            <img class="xs-profilepic"
-                                                src="Assets/Images/Profile Pictures/default-profile-picture.jpg"
-                                                alt="profile picture">
-                                            <p>Carlo John Toledo</p>
-                                        </div>
-                                        <div class="project-status-container">
-                                            <p id="project-date">01/01/2025</p>
-                                        </div>
-                                    </div>
-                                </div>
+                </div>
 
-                                <div class="project-links-container scroll-fade">
-                                    <div class="project-tag-container" id="project-tags">
-                                        <div>csharp</div>
-                                        <div>javascript</div>
-                                        <div>html</div>
-                                        <div>css</div>
-                                        <div>react</div>
-                                    </div>
-                                </div>
-                                <div class="project-desc-container">
-                                    <p class="desc-text" id="project-description">Lorem ipsum dolor sit amet consectetur
-                                        adipisicing elit...</p>
-                                    <button class="toggle-desc">See More</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <!-- This is where the created project will be posted -->
+                <div class="project-container-parent" style="display: none;">
+
                 </div>
 
                 <div class="end-indicator">
@@ -422,173 +368,255 @@
         </div>
     </div>
 
-    <!-- Firebase + Cloudinary Script -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import {
-            getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp
-        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    <script src="JS/navbar-menu-script.js"></script>
+    <script src="JS/theme-toggle.js"></script>
 
-        // 🔹 CONFIGURE THESE
-        const firebaseConfig = {
-            apiKey: "AIzaSyAqIrj2qzOCCH-121R7bKTC7V7txPm7yl8",
-            authDomain: "my-socmed-bea3a.firebaseapp.com",
-            projectId: "my-socmed-bea3a",
-            storageBucket: "my-socmed-bea3a.firebasestorage.app",
-            messagingSenderId: "530230105836",
-            appId: "1:530230105836:web:e329797c9ed468d0ef77c9"
-        };
-        const CLOUD_NAME = "dglegfflv";
-        const UPLOAD_PRESET = "mysocmed_projects"; // must be unsigned & set to folder "projects"
+    <script>
+        // create post toggle
+        document.getElementById('create-new-post').addEventListener('click', function () {
+            const postCard = document.querySelector('.create-card-container-parent');
+            postCard.style.display = 'grid';
+        });
 
-        // Init Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        document.getElementById('cancel-btn').addEventListener('click', function () {
+            const postCard = document.querySelector('.create-card-container-parent');
+            postCard.style.display = 'none';
+        });
 
-        // Upload to Cloudinary
-        async function uploadImage(file) {
-            const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
-            const formData = new FormData();
-            formData.append("file", file);
-            formData.append("upload_preset", UPLOAD_PRESET);
-            const res = await fetch(url, { method: "POST", body: formData });
-            return res.json(); // returns { public_id, secure_url, ... }
-        }
 
-        // Toggle Create Form
+    </script>
+
+    <script>
+        // Toggle create post form
         document.getElementById('create-new-post').addEventListener('click', () => {
             document.querySelector('.create-card-container-parent').style.display = 'grid';
         });
         document.getElementById('cancel-btn').addEventListener('click', () => {
             document.querySelector('.create-card-container-parent').style.display = 'none';
         });
-        document.getElementById('close-error').addEventListener('click', () => {
-            document.getElementById('form-warning').style.display = 'none';
-        });
 
-        // Post Project
-        document.getElementById('post-btn').addEventListener('click', async () => {
-            const title = document.getElementById('input-project-title').value.trim();
-            const description = document.getElementById('input-project-description').value.trim();
-            const date = document.getElementById('project-date').value;
-            const status = document.getElementById('project-status').value;
-            const tagsInput = document.getElementById('input-project-tags').value.trim();
-            const tags = tagsInput ? tagsInput.split(',').map(t => t.trim()) : [];
-            const files = Array.from(document.getElementById('file').files);
-            const warningBox = document.getElementById('form-warning');
+        function previewImages(event) {
+            const files = event.target.files;
+            const previewContainer = document.getElementById("image-preview-container");
+            previewContainer.innerHTML = "";
 
-            // Hide any previous warning
-            warningBox.style.display = 'none';
+            Array.from(files).forEach((file, index) => {
+                if (!file.type.startsWith("image/")) return;
 
-            // Validate required fields
-            if (!title || !description || !date || !status) {
-                warningBox.style.display = 'flex';
-                return;
-            }
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const filePreview = document.createElement("div");
+                    filePreview.classList.add("file-preview");
 
-            // Upload all selected images to Cloudinary
-            const uploadedImages = [];
-            for (let file of files) {
-                const result = await uploadImage(file);
-                uploadedImages.push(result.public_id);
-            }
+                    const imgWrapper = document.createElement("div");
+                    imgWrapper.classList.add("image-preview");
 
-            // Save project in Firestore
-            await addDoc(collection(db, "projects"), {
-                title,
-                description,
-                startDate: date,
-                status,
-                tags,
-                imageIds: uploadedImages,
-                createdAt: serverTimestamp(),
-                isPinned: false
-            });
+                    const img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.alt = `Preview ${index + 1}`;
 
-            alert("✅ Project posted!");
-            document.getElementById('create-project-form').reset();
-            document.getElementById('file').value = '';
-            document.querySelector('.create-card-container-parent').style.display = 'none';
+                    const removeBtn = document.createElement("button");
+                    removeBtn.classList.add("remove-preview");
+                    removeBtn.innerHTML = "&times;";
+                    removeBtn.addEventListener("click", function () {
+                        filePreview.remove();
+                        const dt = new DataTransfer();
+                        Array.from(files).filter((_, i) => i !== index).forEach(f => dt.items.add(f));
+                        event.target.files = dt.files;
+                    });
 
-            // Reload the list
-            await loadProjects();
-        });
-
-        // Load Projects from Firestore
-        async function loadProjects() {
-            const q = query(
-                collection(db, "projects"),
-                orderBy("isPinned", "desc"),
-                orderBy("createdAt", "desc")
-            );
-            const snap = await getDocs(q);
-            const postList = document.querySelector('.project-section');
-            const template = document.getElementById('project-template');
-            const endIndicator = document.querySelector('.end-indicator');
-
-            // Remove any old project cards except the template
-            document.querySelectorAll('.project-container-parent:not(#project-template)')
-                .forEach(el => el.remove());
-
-            snap.forEach(docSnap => {
-                const p = docSnap.data();
-                const clone = template.cloneNode(true);
-                clone.style.display = '';
-                clone.removeAttribute('id');
-
-                // Fill in project details
-                clone.querySelector('#project-title').textContent = p.title;
-                clone.querySelector('#project-description').textContent = p.description;
-                clone.querySelector('#project-date').textContent = p.startDate;
-                clone.querySelector('#project-status').textContent = p.status;
-
-                // Tags
-                const tagContainer = clone.querySelector('#project-tags');
-                tagContainer.innerHTML = '';
-                p.tags?.forEach(tag => {
-                    const div = document.createElement('div');
-                    div.textContent = tag;
-                    tagContainer.appendChild(div);
-                });
-
-                // Images (single or carousel)
-                if (p.imageIds?.length > 0) {
-                    const imgElement = clone.querySelector('#project-image');
-                    const imageUrls = p.imageIds.map(id =>
-                        `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/f_auto,q_auto,w_800/${id}`
-                    );
-
-                    if (imageUrls.length === 1) {
-                        imgElement.src = imageUrls[0];
-                    } else {
-                        startCarousel(imgElement, imageUrls);
-                    }
-                }
-
-                // Insert before end-indicator
-                postList.insertBefore(clone, endIndicator);
+                    imgWrapper.appendChild(img);
+                    filePreview.appendChild(imgWrapper);
+                    filePreview.appendChild(removeBtn);
+                    previewContainer.appendChild(filePreview);
+                };
+                reader.readAsDataURL(file);
             });
         }
 
-        // Carousel Function
-        function startCarousel(imgElement, images) {
-            let currentIndex = 0;
-            imgElement.src = images[currentIndex];
+        function postSorter() {
+            const parentContainer = document.querySelector(".project-container-parent");
+            const pinned = Array.from(parentContainer.querySelectorAll(".project-container[data-pinned='true']"));
+            const unpinned = Array.from(parentContainer.querySelectorAll(".project-container[data-pinned='false']"));
 
-            if (images.length > 1) {
+            const sortByDate = (a, b) => {
+                const dateA = new Date(a.querySelector("[data-date]").dataset.date);
+                const dateB = new Date(b.querySelector("[data-date]").dataset.date);
+                return dateB - dateA;
+            };
+
+            pinned.sort(sortByDate);
+            unpinned.sort(sortByDate);
+
+            [...pinned, ...unpinned].forEach(post => parentContainer.appendChild(post));
+        }
+
+        function SubmitPost() {
+            document.getElementById("post-btn").addEventListener("click", function () {
+                const title = document.querySelector(".input-project-title");
+                const description = document.querySelector(".input-project-description");
+                const date = document.querySelector(".input-project-date");
+                const status = document.querySelector(".input-project-status");
+                const tagsInput = document.querySelector('.input-project-tags');
+                const fileInput = document.getElementById("file");
+                const errorElement = document.querySelector(".error");
+                const postCard = document.querySelector('.create-card-container-parent');
+
+                if (!title.value.trim() || !description.value.trim() || !date.value.trim() || !status.value.trim()) {
+                    errorElement.style.display = "flex";
+                    return;
+                }
+                errorElement.style.display = "none";
+                postCard.style.display = 'none';
+
+                const parentContainer = document.querySelector(".project-container-parent");
+                parentContainer.style.display = "grid";
+
+                const uploadedImages = [];
+                Array.from(fileInput.files).forEach(file => {
+                    if (file.type.startsWith("image/")) {
+                        uploadedImages.push(URL.createObjectURL(file));
+                    }
+                });
+
+                // Process tags into an array
+                const tagsArray = tagsInput.value
+                    .split(",")
+                    .map(tag => tag.trim())
+                    .filter(tag => tag.length > 0);
+
+                // Convert tags array into HTML divs
+                const tagsHTML = tagsArray.map(tag => `<div>${tag}</div>`).join("");
+
+                const uid = Date.now();
+                const toggleId = `checkbox-${uid}`;
+                const pinId = `pin-post-${uid}`;
+                const editId = `edit-post-${uid}`;
+                const removeId = `remove-post-${uid}`;
+
+                const firstImage = uploadedImages.length > 0 ? uploadedImages[0] : "Assets/Images/placeholder.svg";
+
+                const newProjectHTML = `
+                    <div class="project-container" data-pinned="false">
+                        <div class="project-card">
+                            <div class="project-content" style="position: relative;">
+                                <div class="post-extra-popup">
+                                    <input type="checkbox" id="${toggleId}" class="checkbox">
+                                    <label for="${toggleId}" class="post-extra-btn"><strong>. . .</strong></label>
+                                    <div class="post-extra-list-container">
+                                        <ul class="post-extra-list">
+                                            <li>
+                                                <input type="checkbox" id="${pinId}" hidden>
+                                                <label for="${pinId}"><span>Pin Project</span></label>
+                                            </li>
+                                            <li>
+                                                <input type="checkbox" id="${editId}" hidden>
+                                                <label for="${editId}"><span>Edit Project</span></label>
+                                            </li>
+                                            <li>
+                                                <input type="checkbox" id="${removeId}" hidden>
+                                                <label for="${removeId}"><span>Remove Project</span></label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="project-image-container">
+                                    <div class="post-indicators">
+                                        <h1 class="srv" id="theme-toggle">Projects</h1>
+                                        <h1 class="srv" id="project-status">${status.value}</h1>
+                                        <h1 class="srv" id="pinned-post-indicator" style="display: none;">Pinned</h1>
+                                    </div>
+                                    <div class="project-logo-container">
+                                        <h1 class="project-logo-panel">KOALO</h1>
+                                    </div>
+                                    <img src="${firstImage}" alt="project image" class="project-image" id="project-image-${uid}">
+                                </div>
+                                <div class="project-title-container">
+                                    <h1 id="project-title">${title.value}</h1>
+                                    <div class="project-details-container">
+                                        <div class="project-name-container">
+                                            <img class="xs-profilepic" src="Assets/Images/Profile Pictures/default-profile-picture.jpg" alt="profile picture">
+                                            <p>Carlo John Toledo</p>
+                                        </div>
+                                        <div class="project-status-container">
+                                            <p id="project-date">${date.value}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="project-links-container scroll-fade">
+                                    <div class="project-tag-container" id="project-tags-${uid}">
+                                        ${tagsHTML}
+                                    </div>
+                                </div>
+                                <div class="project-desc-container">
+                                    <p class="desc-text" id="project-description">${description.value}</p>
+                                    <button class="toggle-desc">See More</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                parentContainer.insertAdjacentHTML("beforeend", newProjectHTML);
+
+                if (uploadedImages.length > 1) {
+                    const imgElement = document.getElementById(`project-image-${uid}`);
+                    startCarousel(imgElement, uploadedImages);
+                }
+
+                postSorter();
+
+                // Reset form fields
+                title.value = "";
+                description.value = "";
+                date.value = "";
+                status.value = "";
+                tagsInput.value = "";
+                fileInput.value = "";
+                document.getElementById("image-preview-container").innerHTML = "";
+            });
+
+            document.addEventListener("change", function (e) {
+                const target = e.target;
+                const card = target.closest(".project-container");
+                if (!card) return;
+
+                if (target.id.startsWith("pin-post")) {
+                    const pinIndicator = card.querySelector("#pinned-post-indicator");
+                    const pinLabel = card.querySelector(`label[for="${target.id}"] span`);
+                    if (target.checked) {
+                        card.dataset.pinned = "true";
+                        pinIndicator.style.display = "block";
+                        pinLabel.textContent = "Unpin Project";
+                    } else {
+                        card.dataset.pinned = "false";
+                        pinIndicator.style.display = "none";
+                        pinLabel.textContent = "Pin Project";
+                    }
+                    postSorter();
+                }
+
+                if (target.id.startsWith("edit-post")) {
+                    alert("Edit functionality here!");
+                    target.checked = false;
+                }
+
+                if (target.id.startsWith("remove-post")) {
+                    card.remove();
+                }
+            });
+
+            function startCarousel(imgElement, images) {
+                let currentIndex = 0;
+                imgElement.src = images[currentIndex];
                 setInterval(() => {
-                    imgElement.classList.add('fade-out');
-                    setTimeout(() => {
-                        currentIndex = (currentIndex + 1) % images.length;
-                        imgElement.src = images[currentIndex];
-                        imgElement.classList.remove('fade-out');
-                    }, 500);
+                    currentIndex = (currentIndex + 1) % images.length;
+                    imgElement.src = images[currentIndex];
                 }, 3000);
             }
         }
 
-        // Initial load
-        await loadProjects();
+        SubmitPost();
     </script>
 
 

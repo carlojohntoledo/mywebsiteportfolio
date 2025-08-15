@@ -54,6 +54,7 @@
     grid-template-columns: 100%;
     padding-bottom: 1rem;
     margin: 0 auto;
+    transition: transform 0.3s ease;
 }
 
 .project-content {
@@ -381,7 +382,7 @@
 #pin-post,
 #edit-post,
 #remove-post,
-#checkbox,
+.checkbox,
 .post-extra-list-container {
     display: none;
 }
@@ -449,12 +450,12 @@
 
 /* actions */
 
-#checkbox:checked~.post-extra-btn {
+.checkbox:checked~.post-extra-btn {
     outline: var(--btn_outline_width) solid var(--btn_outline_color);
     outline-offset: var(--btn_outline_offset);
 }
 
-#checkbox:checked~.post-extra-list-container {
+.checkbox:checked~.post-extra-list-container {
     display: block;
 }
 
