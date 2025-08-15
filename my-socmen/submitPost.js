@@ -228,23 +228,9 @@ async function SubmitPost() {
         }
     });
 
-    function startCarousel(imgElement, images) {
-        let currentIndex = 0;
-        imgElement.src = images[currentIndex];
-        setInterval(() => {
-            imgElement.style.opacity = 0;       // fade out
-            imgElement.style.transform = 'scale(1)'; // reset zoom before fade out
-
-            setTimeout(() => {
-                currentIndex = (currentIndex + 1) % images.length;
-                imgElement.src = images[currentIndex];
-                imgElement.style.opacity = 1;       // fade in
-                imgElement.style.transform = 'scale(1.15)'; // zoom in slightly
-            }, 1000); // match fade duration in CSS
-
-        }, 10000); // time between slides
-    }
+    
 }
 
 // Initialize
 SubmitPost();
+loadProjectsFromFirestore();
