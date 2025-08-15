@@ -162,7 +162,7 @@
     background-color: chocolate;
 }
 
-#project-status {
+.project-status {
     background-color: darkcyan;
 }
 
@@ -187,7 +187,7 @@
 
 
 .project-image-container img {
-    width: 100%;
+    min-width: 100%;
     height: 100%;
     object-fit: cover;
     background-position: center;
@@ -196,6 +196,9 @@
     position: absolute;
     z-index: 1;
     background-color: black;
+    transition: opacity 2s ease-in-out, transform 9s linear; /* fade + zoom */
+    opacity: 1;
+    transform: scale(1);
 }
 
 .project-title-container {
