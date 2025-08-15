@@ -402,23 +402,21 @@
     </script>
 
     <script>
-
         function startCarousel(imgElement, images) {
             let currentIndex = 0;
             imgElement.src = images[currentIndex];
             setInterval(() => {
-                imgElement.style.opacity = 0;       // fade out
-                imgElement.style.transform = 'scale(1)'; // reset zoom before fade out
-
+                imgElement.style.opacity = 0;
+                imgElement.style.transform = 'scale(1)';
                 setTimeout(() => {
                     currentIndex = (currentIndex + 1) % images.length;
                     imgElement.src = images[currentIndex];
-                    imgElement.style.opacity = 1;       // fade in
-                    imgElement.style.transform = 'scale(1.15)'; // zoom in slightly
-                }, 1000); // match fade duration in CSS
-
-            }, 10000); // time between slides
+                    imgElement.style.opacity = 1;
+                    imgElement.style.transform = 'scale(1.15)';
+                }, 1000);
+            }, 10000);
         }
+
         async function loadProjectsFromFirestore() {
             const parentContainer = document.querySelector(".project-container-parent");
             parentContainer.innerHTML = ""; // Clear container
@@ -431,13 +429,12 @@
                     const uid = doc.id;
                     const firstImage = data.images && data.images.length > 0 ? data.images[0] : "Assets/Images/placeholder.svg";
 
-                    // Unique IDs for checkboxes
+                    // Unique IDs for toggle/pin/edit/remove
                     const toggleId = `checkbox-${uid}`;
                     const pinId = `pin-post-${uid}`;
                     const editId = `edit-post-${uid}`;
                     const removeId = `remove-post-${uid}`;
 
-                    // Build HTML
                     const projectHTML = `
                 <div class="project-container" data-pinned="false">
                     <div class="project-card">
@@ -501,7 +498,7 @@
 
                     parentContainer.insertAdjacentHTML("beforeend", projectHTML);
 
-                    // Optional: start carousel if multiple images
+                    // Start carousel if multiple images
                     if (data.images && data.images.length > 1) {
                         const imgElement = document.getElementById(`project-image-${uid}`);
                         startCarousel(imgElement, data.images);
@@ -512,8 +509,9 @@
             }
         }
 
-        // Call this function on page load
+        // Call this when the page loads
         loadProjectsFromFirestore();
+
     </script>
 
     <script src="JS/navbar-menu-script.js"></script>
