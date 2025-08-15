@@ -233,4 +233,3 @@ async function SubmitPost() {
 
 // Initialize
 SubmitPost();
-loadProjectsFromFirestore();

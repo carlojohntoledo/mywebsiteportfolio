@@ -18,4 +18,3 @@ async function uploadToCloudinary(file) {
         return null;
     }
 }
-loadProjectsFromFirestore();

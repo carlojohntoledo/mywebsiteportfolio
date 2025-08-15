@@ -21,6 +21,3 @@ document.getElementById('cancel-btn').addEventListener('click', function () {
     const postCard = document.querySelector('.create-card-container-parent');
     postCard.style.display = 'none';
 });
-
-
-loadProjectsFromFirestore();
