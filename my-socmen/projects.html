@@ -19,6 +19,14 @@
 </head>
 
 <body>
+    <div class="loader-container" style="display: none;">
+        <div class="loader">
+            <div class="progress"></div>
+            <div class="progress"></div>
+            <div class="progress"></div>
+        </div>
+    </div>
+
     <div class="content-parent">
         <nav class="menu-nav yellow-bordered">
             <div class="logo-panel blue-bordered">
@@ -278,7 +286,7 @@
                                     </div>
 
                                     <div class="create-project-containers project-label">
-                                        <input id="input-project-tags" placeholder="html, css, js..." type="text">
+                                        <input class="input-project-tags" placeholder="html, css, js..." type="text">
                                         <label for="input-project-tags">Project Tags</label>
                                     </div>
                                     <!-- PREVIEW CONTAINER -->
@@ -401,8 +409,6 @@
         }
     </script>
 
-    <script src="loadProjectsFromFirestore.js"></script>
-
     <script src="JS/navbar-menu-script.js"></script>
     <script src="JS/theme-toggle.js"></script>
 
@@ -411,6 +417,8 @@
     <script src="uploadProjectToCloudinary.js"></script>
 
     <script src="submitPost.js"></script>
+
+    <script src="loadProjectsFromFirestore.js"></script>
 
 </body>
 

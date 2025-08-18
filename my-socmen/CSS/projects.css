@@ -159,11 +159,11 @@
 }
 
 #pinned-post-indicator {
-    background-color: chocolate;
+    background-color: var(--pastel-red);
 }
 
 .project-status {
-    background-color: darkcyan;
+    background-color: var(--pastel-blue);
 }
 
 .project-image-container::before,
@@ -272,15 +272,15 @@
     display: none;
 }
 
-.project-tag-container {
+.project-tags-container {
     display: flex;
     gap: 0.5rem;
     /* border: 1px solid red; */
 }
 
-.project-tag-container div {
+.project-tags-container div {
     background-color: var(--primary-color);
-    color: var(--text-color-sub);
+    color: black;
     padding: 0.2rem 0.5rem;
     border-radius: 0.5rem;
     font-size: var(--font-xs);
