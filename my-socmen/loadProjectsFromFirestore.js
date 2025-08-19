@@ -45,6 +45,27 @@ function postSorter() {
     cards.forEach(card => parent.appendChild(card));
 }
 
+// ✅ Helper to call your deployed backend for image deletion
+async function deleteFromCloudinary(publicId) {
+    try {
+        const response = await fetch("https://mywebsiteportfolio-l0gc.onrender.com", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ public_id: publicId })
+        });
+
+        const result = await response.json();
+        if (!result.success) {
+            console.error("Cloudinary deletion failed:", result.error);
+        } else {
+            console.log("Deleted from Cloudinary:", publicId);
+        }
+    } catch (err) {
+        console.error("Error contacting Cloudinary server:", err);
+    }
+}
+
+
 async function loadProjectsFromFirestore() {
     const parentContainer = document.querySelector('.project-container-parent');
     parentContainer.innerHTML = ''; // Clear container
@@ -61,8 +82,9 @@ async function loadProjectsFromFirestore() {
 
             const firstImage =
                 data.images && data.images.length > 0
-                    ? data.images[0]
+                    ? (data.images[0].url || data.images[0]) // backward-compatible
                     : 'Assets/Images/placeholder.svg';
+
 
             // IDs for menu controls
             const toggleId = `checkbox-${uid}`;
