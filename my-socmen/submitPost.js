@@ -1,4 +1,4 @@
-// SUBMIT POST JS (clean - only creates posts)
+// SUBMIT POST JS
 
 function previewImages(event) {
     const files = event.target.files;
@@ -44,6 +44,8 @@ async function SubmitPost() {
         const date = document.querySelector(".input-project-date");
         const status = document.querySelector(".input-project-status");
         const tagsInput = document.querySelector(".input-project-tags");
+        const pdfLink = document.querySelector(".input-project-pdf-link");
+        const projectLink = document.querySelector(".input-project-link");
         const fileInput = document.getElementById("file");
         const errorElement = document.querySelector(".error");
         const postCard = document.querySelector(".create-card-container-parent");
@@ -69,9 +71,12 @@ async function SubmitPost() {
             const files = Array.from(fileInput.files);
             const uploadedImages = [];
             for (const file of files) {
-                const url = await uploadToCloudinary(file);
-                uploadedImages.push(url);
+                const result = await uploadToCloudinary(file);
+                if (result) {
+                    uploadedImages.push(result); // contains { url, public_id }
+                }
             }
+
 
             // Firestore data for creation only
             const projectData = {
@@ -81,6 +86,8 @@ async function SubmitPost() {
                 date: date.value,
                 tags: tagsArray,
                 images: uploadedImages,
+                pdfLink: pdfLink.value,
+                projectLink: projectLink.value,
                 pinned: false,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
@@ -99,6 +106,8 @@ async function SubmitPost() {
             status.value = "";
             tagsInput.value = "";
             fileInput.value = "";
+            pdfLink.value = "";
+            projectLink.value = "";
             document.querySelector(".file-preview-container").innerHTML = "";
         } catch (err) {
             console.error("Error submitting project:", err);
@@ -107,7 +116,7 @@ async function SubmitPost() {
         }
     });
 
-    // Toggle description only (no pin/remove here)
+    // Toggle description
     document.addEventListener("click", function (e) {
         if (e.target.classList.contains("toggle-desc")) {
             const container = e.target.closest(".project-desc-container");

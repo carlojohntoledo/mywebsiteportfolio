@@ -262,14 +262,20 @@
 
                             <div class="create-project-form-viewport scroll-fade">
                                 <form id="create-project-form">
+
+                                    <!-- CREATE PROJECT TITLE CONTAINER -->
                                     <div class="create-project-containers project-label">
                                         <input class="input-project-title" type="text" required>
                                         <label for="input-project-title">Project Title*</label>
                                     </div>
+
+                                    <!--  CREATE PROJECT DESCRIPTION CONTAINER -->
                                     <div class="create-project-containers project-label">
                                         <textarea class="input-project-description" required></textarea>
                                         <label for="input-project-description">Project Description*</label>
                                     </div>
+
+                                    <!-- CREATE PROJECT DETAILS CONTAINER -->
                                     <div class="flex-container">
                                         <div class="create-project-containers project-label">
                                             <input class="input-project-date" placeholder="" type="date" required>
@@ -285,12 +291,29 @@
                                         </div>
                                     </div>
 
+                                    <!-- CREATE PROJECT TAGS CONTAINER -->
                                     <div class="create-project-containers project-label">
                                         <input class="input-project-tags" placeholder="html, css, js..." type="text">
                                         <label for="input-project-tags">Project Tags</label>
                                     </div>
-                                    <!-- PREVIEW CONTAINER -->
 
+                                    <!-- CREATE PROJECT ADD-ONS CONTAINER -->
+                                    <div class="flex-container">
+                                        <div class="create-project-containers project-label">
+                                            <div class="pdf-upload">
+                                                <input class="input-project-pdf-link"
+                                                    placeholder="https//:www.projects-pdf.app" type="url">
+                                                <label for="input-project-pdf-link">PDF Link</label>
+                                            </div>
+                                        </div>
+                                        <div class="create-project-containers project-label">
+                                            <input class="input-project-link"
+                                                placeholder="https//:www.projects-link.app" type="url">
+                                            <label for="input-project-link">Project Link</label>
+                                        </div>
+                                    </div>
+
+                                    <!-- CREATE PROJECT IMAGE CONTAINER -->
                                     <div class="create-project-image-container">
                                         <h1>Add Photos</h1>
                                         <div class="file-upload-form">
@@ -310,7 +333,11 @@
                                             </label>
                                         </div>
                                     </div>
+
+                                    <!-- CREATE PROJECT IMAGE PREVIEW CONTAINER -->
                                     <div id="file-preview-container" class="file-preview-container"></div>
+
+
                                 </form>
                             </div>
                         </div>
@@ -379,35 +406,7 @@
     <!-- Auth (optional, if you plan to use it later) -->
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
 
-    <script>
-        // 1️⃣ Your Firebase configuration
-        const firebaseConfig = {
-            aapiKey: "AIzaSyAqIrj2qzOCCH-121R7bKTC7V7txPm7yl8",
-            authDomain: "my-socmed-bea3a.firebaseapp.com",
-            projectId: "my-socmed-bea3a",
-            storageBucket: "my-socmed-bea3a.firebasestorage.app",
-            messagingSenderId: "530230105836",
-            appId: "1:530230105836:web:e329797c9ed468d0ef77c9"
-        };
-
-        // 2️⃣ Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-
-        // 3️⃣ Initialize Firestore
-        const db = firebase.firestore();
-
-        async function saveProjectToFirestore(projectData) {
-            try {
-                const db = firebase.firestore(); // or getFirestore() if using modular SDK
-                const docRef = await db.collection("projects").add(projectData);
-                console.log("Project saved with ID:", docRef.id);
-                return docRef.id;
-            } catch (error) {
-                console.error("Error saving project to Firestore:", error);
-                return null;
-            }
-        }
-    </script>
+    <script src="index.js"></script>
 
     <script src="JS/navbar-menu-script.js"></script>
     <script src="JS/theme-toggle.js"></script>

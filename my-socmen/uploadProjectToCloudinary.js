@@ -3,7 +3,7 @@ async function uploadToCloudinary(file) {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", "mysocmed_projects");
-    formData.append("folder", "mysocmed/projects"); // specify folder
+    formData.append("folder", "mysocmed/projects");
 
     try {
         const response = await fetch(url, {
@@ -11,8 +11,12 @@ async function uploadToCloudinary(file) {
             body: formData
         });
         const data = await response.json();
-        // Returns the image URL after successful upload
-        return data.secure_url;
+
+        // ✅ Save both URL and public_id
+        return {
+            url: data.secure_url,
+            public_id: data.public_id
+        };
     } catch (err) {
         console.error("Cloudinary upload error:", err);
         return null;

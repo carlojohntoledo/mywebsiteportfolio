@@ -33,7 +33,7 @@
 .project-container-parent {
     display: grid;
     grid-template-columns: 100%;
-    gap: 0.5rem;
+    gap: 1rem;
     width: 95%;
     height: max-content;
     /* border: 1px solid yellow; */
@@ -186,17 +186,20 @@
 }
 
 
-.project-image-container img {
+.project-image {
     min-width: 100%;
     height: 100%;
     object-fit: cover;
-    background-position: center;
+    object-position: center;
     background-repeat: no-repeat;
     /* border-radius: 0.5rem; */
     position: absolute;
     z-index: 1;
+    top: 0;
+    left: 0;
+    transform: translate(-50%,-50%);
     background-color: black;
-    transition: opacity 2s ease-in-out, transform 9s linear; /* fade + zoom */
+    transition: opacity 2s ease-in-out, transform 5s linear; /* fade + zoom */
     opacity: 1;
     transform: scale(1);
 }
@@ -325,6 +328,8 @@
     padding: 0;
     text-align: left;
     user-select: none;
+    width: 100%;
+    border-bottom: 0.1rem solid var(--primary-color);
 }
 
 .toggle-desc:hover {
@@ -343,6 +348,28 @@
     text-align: center;
     cursor: default;
     position: relative;
+}
+
+.addons-container {
+    margin: auto;
+    width: 90%;
+    height: max-content;
+    /* border: 1px solid; */
+    display: flex;
+    justify-content: end;
+    gap: 1rem; 
+}
+
+.addons-container a {
+    text-decoration: underline;
+    color: var(--pastel-yellow);
+    font-size: var(--font-sm);
+    font-weight: bold;
+    display: none;
+}
+
+.addons-container a:hover {
+    color: var(--text-color);
 }
 
 
@@ -393,11 +420,12 @@
 .post-extra-popup {
     color: var(--text-color);
     position: absolute;
-    z-index: 101;
+    z-index: 110;
     user-select: none;
     right: 1rem;
     top: 0.5rem;
     cursor: pointer;
+    
 }
 
 .post-extra-list-container {
@@ -406,6 +434,7 @@
     right: var(--list_position_right);
     top: 1rem;
     display: none;
+    
 }
 
 .post-extra-list-container.open {

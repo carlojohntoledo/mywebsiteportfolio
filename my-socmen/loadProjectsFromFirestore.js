@@ -77,70 +77,82 @@ async function loadProjectsFromFirestore() {
                     data-id="${uid}"
                     data-pinned="${data.pinned ? 'true' : 'false'}"
                     data-date="${data.date || ''}">
-                <div class="project-card">
-                    <div class="project-content" style="position: relative;">
-                    <div class="post-extra-popup">
-                        <input type="checkbox" id="${toggleId}" class="checkbox">
-                        <label for="${toggleId}" class="post-extra-btn"><strong>. . .</strong></label>
-                        <div class="post-extra-list-container">
-                        <ul class="post-extra-list">
-                            <li>
-                            <input type="checkbox" id="${pinId}" hidden>
-                            <label for="${pinId}"><span>${pinLabelText}</span></label>
-                            </li>
-                            <li>
-                            <input type="checkbox" id="${editId}" hidden>
-                            <label for="${editId}"><span>Edit Project</span></label>
-                            </li>
-                            <li>
-                            <input type="checkbox" id="${removeId}" hidden>
-                            <label for="${removeId}"><span>Remove Project</span></label>
-                            </li>
-                        </ul>
-                        </div>
-                    </div>
+                    <div class="project-card">
+                        <div class="project-content" style="position: relative;">
+                            <div class="post-extra-popup">
+                                <input type="checkbox" id="${toggleId}" class="checkbox">
+                                <label for="${toggleId}" class="post-extra-btn"><strong>. . .</strong></label>
+                                <div class="post-extra-list-container">
+                                <ul class="post-extra-list">
+                                    <li>
+                                    <input type="checkbox" id="${pinId}" hidden>
+                                    <label for="${pinId}"><span>${pinLabelText}</span></label>
+                                    </li>
+                                    <li>
+                                    <input type="checkbox" id="${editId}" hidden>
+                                    <label for="${editId}"><span>Edit Project</span></label>
+                                    </li>
+                                    <li>
+                                    <input type="checkbox" id="${removeId}" hidden>
+                                    <label for="${removeId}"><span>Remove Project</span></label>
+                                    </li>
+                                </ul>
+                                </div>
+                            </div>
 
-                    <div class="project-image-container">
-                        <div class="post-indicators">
-                        <h1 class="srv">Projects</h1>
-                        <h1 class="srv project-status">${data.status || ''}</h1>
-                        <h1 class="srv" id="pinned-post-indicator" style="${data.pinned ? 'display:block' : 'display:none'};">Pinned</h1>
-                        </div>
-                        <div class="project-logo-container">
-                        <h1 class="project-logo-panel">KOALO</h1>
-                        </div>
-                        <img src="${firstImage}" alt="project image" class="project-image" id="project-image-${uid}">
-                    </div>
+                            <div class="project-image-container">
+                                <div class="post-indicators">
+                                    <h1 class="srv">Projects</h1>
+                                    <h1 class="srv project-status">${data.status || ''}</h1>
+                                    <h1 class="srv" id="pinned-post-indicator" style="${data.pinned ? 'display:block' : 'display:none'};">Pinned</h1>
+                                </div>
+                                <div class="project-logo-container">
+                                    <h1 class="project-logo-panel">KOALO</h1>
+                                </div>
+                                <img src="${firstImage}" alt="project image" class="project-image" id="project-image-${uid}">
+                            </div>
 
-                    <div class="project-title-container">
-                        <h1 class="project-title">${data.title || ''}</h1>
-                        <div class="project-details-container">
-                        <div class="project-name-container">
-                            <img class="xs-profilepic" src="Assets/Images/Profile Pictures/default-profile-picture.jpg" alt="profile picture">
-                            <p>Carlo John Toledo</p>
-                        </div>
-                        <div class="project-status-container">
-                            <p class="project-date">${data.date || ''}</p>
-                        </div>
-                        </div>
-                    </div>
+                            <div class="project-title-container">
+                                <h1 class="project-title">${data.title || ''}</h1>
+                                <div class="project-details-container">
+                                    <div class="project-name-container">
+                                        <img class="xs-profilepic" src="Assets/Images/Profile Pictures/default-profile-picture.jpg" alt="profile picture">
+                                        <p>Carlo John Toledo</p>
+                                    </div>
+                                    <div class="project-status-container">
+                                        <p class="project-date">${data.date || ''}</p>
+                                    </div>
+                                </div>
+                            </div>
 
-                    <div class="project-links-container scroll-fade">
-                        <div class="project-tags-container project-tags"></div>
-                    </div>
+                            <div class="project-links-container scroll-fade">
+                                <div class="project-tags-container project-tags"></div>
+                            </div>
 
-                    <div class="project-desc-container">
-                        <p class="desc-text project-description">${data.description || ''}</p>
-                        <button class="toggle-desc">See More</button>
+                            <div class="project-desc-container">
+                                <p class="desc-text project-description">${data.description || ''}</p>
+                                <button class="toggle-desc">See More</button>
+                            </div>
+                            <div class="addons-container">
+                                <a href="${data.pdfLink || ''}" class="project-pdf-download" target="_blank" rel="noopener noreferrer">Download PDF</a>
+                                <a href="${data.projectLink || ''}" class="project-link" target="_blank" rel="noopener noreferrer">Live Demo</a>
+                            </div>
+                        </div>
                     </div>
-                    </div>
-                </div>
                 </div>
             `;
 
             parentContainer.insertAdjacentHTML('beforeend', projectHTML);
 
             const card = parentContainer.querySelector('.project-container:last-child');
+
+            // 👉 Conditionally show PDF & Project link
+            if (data.pdfLink) {
+                card.querySelector('.project-pdf-download').style.display = "inline-block";
+            }
+            if (data.projectLink) {
+                card.querySelector('.project-link').style.display = "inline-block";
+            }
 
             // Tags + random pastel colors
             if (data.tags && data.tags.length > 0) {
@@ -244,17 +256,31 @@ function attachProjectListHandlers() {
             }
 
             try {
+                const projectDoc = await db.collection('projects').doc(docId).get();
+                const projectData = projectDoc.data();
+
+                // 🔥 Delete Cloudinary images if they exist
+                if (projectData.images && projectData.images.length > 0) {
+                    for (const img of projectData.images) {
+                        if (img.public_id) {
+                            await deleteFromCloudinary(img.public_id);
+                        }
+                    }
+                }
+
+                // Delete Firestore doc
                 await db.collection('projects').doc(docId).delete();
                 card.remove();
             } catch (err) {
                 console.error('Error removing project:', err);
             } finally {
-                hideLoader(); // 👉 always hide at the end
+                hideLoader();
             }
 
             closeMenu();
             return;
         }
+
 
         // Edit (placeholder)
         if (forAttr && forAttr.startsWith('edit-post-')) {
