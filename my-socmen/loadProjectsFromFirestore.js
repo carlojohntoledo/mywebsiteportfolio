@@ -47,22 +47,19 @@ function postSorter() {
 
 // ✅ Helper to call your deployed backend for image deletion
 async function deleteFromCloudinary(publicId) {
-    try {
-        const response = await fetch("https://mywebsiteportfolio-l0gc.onrender.com", {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ public_id: publicId })
-        });
+    const response = await fetch("https://mywebsiteportfolio-l0gc.onrender.com/delete", {
+        method: "POST", // match your Express route
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ public_id: publicId })
+    });
 
-        const result = await response.json();
-        if (!result.success) {
-            console.error("Cloudinary deletion failed:", result.error);
-        } else {
-            console.log("Deleted from Cloudinary:", publicId);
-        }
-    } catch (err) {
-        console.error("Error contacting Cloudinary server:", err);
+    const result = await response.json();
+    if (!result.success) {
+        console.error("Cloudinary deletion failed:", result.error);
+    } else {
+        console.log("Deleted from Cloudinary:", publicId);
     }
+
 }
 
 
