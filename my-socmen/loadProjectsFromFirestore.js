@@ -79,8 +79,9 @@ async function loadProjectsFromFirestore() {
 
             const firstImage =
                 data.images && data.images.length > 0
-                    ? (data.images[0].url || data.images[0]) // backward-compatible
+                    ? (typeof data.images[0] === 'object' ? data.images[0].url : data.images[0])
                     : 'Assets/Images/placeholder.svg';
+
 
 
             // IDs for menu controls
