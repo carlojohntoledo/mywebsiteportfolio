@@ -15,10 +15,31 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 // Call cloud function
+// =============================================================
+// ✅ Delete from Cloudinary via Express Server (Render)
+// =============================================================
 async function deleteFromCloudinary(publicId) {
-    const callable = functions.httpsCallable("deleteFromCloudinary");
-    return await callable({ public_id: publicId });
+    try {
+        const response = await fetch("https://mywebsiteportfolio-l0gc.onrender.com/delete", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ public_id: publicId })
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+            console.error("❌ Cloudinary deletion failed:", data.error);
+        } else {
+            console.log("✅ Cloudinary deletion success:", data.result);
+        }
+    } catch (err) {
+        console.error("Error calling Cloudinary delete API:", err);
+    }
 }
+
 
 async function saveProjectToFirestore(projectData) {
     try {
