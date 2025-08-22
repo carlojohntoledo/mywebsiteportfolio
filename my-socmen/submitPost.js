@@ -47,49 +47,55 @@ function previewImages(event) {
     });
 }
 
-async function resizeImage(file, maxWidth = 1920, maxHeight = 1080) {
-    return new Promise((resolve) => {
+async function compressImage(file, maxSizeMB = 2, quality = 0.7) {
+    return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = (e) => {
             const img = new Image();
             img.onload = () => {
-                let canvas = document.createElement("canvas");
-                let ctx = canvas.getContext("2d");
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
 
+                // Scale down very large images
                 let width = img.width;
                 let height = img.height;
+                const maxDimension = 1920;
 
-                // Maintain aspect ratio
-                if (width > height) {
-                    if (width > maxWidth) {
-                        height *= maxWidth / width;
-                        width = maxWidth;
-                    }
-                } else {
-                    if (height > maxHeight) {
-                        width *= maxHeight / height;
-                        height = maxHeight;
-                    }
+                if (width > height && width > maxDimension) {
+                    height *= maxDimension / width;
+                    width = maxDimension;
+                } else if (height > maxDimension) {
+                    width *= maxDimension / height;
+                    height = maxDimension;
                 }
 
                 canvas.width = width;
                 canvas.height = height;
-
                 ctx.drawImage(img, 0, 0, width, height);
 
+                // Export as compressed blob
                 canvas.toBlob(
                     (blob) => {
-                        resolve(new File([blob], file.name, { type: "image/jpeg" }));
+                        if (!blob) return reject(new Error("Compression failed"));
+
+                        // If still larger than maxSizeMB, lower quality
+                        if (blob.size / 1024 / 1024 > maxSizeMB) {
+                            return compressImage(file, maxSizeMB, quality * 0.8).then(resolve);
+                        }
+
+                        resolve(new File([blob], file.name.replace(/\.\w+$/, ".jpg"), { type: "image/jpeg" }));
                     },
                     "image/jpeg",
-                    0.8 // compression quality (0–1)
+                    quality
                 );
             };
             img.src = e.target.result;
         };
+        reader.onerror = reject;
         reader.readAsDataURL(file);
     });
 }
+
 
 
 // ✅ Submit a new project post
@@ -133,8 +139,8 @@ async function SubmitPost() {
 
             const uploadedImages = [];
             for (const file of files) {
-                const result = await uploadToCloudinary(file);
-                const resizedFile = await resizeImage(file); //s compress before upload
+                const compressedFile = await compressImage(file); // ✅ compressed before upload
+                const result = await uploadToCloudinary(compressedFile);
                 console.log("📱 Uploading:", file.name, file.type, file.size);
 
                 if (result) {
