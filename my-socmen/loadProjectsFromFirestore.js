@@ -213,6 +213,9 @@ async function loadProjectsFromFirestore() {
             });
         });
 
+        // ✅ After rendering all, sort DOM for safety
+        postSorter();
+
     } catch (err) {
         console.error("Error loading projects:", err);
     } finally {
@@ -224,3 +227,24 @@ async function loadProjectsFromFirestore() {
 // ✅ Run loader on page start
 // =============================================================
 document.addEventListener("DOMContentLoaded", loadProjectsFromFirestore);
+
+
+function postSorter() {
+    const parent = document.querySelector('.project-container-parent');
+    if (!parent) return;
+
+    const cards = Array.from(parent.querySelectorAll('.project-container'));
+
+    cards.sort((a, b) => {
+        const aPinned = a.getAttribute('data-pinned') === 'true';
+        const bPinned = b.getAttribute('data-pinned') === 'true';
+        if (aPinned !== bPinned) return bPinned - aPinned; // pinned above unpinned
+
+        // Date comes from user input (assumed YYYY-MM-DD). Fallback to 0 if invalid.
+        const aTime = Date.parse(a.getAttribute('data-date')) || 0;
+        const bTime = Date.parse(b.getAttribute('data-date')) || 0;
+        return bTime - aTime; // newest first
+    });
+
+    cards.forEach(card => parent.appendChild(card));
+}
