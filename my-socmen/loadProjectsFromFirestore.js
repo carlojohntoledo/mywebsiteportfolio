@@ -82,35 +82,71 @@ async function loadProjectsFromFirestore() {
             const card = document.createElement("div");
             card.classList.add("project-card");
             card.innerHTML = `
-                <div class="project-image-container">
-                    <img src="${firstImage}" 
-                         alt="project image" 
-                         class="project-image" 
-                         id="project-image-${docId}">
-                </div>
+                <div class="project-container"
+                    data-id="${uid}"
+                    data-pinned="${data.pinned ? 'true' : 'false'}"
+                    data-date="${data.date || ''}">
+                    <div class="project-card">
+                        <div class="project-content" style="position: relative;">
+                            <div class="post-extra-popup">
+                                <input type="checkbox" id="${toggleId}" class="checkbox">
+                                <label for="${toggleId}" class="post-extra-btn"><strong>. . .</strong></label>
+                                <div class="post-extra-list-container">
+                                <ul class="post-extra-list">
+                                    <li>
+                                    <input type="checkbox" id="${pinId}" hidden>
+                                    <label for="${pinId}"><span>${pinLabelText}</span></label>
+                                    </li>
+                                    <li>
+                                    <input type="checkbox" id="${editId}" hidden>
+                                    <label for="${editId}"><span>Edit Project</span></label>
+                                    </li>
+                                    <li>
+                                    <input type="checkbox" id="${removeId}" hidden>
+                                    <label for="${removeId}"><span>Remove Project</span></label>
+                                    </li>
+                                </ul>
+                                </div>
+                            </div>
 
-                <div class="project-info">
-                    <h3 class="project-title">${data.title || "Untitled"}</h3>
-                    <p class="project-date">${data.date || ""}</p>
-                    <div class="project-desc-container">
-                        <p class="desc-text">${data.description || ""}</p>
-                        <button class="toggle-desc">See More</button>
-                    </div>
+                            <div class="project-image-container">
+                                <div class="post-indicators">
+                                    <h1 class="srv">Projects</h1>
+                                    <h1 class="srv project-status">${data.status || ''}</h1>
+                                    <h1 class="srv" id="pinned-post-indicator" style="${data.pinned ? 'display:block' : 'display:none'};">Pinned</h1>
+                                </div>
+                                <div class="project-logo-container">
+                                    <h1 class="project-logo-panel">KOALO</h1>
+                                </div>
+                                <img src="${firstImage}" alt="project image" class="project-image" id="project-image-${uid}">
+                            </div>
 
-                    <p class="project-status">Status: ${data.status || ""}</p>
-                    <p class="project-tags">Tags: ${(data.tags || []).join(", ")}</p>
+                            <div class="project-title-container">
+                                <h1 class="project-title">${data.title || ''}</h1>
+                                <div class="project-details-container">
+                                    <div class="project-name-container">
+                                        <img class="xs-profilepic" src="Assets/Images/Profile Pictures/default-profile-picture.jpg" alt="profile picture">
+                                        <p>Carlo John Toledo</p>
+                                    </div>
+                                    <div class="project-status-container">
+                                        <p class="project-date">${data.date || ''}</p>
+                                    </div>
+                                </div>
+                            </div>
 
-                    <div class="project-links">
-                        ${data.projectLink ? `<a href="${data.projectLink}" target="_blank">🔗 Project</a>` : ""}
-                        ${data.pdfLink ? `<a href="${data.pdfLink}" target="_blank">📄 PDF</a>` : ""}
-                    </div>
+                            <div class="project-links-container scroll-fade">
+                                <div class="project-tags-container project-tags"></div>
+                            </div>
 
-                    <div class="project-actions">
-                        <button class="pin-project" data-id="${docId}">
-                            ${data.pinned ? "📌 Unpin" : "📍 Pin"}
-                        </button>
-                        <button class="edit-project" data-id="${docId}">✏️ Edit</button>
-                        <button class="delete-project" data-id="${docId}">🗑️ Delete</button>
+                            <div class="project-desc-container">
+                                <p class="desc-text project-description">${data.description || ''}</p>
+                                <button class="toggle-desc">See More</button>
+                            </div>
+                            <div class="addons-container">
+                                <a href="${data.pdfLink || ''}" class="project-pdf-download" target="_blank" rel="noopener noreferrer">Download PDF</a>
+                                <a href="${data.projectLink || ''}" class="project-link" target="_blank" rel="noopener noreferrer">Live Demo</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
