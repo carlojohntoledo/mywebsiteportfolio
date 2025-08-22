@@ -76,14 +76,21 @@ async function SubmitPost() {
         // ✅ Tags: comma separated → array
         const tagsArray = tagsInput.value.split(",").map(tag => tag.trim()).filter(Boolean);
 
+        console.log("📱 Submitting post...");
+        alert("Submit button clicked!");
+
         try {
             if (typeof showLoader === "function") showLoader();
 
             // ✅ Upload images
             const files = Array.from(fileInput.files);
+            alert("Files length: " + fileInput.files.length);
+
             const uploadedImages = [];
             for (const file of files) {
                 const result = await uploadToCloudinary(file);
+                console.log("📱 Uploading:", file.name, file.type, file.size);
+
                 if (result) {
                     // Store consistently so rendering/deletion works
                     uploadedImages.push({
@@ -125,6 +132,7 @@ async function SubmitPost() {
             document.querySelector(".file-preview-container").innerHTML = "";
         } catch (err) {
             console.error("Error submitting project:", err);
+            alert("Error: " + err.message);
         } finally {
             if (typeof hideLoader === "function") hideLoader();
         }
