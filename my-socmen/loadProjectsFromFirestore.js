@@ -209,16 +209,37 @@ async function loadProjectsFromFirestore() {
             const removeCheckbox = containerDiv.querySelector(`#${removeId}`);
             removeCheckbox.addEventListener("change", async () => {
                 if (confirm("Are you sure you want to delete this project?")) {
-                    if (data.images && data.images.length > 0) {
-                        for (const img of data.images) {
-                            const pid = img?.publicId || img?.public_id;
-                            if (pid) await deleteFromCloudinary(pid);
+                    showLoader(); // 🔵 Show loader right away
+
+                    try {
+                        // 1. Delete images from Cloudinary (if any exist)
+                        if (data.images && data.images.length > 0) {
+                            await Promise.all(
+                                data.images.map(img => {
+                                    const pid = img?.publicId || img?.public_id;
+                                    return pid ? deleteFromCloudinary(pid) : null;
+                                })
+                            );
                         }
+
+                        // 2. Delete Firestore project doc
+                        await db.collection("projects").doc(uid).delete();
+
+                        // 3. Refresh project list
+                        await loadProjectsFromFirestore();
+
+                    } catch (err) {
+                        console.error("❌ Error deleting project:", err);
+                        alert("Something went wrong while deleting the project.");
+                    } finally {
+                        hideLoader(); // 🟢 Always hide loader (success or fail)
                     }
-                    await db.collection("projects").doc(uid).delete();
-                    loadProjectsFromFirestore();
                 }
+
+                // Uncheck the "remove" toggle so menu closes after action
+                removeCheckbox.checked = false;
             });
+
 
             // Placeholder edit action
             const editCheckbox = containerDiv.querySelector(`#${editId}`);
