@@ -1,33 +1,34 @@
-// ✅ Carousel: handle both object (with url) and string
+// ✅ Carousel: handle string URLs, object {url}, and skip invalid entries
 function startCarousel(imgElement, images) {
     let currentIndex = 0;
 
-    // Normalize: convert all entries to URLs
-    const urls = images.map(img => (typeof img === "object" ? img.url : img));
+    // Normalize + filter invalid
+    const urls = images
+        .map(img => {
+            if (typeof img === "string") return img;
+            if (typeof img === "object" && img.url) return img.url;
+            return null; // skip invalid
+        })
+        .filter(Boolean);
+
+    // If no valid images, fallback placeholder
+    if (urls.length === 0) {
+        imgElement.src = "Assets/Images/placeholder.svg";
+        return;
+    }
 
     imgElement.src = urls[currentIndex];
 
     setInterval(() => {
         imgElement.style.opacity = 0;
-        imgElement.style.transform = 'scale(1)';
+        imgElement.style.transform = "scale(1)";
         setTimeout(() => {
             currentIndex = (currentIndex + 1) % urls.length;
             imgElement.src = urls[currentIndex];
             imgElement.style.opacity = 1;
-            imgElement.style.transform = 'scale(1.15)';
+            imgElement.style.transform = "scale(1.15)";
         }, 1000);
     }, 10000);
-}
-
-
-function showLoader() {
-    const loader = document.querySelector('.loader-container');
-    if (loader) loader.style.display = 'flex';
-}
-
-function hideLoader() {
-    const loader = document.querySelector('.loader-container');
-    if (loader) loader.style.display = 'none';
 }
 
 
@@ -84,10 +85,18 @@ async function loadProjectsFromFirestore() {
             const data = doc.data();
             const uid = doc.id;
 
-            const firstImage =
-                data.images && data.images.length > 0
-                    ? (typeof data.images[0] === "object" ? data.images[0].url : data.images[0])
-                    : "Assets/Images/placeholder.svg";
+            // ✅ Safe first image getter
+            const getFirstImage = (images) => {
+                if (!images || images.length === 0) return "Assets/Images/placeholder.svg";
+                for (const img of images) {
+                    if (typeof img === "string") return img;
+                    if (typeof img === "object" && img.url) return img.url;
+                }
+                return "Assets/Images/placeholder.svg";
+            };
+
+            const firstImage = getFirstImage(data.images);
+
 
             // IDs for menu controls
             const toggleId = `checkbox-${uid}`;
