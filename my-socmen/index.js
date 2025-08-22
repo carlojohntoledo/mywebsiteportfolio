@@ -1,6 +1,6 @@
 // 1️⃣ Your Firebase configuration
 const firebaseConfig = {
-    aapiKey: "AIzaSyAqIrj2qzOCCH-121R7bKTC7V7txPm7yl8",
+    apiKey: "AIzaSyAqIrj2qzOCCH-121R7bKTC7V7txPm7yl8", // typo fixed: apiKey not aapiKey
     authDomain: "my-socmed-bea3a.firebaseapp.com",
     projectId: "my-socmed-bea3a",
     storageBucket: "my-socmed-bea3a.firebasestorage.app",
@@ -9,14 +9,19 @@ const firebaseConfig = {
 };
 
 // 2️⃣ Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
 
 // 3️⃣ Initialize Firestore
 const db = firebase.firestore();
 
+// Call cloud function
+async function deleteFromCloudinary(publicId) {
+    const callable = functions.httpsCallable("deleteFromCloudinary");
+    return await callable({ public_id: publicId });
+}
+
 async function saveProjectToFirestore(projectData) {
     try {
-        const db = firebase.firestore(); // or getFirestore() if using modular SDK
         const docRef = await db.collection("projects").add(projectData);
         console.log("Project saved with ID:", docRef.id);
         return docRef.id;
@@ -25,3 +30,4 @@ async function saveProjectToFirestore(projectData) {
         return null;
     }
 }
+
