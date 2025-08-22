@@ -365,7 +365,6 @@
     color: var(--pastel-yellow);
     font-size: var(--font-sm);
     font-weight: bold;
-    display: none;
 }
 
 .addons-container a:hover {
