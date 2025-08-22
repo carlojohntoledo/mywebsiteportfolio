@@ -281,7 +281,7 @@
     /* border: 1px solid red; */
 }
 
-.project-tags-container div {
+.project-tags-container span {
     background-color: var(--primary-color);
     color: black;
     padding: 0.2rem 0.5rem;

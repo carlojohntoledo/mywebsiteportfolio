@@ -1,349 +1,238 @@
-// ✅ Carousel: handle string URLs, object {url}, and skip invalid entries
-function startCarousel(imgElement, images) {
-    let currentIndex = 0;
+// =============================================================
+// ✅ Firestore → Load Projects + Render UI
+// Handles mixed image formats: string, { url }, { imageUrl }
+// =============================================================
 
-    // Normalize + filter invalid
-    const urls = images
-        .map(img => {
-            if (typeof img === "string") return img;
-            if (typeof img === "object" && img.url) return img.url;
-            return null; // skip invalid
-        })
+// --- Helper: normalize any image item into a usable URL ---
+function getImageUrl(item) {
+    if (!item) return null;
+
+    // Old saved projects: just a plain string URL
+    if (typeof item === "string" && item.trim() !== "") return item;
+
+    // Newer saved projects: object formats
+    if (typeof item === "object") {
+        return item.imageUrl || item.url || null;
+    }
+
+    return null;
+}
+
+// --- Helper: random pastel color for tag chips ---
+function getRandomPastelColor() {
+    const colors = [
+        "#70d6ff", // pastel-blue
+        "#ff70a6", // pastel-red
+        "#ff9770", // pastel-orange
+        "#e9ff70", // pastel-yellow
+        "#91f291"  // pastel-green
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
+}
+
+// --- Helper: get the first valid image or fallback placeholder ---
+function getFirstImage(images) {
+    if (!images || images.length === 0) return "Assets/Images/placeholder.svg";
+
+    for (const img of images) {
+        const url = getImageUrl(img);
+        if (url) return url;
+    }
+
+    return "Assets/Images/placeholder.svg"; // fallback
+}
+
+// --- Helper: start carousel rotation for project images ---
+function startCarousel(imgElement, images) {
+    // Extract only valid URLs
+    const urls = (images || [])
+        .map(getImageUrl)
         .filter(Boolean);
 
-    // If no valid images, fallback placeholder
     if (urls.length === 0) {
         imgElement.src = "Assets/Images/placeholder.svg";
         return;
     }
 
-    imgElement.src = urls[currentIndex];
+    let currentIndex = 0;
+    imgElement.src = urls[currentIndex]; // show first image immediately
 
+    // Rotate every 10s with smooth fade
     setInterval(() => {
         imgElement.style.opacity = 0;
         imgElement.style.transform = "scale(1)";
+
         setTimeout(() => {
             currentIndex = (currentIndex + 1) % urls.length;
-            imgElement.src = urls[currentIndex];
+            imgElement.src = urls[currentIndex]; // swap to next image
             imgElement.style.opacity = 1;
             imgElement.style.transform = "scale(1.15)";
-        }, 1000);
-    }, 10000);
+        }, 1000); // fade transition time
+    }, 10000); // every 10 seconds
 }
 
-
-// 👉 Sorter: pinned first, then within each group by user-entered date (newest first)
-function postSorter() {
-    const parent = document.querySelector('.project-container-parent');
-    if (!parent) return;
-
-    const cards = Array.from(parent.querySelectorAll('.project-container'));
-
-    cards.sort((a, b) => {
-        const aPinned = a.getAttribute('data-pinned') === 'true';
-        const bPinned = b.getAttribute('data-pinned') === 'true';
-        if (aPinned !== bPinned) return bPinned - aPinned; // pinned above unpinned
-
-        // Date comes from user input (assumed YYYY-MM-DD). Fallback to 0 if invalid.
-        const aTime = Date.parse(a.getAttribute('data-date')) || 0;
-        const bTime = Date.parse(b.getAttribute('data-date')) || 0;
-        return bTime - aTime; // newest first
-    });
-
-    cards.forEach(card => parent.appendChild(card));
-}
-
-// ✅ Helper to call your deployed backend for image deletion
-async function deleteFromCloudinary(publicId) {
-    const response = await fetch("https://mywebsiteportfolio-l0gc.onrender.com/delete", {
-        method: "POST", // match your Express route
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ public_id: publicId })
-    });
-
-    const result = await response.json();
-    if (!result.success) {
-        console.error("Cloudinary deletion failed:", result.error);
-    } else {
-        console.log("Deleted from Cloudinary:", publicId);
-    }
-
-}
-// loadProjectsFromFirestore.js
-
+// =============================================================
+// ✅ MAIN FUNCTION → Load from Firestore
+// =============================================================
 async function loadProjectsFromFirestore() {
-    const parentContainer = document.querySelector(".project-container-parent");
-    parentContainer.innerHTML = ""; // clear old projects
+    const container = document.querySelector(".project-container-parent");
+    container.innerHTML = ""; // clear old cards before re-render
 
     try {
+        // Pull all projects: pinned first, newest on top
         const snapshot = await db.collection("projects")
             .orderBy("pinned", "desc")
             .orderBy("createdAt", "desc")
             .get();
 
-        snapshot.forEach((doc) => {
-            const data = doc.data();
+        snapshot.forEach(doc => {
             const uid = doc.id;
+            const data = doc.data();
 
-            // fallback if images missing
-            const firstImage = data.images && data.images.length > 0
-                ? data.images[0].url
-                : "Assets/Images/placeholder.png"; // ✅ use placeholder instead of undefined
+            // Normalize first image
+            const firstImage = getFirstImage(data.images);
 
-            // generate unique IDs for controls
+            // Unique IDs for checkboxes in the extra menu
             const toggleId = `toggle-${uid}`;
             const pinId = `pin-${uid}`;
             const editId = `edit-${uid}`;
             const removeId = `remove-${uid}`;
+
             const pinLabelText = data.pinned ? "Unpin Project" : "Pin Project";
 
-            // create wrapper
-            const card = document.createElement("div");
+            // --- Build main project card container ---
+            const containerDiv = document.createElement("div");
+            containerDiv.classList.add("project-container");
+            containerDiv.setAttribute("data-id", uid);
+            containerDiv.setAttribute("data-pinned", data.pinned ? "true" : "false");
+            containerDiv.setAttribute("data-date", data.date || "");
 
-            // inject EXACT HTML structure you gave
-            card.innerHTML = `
-                <div class="project-container"
-                    data-id="${uid}"
-                    data-pinned="${data.pinned ? "true" : "false"}"
-                    data-date="${data.date || ""}">
-                    <div class="project-card">
-                        <div class="project-content" style="position: relative;">
-                            <div class="post-extra-popup">
-                                <input type="checkbox" id="${toggleId}" class="checkbox">
-                                <label for="${toggleId}" class="post-extra-btn"><strong>. . .</strong></label>
-                                <div class="post-extra-list-container">
-                                    <ul class="post-extra-list">
-                                        <li>
-                                            <input type="checkbox" id="${pinId}" hidden>
-                                            <label for="${pinId}"><span>${pinLabelText}</span></label>
-                                        </li>
-                                        <li>
-                                            <input type="checkbox" id="${editId}" hidden>
-                                            <label for="${editId}"><span>Edit Project</span></label>
-                                        </li>
-                                        <li>
-                                            <input type="checkbox" id="${removeId}" hidden>
-                                            <label for="${removeId}"><span>Remove Project</span></label>
-                                        </li>
-                                    </ul>
+            // Template markup for project card
+            containerDiv.innerHTML = `
+                <div class="project-card">
+                    <div class="project-content" style="position: relative;">
+                        
+                        <!-- Extra Menu (Pin / Edit / Remove) -->
+                        <div class="post-extra-popup">
+                            <input type="checkbox" id="${toggleId}" class="checkbox">
+                            <label for="${toggleId}" class="post-extra-btn"><strong>. . .</strong></label>
+                            <div class="post-extra-list-container">
+                                <ul class="post-extra-list">
+                                    <li>
+                                        <input type="checkbox" id="${pinId}" hidden>
+                                        <label for="${pinId}"><span>${pinLabelText}</span></label>
+                                    </li>
+                                    <li>
+                                        <input type="checkbox" id="${editId}" hidden>
+                                        <label for="${editId}"><span>Edit Project</span></label>
+                                    </li>
+                                    <li>
+                                        <input type="checkbox" id="${removeId}" hidden>
+                                        <label for="${removeId}"><span>Remove Project</span></label>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Image + Indicators -->
+                        <div class="project-image-container">
+                            <div class="post-indicators">
+                                <h1 class="srv">Projects</h1>
+                                <h1 class="srv project-status">${data.status || ''}</h1>
+                                <h1 class="srv" id="pinned-post-indicator" style="${data.pinned ? 'display:block' : 'display:none'};">Pinned</h1>
+                            </div>
+                            <div class="project-logo-container">
+                                <h1 class="project-logo-panel">KOALO</h1>
+                            </div>
+                            <img src="${firstImage}" alt="project image" class="project-image" id="project-image-${uid}">
+                        </div>
+
+                        <!-- Title + Profile -->
+                        <div class="project-title-container">
+                            <h1 class="project-title">${data.title || ''}</h1>
+                            <div class="project-details-container">
+                                <div class="project-name-container">
+                                    <img class="xs-profilepic" src="Assets/Images/Profile Pictures/default-profile-picture.jpg" alt="profile picture">
+                                    <p>Carlo John Toledo</p>
+                                </div>
+                                <div class="project-status-container">
+                                    <p class="project-date">${data.date || ''}</p>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="project-image-container">
-                                <div class="post-indicators">
-                                    <h1 class="srv">Projects</h1>
-                                    <h1 class="srv project-status">${data.status || ""}</h1>
-                                    <h1 class="srv" id="pinned-post-indicator"
-                                        style="${data.pinned ? "display:block" : "display:none"};">
-                                        Pinned
-                                    </h1>
-                                </div>
-                                <div class="project-logo-container">
-                                    <h1 class="project-logo-panel">KOALO</h1>
-                                </div>
-                                <img src="${firstImage}" alt="project image"
-                                    class="project-image" id="project-image-${uid}">
+                        <!-- Tags (colors applied in JS below) -->
+                        <div class="project-links-container scroll-fade">
+                            <div class="project-tags-container project-tags">
+                                ${(data.tags || []).map(tag => `<span class="tag">${tag}</span>`).join("")}
                             </div>
+                        </div>
 
-                            <div class="project-title-container">
-                                <h1 class="project-title">${data.title || ""}</h1>
-                                <div class="project-details-container">
-                                    <div class="project-name-container">
-                                        <img class="xs-profilepic"
-                                            src="Assets/Images/Profile Pictures/default-profile-picture.jpg"
-                                            alt="profile picture">
-                                        <p>Carlo John Toledo</p>
-                                    </div>
-                                    <div class="project-status-container">
-                                        <p class="project-date">${data.date || ""}</p>
-                                    </div>
-                                </div>
-                            </div>
+                        <!-- Description -->
+                        <div class="project-desc-container">
+                            <p class="desc-text project-description">${data.description || ''}</p>
+                            <button class="toggle-desc">See More</button>
+                        </div>
 
-                            <div class="project-links-container scroll-fade">
-                                <div class="project-tags-container project-tags"></div>
-                            </div>
-
-                            <div class="project-desc-container">
-                                <p class="desc-text project-description">${data.description || ""}</p>
-                                <button class="toggle-desc">See More</button>
-                            </div>
-                            <div class="addons-container">
-                                <a href="${data.pdfLink || ""}" class="project-pdf-download"
-                                    target="_blank" rel="noopener noreferrer">Download PDF</a>
-                                <a href="${data.projectLink || ""}" class="project-link"
-                                    target="_blank" rel="noopener noreferrer">Live Demo</a>
-                            </div>
+                        <!-- Addons (PDF / Link) -->
+                        <div class="addons-container">
+                            ${data.pdfLink ? `<a href="${data.pdfLink}" class="project-pdf-download" target="_blank" rel="noopener noreferrer">Download PDF</a>` : ""}
+                            ${data.projectLink ? `<a href="${data.projectLink}" class="project-link" target="_blank" rel="noopener noreferrer">Live Demo</a>` : ""}
                         </div>
                     </div>
                 </div>
             `;
 
-            // ✅ Attach event listeners safely
+            // --- Apply random pastel colors to each tag ---
+            const tagsHtml = (data.tags || [])
+                .map(tag => `<span class="tag" style="background-color:${getRandomPastelColor()}">${tag}</span>`)
+                .join("");
+            containerDiv.querySelector(".project-tags-container").innerHTML = tagsHtml;
 
-            // Pin
-            const pinInput = card.querySelector(`#${pinId}`);
-            if (pinInput) {
-                pinInput.addEventListener("change", async () => {
-                    await db.collection("projects").doc(uid).update({
-                        pinned: !data.pinned,
-                    });
-                    loadProjectsFromFirestore(); // reload to update UI
-                });
-            }
+            // Append finished card to the parent container
+            document.querySelector(".project-container-parent").appendChild(containerDiv);
 
-            // Edit
-            const editInput = card.querySelector(`#${editId}`);
-            if (editInput) {
-                editInput.addEventListener("change", () => {
-                    console.log("Edit project:", uid);
-                    // 👉 implement edit modal later
-                });
-            }
+            // Start rotating carousel for project images
+            const imgElement = containerDiv.querySelector(`#project-image-${uid}`);
+            startCarousel(imgElement, data.images);
 
-            // Remove
-            const removeInput = card.querySelector(`#${removeId}`);
-            if (removeInput) {
-                removeInput.addEventListener("change", async () => {
-                    if (confirm("Are you sure you want to delete this project?")) {
-                        await db.collection("projects").doc(uid).delete();
-                        loadProjectsFromFirestore();
+            // --- Hook up Extra Menu Actions ---
+
+            // Pin/Unpin project
+            const pinCheckbox = containerDiv.querySelector(`#${pinId}`);
+            pinCheckbox.addEventListener("change", async () => {
+                await db.collection("projects").doc(uid).update({ pinned: !data.pinned });
+                loadProjectsFromFirestore(); // reload after update
+            });
+
+            // Remove project (Firestore + Cloudinary cleanup)
+            const removeCheckbox = containerDiv.querySelector(`#${removeId}`);
+            removeCheckbox.addEventListener("change", async () => {
+                if (confirm("Are you sure you want to delete this project?")) {
+                    if (data.images && data.images.length > 0) {
+                        for (const img of data.images) {
+                            const pid = img?.publicId || img?.public_id;
+                            if (pid) await deleteFromCloudinary(pid);
+                        }
                     }
-                });
-            }
+                    await db.collection("projects").doc(uid).delete();
+                    loadProjectsFromFirestore();
+                }
+            });
 
-            // Tags
-            const tagsContainer = card.querySelector(".project-tags");
-            if (tagsContainer && data.tags) {
-                data.tags.forEach(tag => {
-                    const tagEl = document.createElement("span");
-                    tagEl.classList.add("project-tag");
-                    tagEl.textContent = tag;
-                    tagsContainer.appendChild(tagEl);
-                });
-            }
-
-            // Description toggle
-            const toggleDescBtn = card.querySelector(".toggle-desc");
-            const descText = card.querySelector(".desc-text");
-            if (toggleDescBtn && descText) {
-                toggleDescBtn.addEventListener("click", () => {
-                    descText.classList.toggle("expanded");
-                    toggleDescBtn.textContent =
-                        descText.classList.contains("expanded") ? "See Less" : "See More";
-                });
-            }
-
-            // Append to parent
-            parentContainer.appendChild(card.firstElementChild);
+            // Placeholder edit action
+            const editCheckbox = containerDiv.querySelector(`#${editId}`);
+            editCheckbox.addEventListener("change", () => {
+                alert("Edit feature not implemented yet");
+            });
         });
+
     } catch (err) {
         console.error("Error loading projects:", err);
     }
 }
 
-
-// Attach only once
-function attachProjectListHandlers() {
-    const parent = document.querySelector('.project-container-parent');
-    if (parent.__handlersAttached) return; // guard against multiple attachments
-    parent.__handlersAttached = true;
-
-    parent.addEventListener('click', async (e) => {
-        const label = e.target.closest('label');
-        if (!label) return;
-
-        const card = e.target.closest('.project-container');
-        if (!card) return;
-
-        const docId = card.getAttribute('data-id');
-        const forAttr = label.getAttribute('for');
-
-        // Close the menu helper
-        const closeMenu = () => {
-            const toggleInput = card.querySelector('.post-extra-popup input.checkbox');
-            if (toggleInput) toggleInput.checked = false;
-        };
-
-        // Pin / Unpin (intercept the label click so it doesn’t toggle hidden checkbox)
-        if (forAttr && forAttr.startsWith('pin-post-')) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            const currentlyPinned = card.getAttribute('data-pinned') === 'true';
-            const newPinned = !currentlyPinned;
-
-            try {
-                await db.collection('projects').doc(docId).update({ pinned: newPinned });
-
-                // Update UI
-                card.setAttribute('data-pinned', newPinned ? 'true' : 'false');
-
-                const indicator = card.querySelector('#pinned-post-indicator');
-                if (indicator) indicator.style.display = newPinned ? 'block' : 'none';
-
-                const span = label.querySelector('span');
-                if (span) span.textContent = newPinned ? 'Unpin Project' : 'Pin Project';
-
-                // Re-sort with the new state
-                postSorter();
-            } catch (err) {
-                console.error('Error updating pin:', err);
-            } finally {
-                hideLoader(); // 👉 always hide at the end
-            }
-
-            closeMenu();
-            return;
-        }
-
-        // Remove
-        if (forAttr && forAttr.startsWith('remove-post-')) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            if (!confirm('Are you sure you want to delete this project?')) {
-                closeMenu();
-                return;
-            }
-
-            try {
-                const projectDoc = await db.collection('projects').doc(docId).get();
-                const projectData = projectDoc.data();
-
-                // 🔥 Delete Cloudinary images if they exist
-                if (projectData.images && projectData.images.length > 0) {
-                    for (const img of projectData.images) {
-                        if (img.public_id) {
-                            await deleteFromCloudinary(img.public_id);
-                        }
-                    }
-                }
-
-                // Delete Firestore doc
-                await db.collection('projects').doc(docId).delete();
-                card.remove();
-            } catch (err) {
-                console.error('Error removing project:', err);
-            } finally {
-                hideLoader();
-            }
-
-            closeMenu();
-            return;
-        }
-
-
-        // Edit (placeholder)
-        if (forAttr && forAttr.startsWith('edit-post-')) {
-            e.preventDefault();
-            e.stopPropagation();
-            alert('Edit functionality here!');
-            closeMenu();
-            return;
-        }
-    });
-}
-
-// Load on page start
-loadProjectsFromFirestore();
+// =============================================================
+// ✅ Run loader on page start
+// =============================================================
+document.addEventListener("DOMContentLoaded", loadProjectsFromFirestore);
