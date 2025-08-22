@@ -1,6 +1,6 @@
-// 1️⃣ Firebase config
+// 1️⃣ Your Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyAqIrj2qzOCCH-121R7bKTC7V7txPm7yl8",
+    apiKey: "AIzaSyAqIrj2qzOCCH-121R7bKTC7V7txPm7yl8", // typo fixed: apiKey not aapiKey
     authDomain: "my-socmed-bea3a.firebaseapp.com",
     projectId: "my-socmed-bea3a",
     storageBucket: "my-socmed-bea3a.firebasestorage.app",
@@ -11,19 +11,14 @@ const firebaseConfig = {
 // 2️⃣ Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-// 3️⃣ Firestore
+// 3️⃣ Initialize Firestore
 const db = firebase.firestore();
 
-// 4️⃣ Functions (⚠️ this line was missing before)
-const functions = firebase.app().functions("asia-southeast1"); 
-// replace "asia-southeast1" with your actual region
-
-// 5️⃣ Cloud Function delete
+// Call cloud function
 async function deleteFromCloudinary(publicId) {
     const callable = functions.httpsCallable("deleteFromCloudinary");
     return await callable({ public_id: publicId });
 }
-
 
 async function saveProjectToFirestore(projectData) {
     try {
@@ -35,4 +30,3 @@ async function saveProjectToFirestore(projectData) {
         return null;
     }
 }
-
