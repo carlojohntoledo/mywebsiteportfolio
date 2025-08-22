@@ -10,34 +10,44 @@ window.hideLoader = window.hideLoader || function () {
     if (loader) loader.style.display = 'none';
 };
 
-
+// ======================
+// IMAGE PREVIEW HANDLER
+// ======================
 function previewImages(event) {
     const files = event.target.files;
     const previewContainer = document.querySelector(".file-preview-container");
     previewContainer.innerHTML = "";
+
     Array.from(files).forEach((file, index) => {
-        if (!file.type.startsWith("image/")) return;
+        if (!file.type.startsWith("image/")) return; // only preview images
+
         const reader = new FileReader();
         reader.onload = function (e) {
             const filePreview = document.createElement("div");
-
             filePreview.classList.add("file-preview");
+
             const imgWrapper = document.createElement("div");
             imgWrapper.classList.add("image-preview");
+
             const img = document.createElement("img");
             img.src = e.target.result;
             img.alt = `Preview ${index + 1}`;
+
+            // ❌ Remove preview button
             const removeBtn = document.createElement("button");
             removeBtn.classList.add("remove-preview");
             removeBtn.innerHTML = "&times;";
             removeBtn.addEventListener("click", function () {
                 filePreview.remove();
+
+                // Update FileList in <input type="file">
                 const dt = new DataTransfer();
                 Array.from(files)
                     .filter((_, i) => i !== index)
                     .forEach((f) => dt.items.add(f));
                 event.target.files = dt.files;
             });
+
             imgWrapper.appendChild(img);
             filePreview.appendChild(imgWrapper);
             filePreview.appendChild(removeBtn);
@@ -47,60 +57,10 @@ function previewImages(event) {
     });
 }
 
-async function compressImage(file, maxSizeMB = 2, quality = 0.7) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const img = new Image();
-            img.onload = () => {
-                const canvas = document.createElement("canvas");
-                const ctx = canvas.getContext("2d");
-
-                // Scale down very large images
-                let width = img.width;
-                let height = img.height;
-                const maxDimension = 1920;
-
-                if (width > height && width > maxDimension) {
-                    height *= maxDimension / width;
-                    width = maxDimension;
-                } else if (height > maxDimension) {
-                    width *= maxDimension / height;
-                    height = maxDimension;
-                }
-
-                canvas.width = width;
-                canvas.height = height;
-                ctx.drawImage(img, 0, 0, width, height);
-
-                // Export as compressed blob
-                canvas.toBlob(
-                    (blob) => {
-                        if (!blob) return reject(new Error("Compression failed"));
-
-                        // If still larger than maxSizeMB, lower quality
-                        if (blob.size / 1024 / 1024 > maxSizeMB) {
-                            return compressImage(file, maxSizeMB, quality * 0.8).then(resolve);
-                        }
-
-                        resolve(new File([blob], file.name.replace(/\.\w+$/, ".jpg"), { type: "image/jpeg" }));
-                    },
-                    "image/jpeg",
-                    quality
-                );
-            };
-            img.src = e.target.result;
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-    });
-}
-
-
-
-// ✅ Submit a new project post
+// ======================
+// SUBMIT POST HANDLER
+// ======================
 async function SubmitPost() {
-    // CREATE new post
     document.getElementById("post-btn").addEventListener("click", async function () {
         const title = document.querySelector(".input-project-title");
         const description = document.querySelector(".input-project-description");
@@ -113,7 +73,7 @@ async function SubmitPost() {
         const errorElement = document.querySelector(".error");
         const postCard = document.querySelector(".create-card-container-parent");
 
-        // ❌ Prevent saving incomplete project
+        // ❌ Stop if required fields are empty
         if (!title.value.trim() || !description.value.trim() || !date.value.trim() || !status.value.trim()) {
             errorElement.style.display = "flex";
             return;
@@ -124,27 +84,34 @@ async function SubmitPost() {
         const parentContainer = document.querySelector(".project-container-parent");
         parentContainer.style.display = "grid";
 
-        // ✅ Tags: comma separated → array
+        // ✅ Tags: comma-separated string → array
         const tagsArray = tagsInput.value.split(",").map(tag => tag.trim()).filter(Boolean);
 
         console.log("📱 Submitting post...");
-        alert("Submit button clicked!");
 
         try {
             if (typeof showLoader === "function") showLoader();
 
-            // ✅ Upload images
+            // ======================
+            // 1. UPLOAD IMAGES
+            // ======================
             const files = Array.from(fileInput.files);
-            alert("Files length: " + fileInput.files.length);
-
             const uploadedImages = [];
+
             for (const file of files) {
-                const compressedFile = await compressImage(file); // ✅ compressed before upload
+                // 🔹 Step 1: compress
+                const compressedFile = await compressImage(file);
+
+                // 🔹 Step 2: upload to Cloudinary
                 const result = await uploadToCloudinary(compressedFile);
-                console.log("📱 Uploading:", file.name, file.type, file.size);
+
+                console.log("📤 Upload result:", {
+                    name: file.name,
+                    originalSize: file.size,
+                    uploaded: result
+                });
 
                 if (result) {
-                    // Store consistently so rendering/deletion works
                     uploadedImages.push({
                         imageUrl: result.imageUrl,
                         publicId: result.publicId
@@ -152,14 +119,16 @@ async function SubmitPost() {
                 }
             }
 
-            // ✅ Save to Firestore
+            // ======================
+            // 2. SAVE TO FIRESTORE
+            // ======================
             const projectData = {
                 title: title.value,
                 description: description.value,
                 status: status.value,
                 date: date.value,
                 tags: tagsArray,
-                images: uploadedImages, // [{ imageUrl, publicId }]
+                images: uploadedImages, // array of { imageUrl, publicId }
                 pdfLink: pdfLink.value,
                 projectLink: projectLink.value,
                 pinned: false,
@@ -169,10 +138,11 @@ async function SubmitPost() {
             const docRef = await db.collection("projects").add(projectData);
             console.log("✅ Saved project ID:", docRef.id);
 
-            // ✅ Reload list
+            // ======================
+            // 3. RELOAD + CLEAR FORM
+            // ======================
             await loadProjectsFromFirestore();
 
-            // ✅ Clear form
             title.value = "";
             description.value = "";
             date.value = "";
@@ -182,15 +152,16 @@ async function SubmitPost() {
             pdfLink.value = "";
             projectLink.value = "";
             document.querySelector(".file-preview-container").innerHTML = "";
+
         } catch (err) {
-            console.error("Error submitting project:", err);
+            console.error("❌ Error submitting project:", err);
             alert("Error: " + err.message);
         } finally {
             if (typeof hideLoader === "function") hideLoader();
         }
     });
 
-    // Toggle description expand/collapse
+    // Expand/Collapse description toggle
     document.addEventListener("click", function (e) {
         if (e.target.classList.contains("toggle-desc")) {
             const container = e.target.closest(".project-desc-container");
@@ -199,8 +170,6 @@ async function SubmitPost() {
             e.target.textContent = text.classList.contains("expanded") ? "See Less" : "See More";
         }
     });
-
-    // pin/remove handled in loadProjectsFromFirestore()
 }
 
 SubmitPost();
