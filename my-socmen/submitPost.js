@@ -47,6 +47,51 @@ function previewImages(event) {
     });
 }
 
+async function resizeImage(file, maxWidth = 1920, maxHeight = 1080) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                let canvas = document.createElement("canvas");
+                let ctx = canvas.getContext("2d");
+
+                let width = img.width;
+                let height = img.height;
+
+                // Maintain aspect ratio
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height *= maxWidth / width;
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width *= maxHeight / height;
+                        height = maxHeight;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+
+                ctx.drawImage(img, 0, 0, width, height);
+
+                canvas.toBlob(
+                    (blob) => {
+                        resolve(new File([blob], file.name, { type: "image/jpeg" }));
+                    },
+                    "image/jpeg",
+                    0.8 // compression quality (0–1)
+                );
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+
 // ✅ Submit a new project post
 async function SubmitPost() {
     // CREATE new post
@@ -89,6 +134,7 @@ async function SubmitPost() {
             const uploadedImages = [];
             for (const file of files) {
                 const result = await uploadToCloudinary(file);
+                const resizedFile = await resizeImage(file); //s compress before upload
                 console.log("📱 Uploading:", file.name, file.type, file.size);
 
                 if (result) {
