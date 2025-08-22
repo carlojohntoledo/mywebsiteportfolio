@@ -7,16 +7,13 @@ async function uploadToCloudinary(file) {
     formData.append("folder", "mysocmed/projects");
 
     try {
-        const response = await fetch(url, {
-            method: "POST",
-            body: formData
-        });
+        const response = await fetch(url, { method: "POST", body: formData });
         const data = await response.json();
 
-        // ✅ Return consistent keys (imageUrl + publicId)
+        // ✅ Always return the same keys
         return {
-            imageUrl: data.secure_url,   // string → used directly for <img src="">
-            publicId: data.public_id     // string → used when deleting from Cloudinary
+            imageUrl: data.secure_url,   // string → use for <img src="">
+            publicId: data.public_id     // string → use for deletion
         };
     } catch (err) {
         console.error("Cloudinary upload error:", err);

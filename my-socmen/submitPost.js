@@ -1,5 +1,16 @@
 // SUBMIT POST JS
 
+// --- Safe fallbacks so submitPost.js never crashes ---
+window.showLoader = window.showLoader || function () {
+    const loader = document.querySelector('.loader-container');
+    if (loader) loader.style.display = 'flex';
+};
+window.hideLoader = window.hideLoader || function () {
+    const loader = document.querySelector('.loader-container');
+    if (loader) loader.style.display = 'none';
+};
+
+
 function previewImages(event) {
     const files = event.target.files;
     const previewContainer = document.querySelector(".file-preview-container");
@@ -38,6 +49,7 @@ function previewImages(event) {
 
 // ✅ Submit a new project post
 async function SubmitPost() {
+    // CREATE new post
     document.getElementById("post-btn").addEventListener("click", async function () {
         const title = document.querySelector(".input-project-title");
         const description = document.querySelector(".input-project-description");
@@ -61,42 +73,44 @@ async function SubmitPost() {
         const parentContainer = document.querySelector(".project-container-parent");
         parentContainer.style.display = "grid";
 
-        // ✅ Process tags (comma separated → array of strings)
+        // ✅ Tags: comma separated → array
         const tagsArray = tagsInput.value.split(",").map(tag => tag.trim()).filter(Boolean);
 
         try {
-            showLoader(); // 👉 show loader while uploading + saving
+            if (typeof showLoader === "function") showLoader();
 
-            // ✅ Upload images to Cloudinary
+            // ✅ Upload images
             const files = Array.from(fileInput.files);
             const uploadedImages = [];
             for (const file of files) {
                 const result = await uploadToCloudinary(file);
                 if (result) {
-                    uploadedImages.push(result); 
-                    // now looks like: { imageUrl: "https://..", publicId: "mysocmed/projects/123" }
+                    // Store consistently so rendering/deletion works
+                    uploadedImages.push({
+                        imageUrl: result.imageUrl,
+                        publicId: result.publicId
+                    });
                 }
             }
 
-            // ✅ Project document structure saved to Firestore
+            // ✅ Save to Firestore
             const projectData = {
                 title: title.value,
                 description: description.value,
                 status: status.value,
                 date: date.value,
                 tags: tagsArray,
-                images: uploadedImages,       // contains array of { imageUrl, publicId }
+                images: uploadedImages, // [{ imageUrl, publicId }]
                 pdfLink: pdfLink.value,
                 projectLink: projectLink.value,
                 pinned: false,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 
-            // ✅ Save to Firestore once
             const docRef = await db.collection("projects").add(projectData);
             console.log("✅ Saved project ID:", docRef.id);
 
-            // ✅ Reload projects (ensures they display with correct <img src="...">)
+            // ✅ Reload list
             await loadProjectsFromFirestore();
 
             // ✅ Clear form
@@ -112,11 +126,11 @@ async function SubmitPost() {
         } catch (err) {
             console.error("Error submitting project:", err);
         } finally {
-            hideLoader(); // 👉 always hide loader when finished
+            if (typeof hideLoader === "function") hideLoader();
         }
     });
 
-    // ✅ Toggle description text expansion
+    // Toggle description expand/collapse
     document.addEventListener("click", function (e) {
         if (e.target.classList.contains("toggle-desc")) {
             const container = e.target.closest(".project-desc-container");
@@ -126,7 +140,7 @@ async function SubmitPost() {
         }
     });
 
-    // pin/remove functionality handled separately in loadProjectsFromFirestore()
+    // pin/remove handled in loadProjectsFromFirestore()
 }
 
 SubmitPost();
