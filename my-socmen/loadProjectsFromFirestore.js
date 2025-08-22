@@ -1,22 +1,32 @@
-// ✅ Carousel: handle string URLs, object {url}, and skip invalid entries
-function startCarousel(imgElement, images) {
-    let currentIndex = 0;
+// ✅ Helper: safely extract first valid image
+function getFirstImage(images) {
+    if (!images || images.length === 0) return "Assets/Images/placeholder.svg";
 
-    // Normalize + filter invalid
+    for (const img of images) {
+        if (typeof img === "string" && img.trim() !== "") return img;
+        if (typeof img === "object" && img.url) return img.url;
+    }
+
+    return "Assets/Images/placeholder.svg"; // fallback
+}
+
+// ✅ Carousel: normalize images and loop safely
+function startCarousel(imgElement, images) {
+    // Convert mixed array (strings or {url}) to clean URLs
     const urls = images
         .map(img => {
-            if (typeof img === "string") return img;
+            if (typeof img === "string" && img.trim() !== "") return img;
             if (typeof img === "object" && img.url) return img.url;
-            return null; // skip invalid
+            return null;
         })
         .filter(Boolean);
 
-    // If no valid images, fallback placeholder
     if (urls.length === 0) {
         imgElement.src = "Assets/Images/placeholder.svg";
         return;
     }
 
+    let currentIndex = 0;
     imgElement.src = urls[currentIndex];
 
     setInterval(() => {
@@ -31,46 +41,7 @@ function startCarousel(imgElement, images) {
     }, 10000);
 }
 
-
-// 👉 Sorter: pinned first, then within each group by user-entered date (newest first)
-function postSorter() {
-    const parent = document.querySelector('.project-container-parent');
-    if (!parent) return;
-
-    const cards = Array.from(parent.querySelectorAll('.project-container'));
-
-    cards.sort((a, b) => {
-        const aPinned = a.getAttribute('data-pinned') === 'true';
-        const bPinned = b.getAttribute('data-pinned') === 'true';
-        if (aPinned !== bPinned) return bPinned - aPinned; // pinned above unpinned
-
-        // Date comes from user input (assumed YYYY-MM-DD). Fallback to 0 if invalid.
-        const aTime = Date.parse(a.getAttribute('data-date')) || 0;
-        const bTime = Date.parse(b.getAttribute('data-date')) || 0;
-        return bTime - aTime; // newest first
-    });
-
-    cards.forEach(card => parent.appendChild(card));
-}
-
-// ✅ Helper to call your deployed backend for image deletion
-async function deleteFromCloudinary(publicId) {
-    const response = await fetch("https://mywebsiteportfolio-l0gc.onrender.com/delete", {
-        method: "POST", // match your Express route
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ public_id: publicId })
-    });
-
-    const result = await response.json();
-    if (!result.success) {
-        console.error("Cloudinary deletion failed:", result.error);
-    } else {
-        console.log("Deleted from Cloudinary:", publicId);
-    }
-
-}
-
-
+// ✅ Main Firestore Loader
 async function loadProjectsFromFirestore() {
     const parentContainer = document.querySelector('.project-container-parent');
     parentContainer.innerHTML = ''; // Clear container
@@ -78,25 +49,13 @@ async function loadProjectsFromFirestore() {
     showLoader();
 
     try {
-        // No Firestore ordering needed; we sort client-side by the user-entered date.
         const snapshot = await db.collection('projects').get();
 
         snapshot.forEach(doc => {
             const data = doc.data();
             const uid = doc.id;
 
-            // ✅ Safe first image getter
-            const getFirstImage = (images) => {
-                if (!images || images.length === 0) return "Assets/Images/placeholder.svg";
-                for (const img of images) {
-                    if (typeof img === "string") return img;
-                    if (typeof img === "object" && img.url) return img.url;
-                }
-                return "Assets/Images/placeholder.svg";
-            };
-
             const firstImage = getFirstImage(data.images);
-
 
             // IDs for menu controls
             const toggleId = `checkbox-${uid}`;
@@ -180,7 +139,7 @@ async function loadProjectsFromFirestore() {
 
             const card = parentContainer.querySelector('.project-container:last-child');
 
-            // 👉 Conditionally show PDF & Project link
+            // Conditionally show PDF & Project link
             if (data.pdfLink) {
                 card.querySelector('.project-pdf-download').style.display = "inline-block";
             }
@@ -188,7 +147,7 @@ async function loadProjectsFromFirestore() {
                 card.querySelector('.project-link').style.display = "inline-block";
             }
 
-            // Tags + random pastel colors
+            // Tags with pastel colors
             if (data.tags && data.tags.length > 0) {
                 const tagsContainer = card.querySelector('.project-tags-container');
                 tagsContainer.innerHTML = data.tags.map(tag => `<div>${tag}</div>`).join('');
@@ -205,127 +164,18 @@ async function loadProjectsFromFirestore() {
                 });
             }
 
-            // Carousel if multiple images
+            // ✅ Carousel only if more than 1 valid image
             if (data.images && data.images.length > 1) {
                 const imgElement = document.getElementById(`project-image-${uid}`);
                 startCarousel(imgElement, data.images);
             }
         });
 
-        // Sort after rendering all cards
         postSorter();
-
-        // Single event delegation for pin/unpin/remove (no duplicates)
         attachProjectListHandlers();
-
     } catch (error) {
         console.error('Error loading projects from Firestore:', error);
     } finally {
-        hideLoader(); // 👉 always hide at the end
+        hideLoader();
     }
 }
-
-// Attach only once
-function attachProjectListHandlers() {
-    const parent = document.querySelector('.project-container-parent');
-    if (parent.__handlersAttached) return; // guard against multiple attachments
-    parent.__handlersAttached = true;
-
-    parent.addEventListener('click', async (e) => {
-        const label = e.target.closest('label');
-        if (!label) return;
-
-        const card = e.target.closest('.project-container');
-        if (!card) return;
-
-        const docId = card.getAttribute('data-id');
-        const forAttr = label.getAttribute('for');
-
-        // Close the menu helper
-        const closeMenu = () => {
-            const toggleInput = card.querySelector('.post-extra-popup input.checkbox');
-            if (toggleInput) toggleInput.checked = false;
-        };
-
-        // Pin / Unpin (intercept the label click so it doesn’t toggle hidden checkbox)
-        if (forAttr && forAttr.startsWith('pin-post-')) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            const currentlyPinned = card.getAttribute('data-pinned') === 'true';
-            const newPinned = !currentlyPinned;
-
-            try {
-                await db.collection('projects').doc(docId).update({ pinned: newPinned });
-
-                // Update UI
-                card.setAttribute('data-pinned', newPinned ? 'true' : 'false');
-
-                const indicator = card.querySelector('#pinned-post-indicator');
-                if (indicator) indicator.style.display = newPinned ? 'block' : 'none';
-
-                const span = label.querySelector('span');
-                if (span) span.textContent = newPinned ? 'Unpin Project' : 'Pin Project';
-
-                // Re-sort with the new state
-                postSorter();
-            } catch (err) {
-                console.error('Error updating pin:', err);
-            } finally {
-                hideLoader(); // 👉 always hide at the end
-            }
-
-            closeMenu();
-            return;
-        }
-
-        // Remove
-        if (forAttr && forAttr.startsWith('remove-post-')) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            if (!confirm('Are you sure you want to delete this project?')) {
-                closeMenu();
-                return;
-            }
-
-            try {
-                const projectDoc = await db.collection('projects').doc(docId).get();
-                const projectData = projectDoc.data();
-
-                // 🔥 Delete Cloudinary images if they exist
-                if (projectData.images && projectData.images.length > 0) {
-                    for (const img of projectData.images) {
-                        if (img.public_id) {
-                            await deleteFromCloudinary(img.public_id);
-                        }
-                    }
-                }
-
-                // Delete Firestore doc
-                await db.collection('projects').doc(docId).delete();
-                card.remove();
-            } catch (err) {
-                console.error('Error removing project:', err);
-            } finally {
-                hideLoader();
-            }
-
-            closeMenu();
-            return;
-        }
-
-
-        // Edit (placeholder)
-        if (forAttr && forAttr.startsWith('edit-post-')) {
-            e.preventDefault();
-            e.stopPropagation();
-            alert('Edit functionality here!');
-            closeMenu();
-            return;
-        }
-    });
-}
-
-// Load on page start
-loadProjectsFromFirestore();
