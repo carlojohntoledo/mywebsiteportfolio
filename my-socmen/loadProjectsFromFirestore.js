@@ -1,17 +1,24 @@
+// ✅ Carousel: handle both object (with url) and string
 function startCarousel(imgElement, images) {
     let currentIndex = 0;
-    imgElement.src = images[currentIndex];
+
+    // Normalize: convert all entries to URLs
+    const urls = images.map(img => (typeof img === "object" ? img.url : img));
+
+    imgElement.src = urls[currentIndex];
+
     setInterval(() => {
         imgElement.style.opacity = 0;
         imgElement.style.transform = 'scale(1)';
         setTimeout(() => {
-            currentIndex = (currentIndex + 1) % images.length;
-            imgElement.src = images[currentIndex];
+            currentIndex = (currentIndex + 1) % urls.length;
+            imgElement.src = urls[currentIndex];
             imgElement.style.opacity = 1;
             imgElement.style.transform = 'scale(1.15)';
         }, 1000);
     }, 10000);
 }
+
 
 function showLoader() {
     const loader = document.querySelector('.loader-container');
@@ -79,10 +86,8 @@ async function loadProjectsFromFirestore() {
 
             const firstImage =
                 data.images && data.images.length > 0
-                    ? (typeof data.images[0] === 'object' ? data.images[0].url : data.images[0])
-                    : 'Assets/Images/placeholder.svg';
-
-
+                    ? (typeof data.images[0] === "object" ? data.images[0].url : data.images[0])
+                    : "Assets/Images/placeholder.svg";
 
             // IDs for menu controls
             const toggleId = `checkbox-${uid}`;

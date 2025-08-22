@@ -36,8 +36,8 @@ function previewImages(event) {
     });
 }
 
+// ✅ Submit a new project post
 async function SubmitPost() {
-    // CREATE new post
     document.getElementById("post-btn").addEventListener("click", async function () {
         const title = document.querySelector(".input-project-title");
         const description = document.querySelector(".input-project-description");
@@ -50,7 +50,7 @@ async function SubmitPost() {
         const errorElement = document.querySelector(".error");
         const postCard = document.querySelector(".create-card-container-parent");
 
-        // Validate
+        // ❌ Prevent saving incomplete project
         if (!title.value.trim() || !description.value.trim() || !date.value.trim() || !status.value.trim()) {
             errorElement.style.display = "flex";
             return;
@@ -61,45 +61,45 @@ async function SubmitPost() {
         const parentContainer = document.querySelector(".project-container-parent");
         parentContainer.style.display = "grid";
 
-        // Tags
+        // ✅ Process tags (comma separated → array of strings)
         const tagsArray = tagsInput.value.split(",").map(tag => tag.trim()).filter(Boolean);
 
         try {
             showLoader(); // 👉 show loader while uploading + saving
 
-            // Upload images
+            // ✅ Upload images to Cloudinary
             const files = Array.from(fileInput.files);
             const uploadedImages = [];
             for (const file of files) {
                 const result = await uploadToCloudinary(file);
                 if (result) {
-                    uploadedImages.push(result); // contains { url, public_id }
+                    uploadedImages.push(result); 
+                    // now looks like: { imageUrl: "https://..", publicId: "mysocmed/projects/123" }
                 }
             }
 
-
-            // Firestore data for creation only
+            // ✅ Project document structure saved to Firestore
             const projectData = {
                 title: title.value,
                 description: description.value,
                 status: status.value,
                 date: date.value,
                 tags: tagsArray,
-                images: uploadedImages,
+                images: uploadedImages,       // contains array of { imageUrl, publicId }
                 pdfLink: pdfLink.value,
                 projectLink: projectLink.value,
                 pinned: false,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 
-            // Save once
+            // ✅ Save to Firestore once
             const docRef = await db.collection("projects").add(projectData);
             console.log("✅ Saved project ID:", docRef.id);
 
-            // Reload from Firestore (render with handlers)
+            // ✅ Reload projects (ensures they display with correct <img src="...">)
             await loadProjectsFromFirestore();
 
-            // Clear inputs
+            // ✅ Clear form
             title.value = "";
             description.value = "";
             date.value = "";
@@ -116,7 +116,7 @@ async function SubmitPost() {
         }
     });
 
-    // Toggle description
+    // ✅ Toggle description text expansion
     document.addEventListener("click", function (e) {
         if (e.target.classList.contains("toggle-desc")) {
             const container = e.target.closest(".project-desc-container");
@@ -126,7 +126,7 @@ async function SubmitPost() {
         }
     });
 
-    //pin/remove are handled in loadProjectsFromFirestore()
+    // pin/remove functionality handled separately in loadProjectsFromFirestore()
 }
 
 SubmitPost();

@@ -1,3 +1,4 @@
+// ✅ Upload a single file to Cloudinary
 async function uploadToCloudinary(file) {
     const url = `https://api.cloudinary.com/v1_1/dglegfflv/upload`;
     const formData = new FormData();
@@ -12,10 +13,10 @@ async function uploadToCloudinary(file) {
         });
         const data = await response.json();
 
-        // ✅ Save both URL and public_id
+        // ✅ Return consistent keys (imageUrl + publicId)
         return {
-            url: data.secure_url,
-            public_id: data.public_id
+            imageUrl: data.secure_url,   // string → used directly for <img src="">
+            publicId: data.public_id     // string → used when deleting from Cloudinary
         };
     } catch (err) {
         console.error("Cloudinary upload error:", err);
