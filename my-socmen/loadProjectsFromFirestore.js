@@ -21,11 +21,7 @@ function getImageUrl(item) {
 // --- Helper: random pastel color for tag chips ---
 function getRandomPastelColor() {
     const colors = [
-        "#70d6ff", // pastel-blue
-        "#ff70a6", // pastel-red
-        "#ff9770", // pastel-orange
-        "#e9ff70", // pastel-yellow
-        "#91f291"  // pastel-green
+        "#70d6ff", "#ff70a6", "#ff9770", "#e9ff70", "#91f291"
     ];
     return colors[Math.floor(Math.random() * colors.length)];
 }
@@ -33,42 +29,35 @@ function getRandomPastelColor() {
 // --- Helper: get the first valid image or fallback placeholder ---
 function getFirstImage(images) {
     if (!images || images.length === 0) return "Assets/Images/placeholder.svg";
-
     for (const img of images) {
         const url = getImageUrl(img);
         if (url) return url;
     }
-
     return "Assets/Images/placeholder.svg"; // fallback
 }
 
 // --- Helper: start carousel rotation for project images ---
 function startCarousel(imgElement, images) {
-    // Extract only valid URLs
-    const urls = (images || [])
-        .map(getImageUrl)
-        .filter(Boolean);
-
+    const urls = (images || []).map(getImageUrl).filter(Boolean);
     if (urls.length === 0) {
         imgElement.src = "Assets/Images/placeholder.svg";
         return;
     }
 
     let currentIndex = 0;
-    imgElement.src = urls[currentIndex]; // show first image immediately
+    imgElement.src = urls[currentIndex]; // show first image
 
     // Rotate every 10s with smooth fade
     setInterval(() => {
         imgElement.style.opacity = 0;
         imgElement.style.transform = "scale(1)";
-
         setTimeout(() => {
             currentIndex = (currentIndex + 1) % urls.length;
-            imgElement.src = urls[currentIndex]; // swap to next image
+            imgElement.src = urls[currentIndex];
             imgElement.style.opacity = 1;
             imgElement.style.transform = "scale(1.15)";
-        }, 1000); // fade transition time
-    }, 10000); // every 10 seconds
+        }, 1000);
+    }, 10000);
 }
 
 // =============================================================
@@ -77,6 +66,8 @@ function startCarousel(imgElement, images) {
 async function loadProjectsFromFirestore() {
     const container = document.querySelector(".project-container-parent");
     container.innerHTML = ""; // clear old cards before re-render
+
+    showLoader(); // 🔵 Show loader while fetching projects
 
     try {
         // Pull all projects: pinned first, newest on top
@@ -89,7 +80,6 @@ async function loadProjectsFromFirestore() {
             const uid = doc.id;
             const data = doc.data();
 
-            // Normalize first image
             const firstImage = getFirstImage(data.images);
 
             // Unique IDs for checkboxes in the extra menu
@@ -97,7 +87,6 @@ async function loadProjectsFromFirestore() {
             const pinId = `pin-${uid}`;
             const editId = `edit-${uid}`;
             const removeId = `remove-${uid}`;
-
             const pinLabelText = data.pinned ? "Unpin Project" : "Pin Project";
 
             // --- Build main project card container ---
@@ -107,29 +96,19 @@ async function loadProjectsFromFirestore() {
             containerDiv.setAttribute("data-pinned", data.pinned ? "true" : "false");
             containerDiv.setAttribute("data-date", data.date || "");
 
-            // Template markup for project card
+            // Card Markup
             containerDiv.innerHTML = `
                 <div class="project-card">
                     <div class="project-content" style="position: relative;">
-                        
                         <!-- Extra Menu (Pin / Edit / Remove) -->
                         <div class="post-extra-popup">
                             <input type="checkbox" id="${toggleId}" class="checkbox">
                             <label for="${toggleId}" class="post-extra-btn"><strong>. . .</strong></label>
                             <div class="post-extra-list-container">
                                 <ul class="post-extra-list">
-                                    <li>
-                                        <input type="checkbox" id="${pinId}" hidden>
-                                        <label for="${pinId}"><span>${pinLabelText}</span></label>
-                                    </li>
-                                    <li>
-                                        <input type="checkbox" id="${editId}" hidden>
-                                        <label for="${editId}"><span>Edit Project</span></label>
-                                    </li>
-                                    <li>
-                                        <input type="checkbox" id="${removeId}" hidden>
-                                        <label for="${removeId}"><span>Remove Project</span></label>
-                                    </li>
+                                    <li><input type="checkbox" id="${pinId}" hidden><label for="${pinId}"><span>${pinLabelText}</span></label></li>
+                                    <li><input type="checkbox" id="${editId}" hidden><label for="${editId}"><span>Edit Project</span></label></li>
+                                    <li><input type="checkbox" id="${removeId}" hidden><label for="${removeId}"><span>Remove Project</span></label></li>
                                 </ul>
                             </div>
                         </div>
@@ -141,9 +120,7 @@ async function loadProjectsFromFirestore() {
                                 <h1 class="srv project-status">${data.status || ''}</h1>
                                 <h1 class="srv" id="pinned-post-indicator" style="${data.pinned ? 'display:block' : 'display:none'};">Pinned</h1>
                             </div>
-                            <div class="project-logo-container">
-                                <h1 class="project-logo-panel">KOALO</h1>
-                            </div>
+                            <div class="project-logo-container"><h1 class="project-logo-panel">KOALO</h1></div>
                             <img src="${firstImage}" alt="project image" class="project-image" id="project-image-${uid}">
                         </div>
 
@@ -161,7 +138,7 @@ async function loadProjectsFromFirestore() {
                             </div>
                         </div>
 
-                        <!-- Tags (colors applied in JS below) -->
+                        <!-- Tags -->
                         <div class="project-links-container scroll-fade">
                             <div class="project-tags-container project-tags">
                                 ${(data.tags || []).map(tag => `<span class="tag">${tag}</span>`).join("")}
@@ -174,10 +151,10 @@ async function loadProjectsFromFirestore() {
                             <button class="toggle-desc">See More</button>
                         </div>
 
-                        <!-- Addons (PDF / Link) -->
+                        <!-- Addons -->
                         <div class="addons-container">
-                            ${data.pdfLink ? `<a href="${data.pdfLink}" class="project-pdf-download" target="_blank" rel="noopener noreferrer">Download PDF</a>` : ""}
-                            ${data.projectLink ? `<a href="${data.projectLink}" class="project-link" target="_blank" rel="noopener noreferrer">Live Demo</a>` : ""}
+                            ${data.pdfLink ? `<a href="${data.pdfLink}" class="project-pdf-download" target="_blank">Download PDF</a>` : ""}
+                            ${data.projectLink ? `<a href="${data.projectLink}" class="project-link" target="_blank">Live Demo</a>` : ""}
                         </div>
                     </div>
                 </div>
@@ -189,30 +166,27 @@ async function loadProjectsFromFirestore() {
                 .join("");
             containerDiv.querySelector(".project-tags-container").innerHTML = tagsHtml;
 
-            // Append finished card to the parent container
-            document.querySelector(".project-container-parent").appendChild(containerDiv);
+            // Append finished card
+            container.appendChild(containerDiv);
 
-            // Start rotating carousel for project images
+            // Start rotating carousel
             const imgElement = containerDiv.querySelector(`#project-image-${uid}`);
             startCarousel(imgElement, data.images);
 
             // --- Hook up Extra Menu Actions ---
-
-            // Pin/Unpin project
             const pinCheckbox = containerDiv.querySelector(`#${pinId}`);
             pinCheckbox.addEventListener("change", async () => {
+                showLoader(); // 🔵 Show loader while pinning/unpinning
                 await db.collection("projects").doc(uid).update({ pinned: !data.pinned });
-                loadProjectsFromFirestore(); // reload after update
+                await loadProjectsFromFirestore();
+                hideLoader(); // 🟢 Hide after reload
             });
 
-            // Remove project (Firestore + Cloudinary cleanup)
             const removeCheckbox = containerDiv.querySelector(`#${removeId}`);
             removeCheckbox.addEventListener("change", async () => {
                 if (confirm("Are you sure you want to delete this project?")) {
-                    showLoader(); // 🔵 Show loader right away
-
+                    showLoader(); // 🔵 Show loader during delete
                     try {
-                        // 1. Delete images from Cloudinary (if any exist)
                         if (data.images && data.images.length > 0) {
                             await Promise.all(
                                 data.images.map(img => {
@@ -221,27 +195,18 @@ async function loadProjectsFromFirestore() {
                                 })
                             );
                         }
-
-                        // 2. Delete Firestore project doc
                         await db.collection("projects").doc(uid).delete();
-
-                        // 3. Refresh project list
                         await loadProjectsFromFirestore();
-
                     } catch (err) {
                         console.error("❌ Error deleting project:", err);
                         alert("Something went wrong while deleting the project.");
                     } finally {
-                        hideLoader(); // 🟢 Always hide loader (success or fail)
+                        hideLoader(); // 🟢 Hide loader no matter what
                     }
                 }
-
-                // Uncheck the "remove" toggle so menu closes after action
-                removeCheckbox.checked = false;
+                removeCheckbox.checked = false; // close menu toggle
             });
 
-
-            // Placeholder edit action
             const editCheckbox = containerDiv.querySelector(`#${editId}`);
             editCheckbox.addEventListener("change", () => {
                 alert("Edit feature not implemented yet");
@@ -250,6 +215,8 @@ async function loadProjectsFromFirestore() {
 
     } catch (err) {
         console.error("Error loading projects:", err);
+    } finally {
+        hideLoader(); // 🟢 Always hide loader after Firestore load
     }
 }
 
