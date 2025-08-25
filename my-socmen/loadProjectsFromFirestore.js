@@ -209,7 +209,8 @@ async function loadProjectsFromFirestore() {
 
             const editCheckbox = containerDiv.querySelector(`#${editId}`);
             editCheckbox.addEventListener("change", () => {
-                alert("Edit feature not implemented yet");
+                openEditForm(uid, data); // 🔥 Pass project ID + its data to edit form
+                editCheckbox.checked = false; // close the menu toggle
             });
         });
 

@@ -150,7 +150,7 @@
 
 .srv {
     /* border: 1px solid; */
-    background-color: var(--accent-color);
+    background-color: var(--pastel-yellow);
     color: var(--primary-color);
     padding: 0.1rem 1rem;
     border-radius: 0.4rem;
@@ -517,7 +517,6 @@
     }
 
     .srv {
-        font-size: 2vw;
         border-radius: 1vw;
     }
 }
