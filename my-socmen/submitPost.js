@@ -1,8 +1,8 @@
-// =============================
-// SUBMIT POST JS
-// =============================
+// ==========================
+// submitPost.js (CREATE MODE)
+// ==========================
 
-// --- Safe fallbacks so code never crashes if loader missing ---
+// --- Safe fallbacks so submitPost.js never crashes ---
 window.showLoader = window.showLoader || function () {
     const loader = document.querySelector('.loader-container');
     if (loader) loader.style.display = 'flex';
@@ -13,25 +13,48 @@ window.hideLoader = window.hideLoader || function () {
 };
 
 // =============================================================
-// IMAGE PREVIEW HANDLER
-// Used in both CREATE and EDIT forms
+// IMAGE PREVIEW HANDLER (used by both CREATE + EDIT forms)
 // =============================================================
-function previewImages(event, isEditMode = false) {
-    const files = event.target.files; // FileList from input
-    const previewContainer = document.querySelector(".file-preview-container");
 
-    // 🔹 In CREATE mode, always clear old previews
-    // 🔹 In EDIT mode, keep previews (we merge)
-    if (!isEditMode) {
-        previewContainer.innerHTML = "";
-    }
+// 🔹 Shared state
+let existingImages = []; // for EDIT mode → already in Firestore
+let newFiles = [];       // new files selected from <input>
 
-    Array.from(files).forEach((file, index) => {
-        if (!file.type.startsWith("image/")) return; // skip non-images
+// --- Renders both existing & new images into preview container ---
+function renderPreview(previewContainer) {
+    previewContainer.innerHTML = "";
 
+    // === 1. Show existing Firestore images ===
+    existingImages.forEach((imgObj, index) => {
+        const filePreview = document.createElement("div");
+        filePreview.classList.add("file-preview");
+
+        const imgWrapper = document.createElement("div");
+        imgWrapper.classList.add("image-preview");
+
+        const img = document.createElement("img");
+        img.src = imgObj.imageUrl;
+        img.alt = `Existing ${index + 1}`;
+
+        // ❌ Remove button for existing images
+        const removeBtn = document.createElement("button");
+        removeBtn.classList.add("remove-preview");
+        removeBtn.innerHTML = "&times;";
+        removeBtn.addEventListener("click", function () {
+            existingImages = existingImages.filter((_, i) => i !== index);
+            renderPreview(previewContainer);
+        });
+
+        imgWrapper.appendChild(img);
+        filePreview.appendChild(imgWrapper);
+        filePreview.appendChild(removeBtn);
+        previewContainer.appendChild(filePreview);
+    });
+
+    // === 2. Show new (local) files ===
+    newFiles.forEach((file, index) => {
         const reader = new FileReader();
         reader.onload = function (e) {
-            // --- Build preview DOM ---
             const filePreview = document.createElement("div");
             filePreview.classList.add("file-preview");
 
@@ -40,22 +63,15 @@ function previewImages(event, isEditMode = false) {
 
             const img = document.createElement("img");
             img.src = e.target.result;
-            img.alt = `Preview ${index + 1}`;
+            img.alt = `New ${index + 1}`;
 
-            // ❌ Remove preview button
+            // ❌ Remove button for new files
             const removeBtn = document.createElement("button");
             removeBtn.classList.add("remove-preview");
             removeBtn.innerHTML = "&times;";
-
             removeBtn.addEventListener("click", function () {
-                filePreview.remove();
-
-                // --- Update <input type="file"> FileList ---
-                const dt = new DataTransfer();
-                Array.from(files)
-                    .filter((_, i) => i !== index) // keep all except removed
-                    .forEach((f) => dt.items.add(f));
-                event.target.files = dt.files;
+                newFiles = newFiles.filter((_, i) => i !== index);
+                renderPreview(previewContainer);
             });
 
             imgWrapper.appendChild(img);
@@ -67,14 +83,28 @@ function previewImages(event, isEditMode = false) {
     });
 }
 
+// --- Called when user picks new files ---
+function previewImages(event, isEditMode = false) {
+    const previewContainer = document.querySelector(".file-preview-container");
+    const files = Array.from(event.target.files);
+
+    if (isEditMode) {
+        // EDIT MODE → keep old images, add new ones
+        newFiles = newFiles.concat(files);
+    } else {
+        // CREATE MODE → reset everything
+        existingImages = [];
+        newFiles = files;
+    }
+
+    renderPreview(previewContainer);
+}
+
 // =============================================================
-// SUBMIT POST HANDLER
+// SUBMIT POST HANDLER (CREATE MODE)
 // =============================================================
 async function SubmitPost() {
-    const saveBtn = document.getElementById("post-btn");
-
-    // --- Attach click handler (only once) ---
-    saveBtn.addEventListener("click", async function () {
+    document.getElementById("post-btn").addEventListener("click", async function () {
         const title = document.querySelector(".input-project-title");
         const description = document.querySelector(".input-project-description");
         const date = document.querySelector(".input-project-date");
@@ -82,11 +112,10 @@ async function SubmitPost() {
         const tagsInput = document.querySelector(".input-project-tags");
         const pdfLink = document.querySelector(".input-project-pdf-link");
         const projectLink = document.querySelector(".input-project-link");
-        const fileInput = document.getElementById("file");
         const errorElement = document.querySelector(".error");
         const postCard = document.querySelector(".create-card-container-parent");
 
-        // ❌ Validation: required fields
+        // ❌ Stop if required fields are empty
         if (!title.value.trim() || !description.value.trim() || !date.value.trim() || !status.value.trim()) {
             errorElement.style.display = "flex";
             return;
@@ -97,32 +126,20 @@ async function SubmitPost() {
         const parentContainer = document.querySelector(".project-container-parent");
         parentContainer.style.display = "grid";
 
-        // ✅ Convert tags string → array
+        // ✅ Tags: comma-separated string → array
         const tagsArray = tagsInput.value.split(",").map(tag => tag.trim()).filter(Boolean);
-
-        console.log("📱 Submitting post...");
 
         try {
             if (typeof showLoader === "function") showLoader();
 
-            // =============================================================
-            // 1. UPLOAD IMAGES
-            // =============================================================
-            const files = Array.from(fileInput.files);
+            // ======================
+            // 1. UPLOAD NEW IMAGES
+            // ======================
             const uploadedImages = [];
 
-            for (const file of files) {
-                // 🔹 Step 1: compress
+            for (const file of newFiles) {
                 const compressedFile = await compressImage(file);
-
-                // 🔹 Step 2: upload to Cloudinary
                 const result = await uploadToCloudinary(compressedFile);
-
-                console.log("📤 Upload result:", {
-                    name: file.name,
-                    originalSize: file.size,
-                    uploaded: result
-                });
 
                 if (result) {
                     uploadedImages.push({
@@ -132,16 +149,16 @@ async function SubmitPost() {
                 }
             }
 
-            // =============================================================
+            // ======================
             // 2. SAVE TO FIRESTORE
-            // =============================================================
+            // ======================
             const projectData = {
                 title: title.value,
                 description: description.value,
                 status: status.value,
                 date: date.value,
                 tags: tagsArray,
-                images: uploadedImages, // array of { imageUrl, publicId }
+                images: uploadedImages, // 🔹 CREATE → only new uploads
                 pdfLink: pdfLink.value,
                 projectLink: projectLink.value,
                 pinned: false,
@@ -151,20 +168,21 @@ async function SubmitPost() {
             const docRef = await db.collection("projects").add(projectData);
             console.log("✅ Saved project ID:", docRef.id);
 
-            // =============================================================
+            // ======================
             // 3. RELOAD + CLEAR FORM
-            // =============================================================
+            // ======================
             await loadProjectsFromFirestore();
 
-            // Reset all inputs
+            // reset inputs
             title.value = "";
             description.value = "";
             date.value = "";
             status.value = "";
             tagsInput.value = "";
-            fileInput.value = "";
             pdfLink.value = "";
             projectLink.value = "";
+            newFiles = [];
+            existingImages = [];
             document.querySelector(".file-preview-container").innerHTML = "";
 
         } catch (err) {
@@ -174,19 +192,6 @@ async function SubmitPost() {
             if (typeof hideLoader === "function") hideLoader();
         }
     });
-
-    // =============================================================
-    // Expand/Collapse description toggle
-    // =============================================================
-    document.addEventListener("click", function (e) {
-        if (e.target.classList.contains("toggle-desc")) {
-            const container = e.target.closest(".project-desc-container");
-            const text = container.querySelector(".desc-text");
-            text.classList.toggle("expanded");
-            e.target.textContent = text.classList.contains("expanded") ? "See Less" : "See More";
-        }
-    });
 }
 
-// --- Initialize ---
 SubmitPost();
