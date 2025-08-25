@@ -21,7 +21,7 @@ function getImageUrl(item) {
 // --- Helper: random pastel color for tag chips ---
 function getRandomPastelColor() {
     const colors = [
-        "#70d6ff", "#ff70a6", "#ff9770", "#e9ff70", "#91f291"
+        "var(--pastel-color-blue)", "var(--pastel-color-red)", "var(--pastel-color-orange)", "var(--pastel-color-yellow)", "var(--pastel-color-green)"
     ];
     return colors[Math.floor(Math.random() * colors.length)];
 }
