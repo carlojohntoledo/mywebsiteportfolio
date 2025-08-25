@@ -283,7 +283,9 @@
 
 
 /* Preview container */
-.file-preview-container {
+.file-preview-container,
+.preview-new-images,
+.preview-existing-images {
     display: grid;
     grid-template-columns: 100%;
     grid-template-rows: auto;
