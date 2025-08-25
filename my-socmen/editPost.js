@@ -123,15 +123,23 @@ async function openEditForm(projectId) {
         newFiles = [];
 
         // 6. Handle Save button (update Firestore)
-        let oldBtn = document.getElementById("post-btn");
-        // Clone the button to remove all previous event listeners (from create mode)
-        let newBtn = oldBtn.cloneNode(true);
-        oldBtn.parentNode.replaceChild(newBtn, oldBtn);
 
-        // Re-select the replaced button
+        // Get the existing button element
+        const oldBtn = document.getElementById("post-btn");
+
+        // Clone it to remove ALL old event listeners (from create mode)
+        const clonedBtn = oldBtn.cloneNode(true);
+
+        // Replace the old button in the DOM with the clean clone
+        oldBtn.parentNode.replaceChild(clonedBtn, oldBtn);
+
+        // Now safely re-select it
         const postBtn = document.getElementById("post-btn");
+
+        // Change label to "Save"
         postBtn.textContent = "Save";
 
+        // Assign new onclick for UPDATE
         postBtn.onclick = async function () {
             const title = document.querySelector(".input-project-title").value.trim();
             const description = document.querySelector(".input-project-description").value.trim();
@@ -159,10 +167,10 @@ async function openEditForm(projectId) {
                     }
                 }
 
-                // 2. Merge images
+                // 2. Merge existing + new
                 const finalImages = [...existingImages, ...uploadedNewImages];
 
-                // 3. Update Firestore doc (no new doc created!)
+                // 3. Update Firestore (no new doc created)
                 await db.collection("projects").doc(projectId).update({
                     title,
                     description,
@@ -177,7 +185,7 @@ async function openEditForm(projectId) {
 
                 console.log("✅ Project updated:", projectId);
 
-                // reload list + close form
+                // Reload + close
                 await loadProjectsFromFirestore();
                 form.style.display = "none";
 
@@ -188,6 +196,7 @@ async function openEditForm(projectId) {
                 if (typeof hideLoader === "function") hideLoader();
             }
         };
+
 
 
         // 7. Bind file input for new images
