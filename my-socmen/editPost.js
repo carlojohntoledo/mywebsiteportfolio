@@ -31,7 +31,7 @@ async function openEditForm(projectId) {
         postCard.style.display = "block";
 
         // --- Change labels/buttons ---
-        document.querySelector(".form-title").textContent = "Edit Post";
+        document.querySelector(".card-title").textContent = "Edit Post";
         const saveBtn = document.getElementById("post-btn");
         saveBtn.textContent = "Save Changes";
         saveBtn.setAttribute("data-edit-id", projectId); // mark which doc we are editing
