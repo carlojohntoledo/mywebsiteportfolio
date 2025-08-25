@@ -24,7 +24,7 @@ async function openEditForm(projectId) {
         document.querySelector(".input-project-link").value = project.projectLink || "";
 
         // 3. Switch form to "Edit" mode
-        const titleElement = document.querySelector(".create-title");
+        const titleElement = document.querySelector(".card-title");
         const postBtn = document.getElementById("post-btn");
         titleElement.textContent = "Edit Post";
         postBtn.textContent = "Save";
