@@ -1,6 +1,8 @@
+// =============================
 // SUBMIT POST JS
+// =============================
 
-// --- Safe fallbacks so submitPost.js never crashes ---
+// --- Safe fallbacks so code never crashes if loader missing ---
 window.showLoader = window.showLoader || function () {
     const loader = document.querySelector('.loader-container');
     if (loader) loader.style.display = 'flex';
@@ -10,19 +12,26 @@ window.hideLoader = window.hideLoader || function () {
     if (loader) loader.style.display = 'none';
 };
 
-// ======================
+// =============================================================
 // IMAGE PREVIEW HANDLER
-// ======================
-function previewImages(event) {
-    const files = event.target.files;
+// Used in both CREATE and EDIT forms
+// =============================================================
+function previewImages(event, isEditMode = false) {
+    const files = event.target.files; // FileList from input
     const previewContainer = document.querySelector(".file-preview-container");
-    previewContainer.innerHTML = "";
+
+    // 🔹 In CREATE mode, always clear old previews
+    // 🔹 In EDIT mode, keep previews (we merge)
+    if (!isEditMode) {
+        previewContainer.innerHTML = "";
+    }
 
     Array.from(files).forEach((file, index) => {
-        if (!file.type.startsWith("image/")) return; // only preview images
+        if (!file.type.startsWith("image/")) return; // skip non-images
 
         const reader = new FileReader();
         reader.onload = function (e) {
+            // --- Build preview DOM ---
             const filePreview = document.createElement("div");
             filePreview.classList.add("file-preview");
 
@@ -37,13 +46,14 @@ function previewImages(event) {
             const removeBtn = document.createElement("button");
             removeBtn.classList.add("remove-preview");
             removeBtn.innerHTML = "&times;";
+
             removeBtn.addEventListener("click", function () {
                 filePreview.remove();
 
-                // Update FileList in <input type="file">
+                // --- Update <input type="file"> FileList ---
                 const dt = new DataTransfer();
                 Array.from(files)
-                    .filter((_, i) => i !== index)
+                    .filter((_, i) => i !== index) // keep all except removed
                     .forEach((f) => dt.items.add(f));
                 event.target.files = dt.files;
             });
@@ -57,11 +67,14 @@ function previewImages(event) {
     });
 }
 
-// ======================
+// =============================================================
 // SUBMIT POST HANDLER
-// ======================
+// =============================================================
 async function SubmitPost() {
-    document.getElementById("post-btn").addEventListener("click", async function () {
+    const saveBtn = document.getElementById("post-btn");
+
+    // --- Attach click handler (only once) ---
+    saveBtn.addEventListener("click", async function () {
         const title = document.querySelector(".input-project-title");
         const description = document.querySelector(".input-project-description");
         const date = document.querySelector(".input-project-date");
@@ -73,7 +86,7 @@ async function SubmitPost() {
         const errorElement = document.querySelector(".error");
         const postCard = document.querySelector(".create-card-container-parent");
 
-        // ❌ Stop if required fields are empty
+        // ❌ Validation: required fields
         if (!title.value.trim() || !description.value.trim() || !date.value.trim() || !status.value.trim()) {
             errorElement.style.display = "flex";
             return;
@@ -84,7 +97,7 @@ async function SubmitPost() {
         const parentContainer = document.querySelector(".project-container-parent");
         parentContainer.style.display = "grid";
 
-        // ✅ Tags: comma-separated string → array
+        // ✅ Convert tags string → array
         const tagsArray = tagsInput.value.split(",").map(tag => tag.trim()).filter(Boolean);
 
         console.log("📱 Submitting post...");
@@ -92,9 +105,9 @@ async function SubmitPost() {
         try {
             if (typeof showLoader === "function") showLoader();
 
-            // ======================
+            // =============================================================
             // 1. UPLOAD IMAGES
-            // ======================
+            // =============================================================
             const files = Array.from(fileInput.files);
             const uploadedImages = [];
 
@@ -119,9 +132,9 @@ async function SubmitPost() {
                 }
             }
 
-            // ======================
+            // =============================================================
             // 2. SAVE TO FIRESTORE
-            // ======================
+            // =============================================================
             const projectData = {
                 title: title.value,
                 description: description.value,
@@ -138,11 +151,12 @@ async function SubmitPost() {
             const docRef = await db.collection("projects").add(projectData);
             console.log("✅ Saved project ID:", docRef.id);
 
-            // ======================
+            // =============================================================
             // 3. RELOAD + CLEAR FORM
-            // ======================
+            // =============================================================
             await loadProjectsFromFirestore();
 
+            // Reset all inputs
             title.value = "";
             description.value = "";
             date.value = "";
@@ -161,7 +175,9 @@ async function SubmitPost() {
         }
     });
 
+    // =============================================================
     // Expand/Collapse description toggle
+    // =============================================================
     document.addEventListener("click", function (e) {
         if (e.target.classList.contains("toggle-desc")) {
             const container = e.target.closest(".project-desc-container");
@@ -172,4 +188,5 @@ async function SubmitPost() {
     });
 }
 
+// --- Initialize ---
 SubmitPost();

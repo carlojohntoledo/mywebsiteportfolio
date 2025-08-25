@@ -49,6 +49,9 @@ async function openEditForm(projectId) {
         const previewContainer = document.querySelector(".file-preview-container");
         previewContainer.innerHTML = ""; // clear old previews
 
+        // Store removed images (publicIds) here
+        let removedImages = [];
+
         (projectData.images || []).forEach((imgObj) => {
             const filePreview = document.createElement("div");
             filePreview.classList.add("file-preview");
@@ -66,31 +69,18 @@ async function openEditForm(projectId) {
             removeBtn.innerHTML = "&times;";
 
             removeBtn.addEventListener("click", async function () {
+                if (typeof showLoader === "function") showLoader();
+
                 try {
-                    if (typeof showLoader === "function") showLoader();
-
-                    // 1️⃣ Remove preview from DOM
                     filePreview.remove();
+                    removedImages.push(imgObj.publicId); // track removed image
 
-                    // 2️⃣ If it's an existing Cloudinary image, delete it
-                    if (imgData.publicId) {
-                        await deleteFromCloudinary(imgData.publicId);
-                        console.log("🗑️ Deleted from Cloudinary:", imgData.publicId);
+                    // 🔥 Optional: delete from Cloudinary right away
+                    await deleteFromCloudinary(imgObj.publicId);
 
-                        // Remove from local array so it doesn’t get saved again
-                        projectData.images = projectData.images.filter(
-                            (img) => img.publicId !== imgData.publicId
-                        );
-
-                        // Update Firestore with new images array
-                        await db.collection("projects").doc(projectId).update({
-                            images: projectData.images
-                        });
-                        console.log("✅ Firestore updated without deleted image");
-                    }
+                    console.log("🗑️ Marked for removal:", imgObj.publicId);
                 } catch (err) {
-                    console.error("❌ Error deleting image:", err);
-                    alert("Failed to delete image. Please try again.");
+                    console.error("Error removing image:", err);
                 } finally {
                     if (typeof hideLoader === "function") hideLoader();
                 }
@@ -103,7 +93,7 @@ async function openEditForm(projectId) {
         });
 
         // --- Attach save handler (only once) ---
-        attachSaveHandler(saveBtn, projectId, projectData);
+        attachSaveHandler(saveBtn, projectId, projectData, removedImages);
 
     } catch (err) {
         console.error("Error opening edit form:", err);
@@ -114,7 +104,7 @@ async function openEditForm(projectId) {
 // ATTACH SAVE HANDLER
 // Handles when user clicks "Save Changes"
 // =============================================================
-function attachSaveHandler(saveBtn, projectId, projectData) {
+function attachSaveHandler(saveBtn, projectId, projectData, removedImages) {
     // Prevent attaching multiple listeners
     const newSaveBtn = saveBtn.cloneNode(true);
     saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
@@ -128,6 +118,7 @@ function attachSaveHandler(saveBtn, projectId, projectData) {
         const pdfLink = document.querySelector(".input-project-pdf-link");
         const projectLink = document.querySelector(".input-project-link");
         const fileInput = document.getElementById("file");
+        fileInput.addEventListener("change", (e) => previewImages(e, true));
         const errorElement = document.querySelector(".error");
         const postCard = document.querySelector(".create-card-container-parent");
 
@@ -148,7 +139,15 @@ function attachSaveHandler(saveBtn, projectId, projectData) {
             if (typeof showLoader === "function") showLoader();
 
             // =============================================================
-            // 1. Upload NEW images (existing ones already preserved)
+            // 1. Handle removed images (delete from Firestore + Cloudinary)
+            // =============================================================
+            projectData.images = projectData.images.filter(img => !removedImages.includes(img.publicId));
+
+            // (Optional) You already delete immediately above in openEditForm,
+            // so here we just filter Firestore images list.
+
+            // =============================================================
+            // 2. Upload NEW images (existing ones already preserved)
             // =============================================================
             const files = Array.from(fileInput.files);
             for (const file of files) {
@@ -164,7 +163,7 @@ function attachSaveHandler(saveBtn, projectId, projectData) {
             }
 
             // =============================================================
-            // 2. Update project data in Firestore
+            // 3. Update project data in Firestore
             // =============================================================
             const updatedData = {
                 title: title.value,
@@ -182,7 +181,7 @@ function attachSaveHandler(saveBtn, projectId, projectData) {
             console.log("✅ Project updated:", projectId);
 
             // =============================================================
-            // 3. Reload + Clear form
+            // 4. Reload + Clear form
             // =============================================================
             await loadProjectsFromFirestore();
 
