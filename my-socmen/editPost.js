@@ -112,7 +112,6 @@ async function openEditForm(projectId) {
 
         // 3. Switch form to "Edit" mode
         const titleElement = document.querySelector(".card-title");
-        const postBtn = document.getElementById("post-btn");
         titleElement.textContent = "Edit Post";
         postBtn.textContent = "Save";
 
@@ -124,6 +123,15 @@ async function openEditForm(projectId) {
         newFiles = [];
 
         // 6. Handle Save button (update Firestore)
+        let oldBtn = document.getElementById("post-btn");
+        // Clone the button to remove all previous event listeners (from create mode)
+        let newBtn = oldBtn.cloneNode(true);
+        oldBtn.parentNode.replaceChild(newBtn, oldBtn);
+
+        // Re-select the replaced button
+        const postBtn = document.getElementById("post-btn");
+        postBtn.textContent = "Save";
+
         postBtn.onclick = async function () {
             const title = document.querySelector(".input-project-title").value.trim();
             const description = document.querySelector(".input-project-description").value.trim();
@@ -138,7 +146,7 @@ async function openEditForm(projectId) {
             try {
                 if (typeof showLoader === "function") showLoader();
 
-                // 1. Upload new images to Cloudinary
+                // 1. Upload new images
                 const uploadedNewImages = [];
                 for (const file of newFiles) {
                     const compressed = await compressImage(file);
@@ -151,10 +159,10 @@ async function openEditForm(projectId) {
                     }
                 }
 
-                // 2. Merge remaining existing images with uploaded new ones
+                // 2. Merge images
                 const finalImages = [...existingImages, ...uploadedNewImages];
 
-                // 3. Save updates to Firestore
+                // 3. Update Firestore doc (no new doc created!)
                 await db.collection("projects").doc(projectId).update({
                     title,
                     description,
@@ -180,6 +188,7 @@ async function openEditForm(projectId) {
                 if (typeof hideLoader === "function") hideLoader();
             }
         };
+
 
         // 7. Bind file input for new images
         const fileInput = document.getElementById("file");
