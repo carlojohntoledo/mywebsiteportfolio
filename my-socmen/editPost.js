@@ -66,18 +66,34 @@ async function openEditForm(projectId) {
             removeBtn.innerHTML = "&times;";
 
             removeBtn.addEventListener("click", async function () {
-                filePreview.remove();
-
-                // 🔹 Delete from Cloudinary immediately
                 try {
-                    await deleteFromCloudinary(imgObj.publicId);
-                    console.log("🗑️ Deleted from Cloudinary:", imgObj.publicId);
-                } catch (err) {
-                    console.error("❌ Failed to delete from Cloudinary", err);
-                }
+                    if (typeof showLoader === "function") showLoader();
 
-                // 🔹 Remove from projectData.images array in memory
-                projectData.images = projectData.images.filter(img => img.publicId !== imgObj.publicId);
+                    // 1️⃣ Remove preview from DOM
+                    filePreview.remove();
+
+                    // 2️⃣ If it's an existing Cloudinary image, delete it
+                    if (imgData.publicId) {
+                        await deleteFromCloudinary(imgData.publicId);
+                        console.log("🗑️ Deleted from Cloudinary:", imgData.publicId);
+
+                        // Remove from local array so it doesn’t get saved again
+                        projectData.images = projectData.images.filter(
+                            (img) => img.publicId !== imgData.publicId
+                        );
+
+                        // Update Firestore with new images array
+                        await db.collection("projects").doc(projectId).update({
+                            images: projectData.images
+                        });
+                        console.log("✅ Firestore updated without deleted image");
+                    }
+                } catch (err) {
+                    console.error("❌ Error deleting image:", err);
+                    alert("Failed to delete image. Please try again.");
+                } finally {
+                    if (typeof hideLoader === "function") hideLoader();
+                }
             });
 
             imgWrapper.appendChild(img);
