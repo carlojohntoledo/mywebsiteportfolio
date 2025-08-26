@@ -327,10 +327,8 @@ async function saveEdit(projectId, oldData, wrapper, removedImages = []) {
     const pdfLink = wrapper.querySelector(".input-project-pdf-link");
     const projectLink = wrapper.querySelector(".input-project-link");
     const fileInput = wrapper.querySelector("#file");
-    const errorElement = wrapper.querySelector(".error");
-
     fileInput.addEventListener("change", checkFormChanges);
-
+    const errorElement = wrapper.querySelector(".error");
 
     if (!title.value.trim() || !description.value.trim() || !date.value.trim() || !status.value.trim()) {
         errorElement.style.display = "flex";
