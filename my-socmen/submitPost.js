@@ -85,7 +85,18 @@ async function SubmitPost() {
         parentContainer.style.display = "grid";
 
         // ✅ Tags: comma-separated string → array
-        const tagsArray = tagsInput.value.split(",").map(tag => tag.trim()).filter(Boolean);
+        const tagsArray = tagsInput.value.split(",").map(tag => tag.replace(/\s+/g, '')).filter(Boolean);
+
+        // Ensure PDF link and project link start with https://
+        let pdfLinkValue = pdfLink.value.trim();
+        if (pdfLinkValue && !/^https?:\/\//i.test(pdfLinkValue)) {
+            pdfLinkValue = 'https://' + pdfLinkValue;
+        }
+
+        let projectLinkValue = projectLink.value.trim();
+        if (projectLinkValue && !/^https?:\/\//i.test(projectLinkValue)) {
+            projectLinkValue = 'https://' + projectLinkValue;
+        }
 
         console.log("📱 Submitting post...");
 
@@ -129,8 +140,8 @@ async function SubmitPost() {
                 date: date.value,
                 tags: tagsArray,
                 images: uploadedImages, // array of { imageUrl, publicId }
-                pdfLink: pdfLink.value,
-                projectLink: projectLink.value,
+                pdfLink: pdfLinkValue,
+                projectLink: projectLinkValue,
                 pinned: false,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };

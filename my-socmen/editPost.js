@@ -68,6 +68,8 @@ function previewEditImages(event) {
 // ======================
 async function openEditForm(projectId) {
     try {
+        showLoader();
+
         const doc = await db.collection("projects").doc(projectId).get();
         if (!doc.exists) return alert("Project not found!");
         const data = doc.data();
@@ -189,8 +191,8 @@ async function openEditForm(projectId) {
         dateInput.value = data.date || "";
         statusInput.value = data.status || "Published";
         tagsInput.value = data.tags ? data.tags.join(", ") : "";
-        pdfLinkInput.value = data.pdfLink || "";
-        projectLinkInput.value = data.projectLink || "";
+        pdfLinkInput.value = data.pdfLinkVale || "";
+        projectLinkInput.value = data.projectLinkValue || "";
 
         // ✅ Track removed images (publicIds)
         const removedImages = [];
@@ -267,6 +269,9 @@ async function openEditForm(projectId) {
 
     } catch (err) {
         console.error("❌ Error opening edit form:", err);
+        alert("Error: " + err.message);
+    } finally {
+        hideLoader(); 
     }
 }
 
