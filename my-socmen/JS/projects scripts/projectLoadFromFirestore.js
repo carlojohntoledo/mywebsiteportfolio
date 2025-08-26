@@ -64,7 +64,7 @@ async function loadProjectsFromFirestore() {
         console.warn("⚠️ .project-container-parent not found. Skipping render.");
         return Promise.resolve();
     }
-    
+
     container.innerHTML = "";
     showLoader(); // 🔵 Show loader while fetching projects
 
@@ -203,7 +203,6 @@ async function loadProjectsFromFirestore() {
         });
 
         postSorter();
-        renderRecentProjects("projects");
 
         return Promise.resolve();
     } catch (err) {
