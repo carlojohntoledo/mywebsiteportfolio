@@ -1,99 +1,95 @@
 // =============================================================
 // ✅ Render Recent Projects List (hash mode compatible)
 // =============================================================
-function renderRecentProjects(projectsArrayOrCollectionName) {
+function renderRecentProjects(collectionName) {
     const recentPanel = document.querySelector(".recent-projects-panel");
     if (!recentPanel) return;
 
     const recentList = recentPanel.querySelector(".recent-projects-list");
     if (!recentList) return;
 
-    recentList.innerHTML = ""; // clear previous
+    recentList.innerHTML = ""; // clear previous items
 
-    // If passed an array (from loadProjectsFromFirestore), use it directly
-    if (Array.isArray(projectsArrayOrCollectionName)) {
-        projectsArrayOrCollectionName.slice(0, 5).forEach(project => {
-            const link = document.createElement("a");
-            if (window.location.pathname.endsWith("projects.html")) {
-                link.href = `#${project.id}`;
-            } else {
-                link.href = `projects.html#${project.id}`;
-            }
+    db.collection(collectionName)
+        .orderBy("createdAt", "desc")
+        .limit(5)
+        .get()
+        .then(snapshot => {
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const uid = doc.id;
 
-            const li = document.createElement("li");
-            li.textContent = project.title || "Untitled Project";
-            link.appendChild(li);
-            recentList.appendChild(link);
+                const link = document.createElement("a");
 
-            link.addEventListener("click", e => {
-                if (link.hash && window.location.pathname.endsWith("projects.html")) {
-                    e.preventDefault();
-                    const target = document.querySelector(link.hash);
-                    if (target) {
-                        target.scrollIntoView({ behavior: "smooth", block: "start" });
-                    }
+                // 🔹 Hash if on projects page, full URL if on other page
+                if (window.location.pathname.endsWith("projects.html")) {
+                    link.href = `#${uid}`;
+                } else {
+                    link.href = `projects.html#${uid}`;
                 }
-            });
-        });
-    } else {
-        // Fallback: collection name string, fetch from Firestore
-        db.collection(projectsArrayOrCollectionName)
-            .orderBy("createdAt", "desc")
-            .limit(5)
-            .get()
-            .then(snapshot => {
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const uid = doc.id;
-                    const link = document.createElement("a");
-                    if (window.location.pathname.endsWith("projects.html")) {
-                        link.href = `#${uid}`;
-                    } else {
-                        link.href = `projects.html#${uid}`;
+
+                const li = document.createElement("li");
+                li.textContent = data.title || "Untitled Project";
+                link.appendChild(li);
+                recentList.appendChild(link);
+
+                // 🔹 Smooth scroll on same page
+                link.addEventListener("click", e => {
+                    if (link.hash && window.location.pathname.endsWith("projects.html")) {
+                        // Prevent default anchor behavior
+                        e.preventDefault();
+
+                        const target = document.querySelector(link.hash);
+                        if (target) {
+                            // Smoothly scroll to target project card
+                            target.scrollIntoView({ behavior: "smooth", block: "start" });
+                        }
+                    } else if (!window.location.pathname.endsWith("projects.html")) {
+                        // 🔹 On other pages: show loader immediately before navigating
+                        e.preventDefault();
+                        if (typeof showLoader === "function") showLoader();
+                        window.location.href = link.href;
                     }
-                    const li = document.createElement("li");
-                    li.textContent = data.title || "Untitled Project";
-                    link.appendChild(li);
-                    recentList.appendChild(link);
                 });
             });
-    }
+        });
 }
 
 // =============================================================
-// ✅ Handle hash scroll on projects page after load
+// ✅ Handle scrolling to hash AFTER projects page loaded
 // =============================================================
 document.addEventListener("DOMContentLoaded", async () => {
     const hash = window.location.hash;
 
+    // Only do this on projects.html
     if (window.location.pathname.endsWith("projects.html")) {
-        showLoader();
 
-        // Wait for projects to fully load and get array
-        let projectsArray = [];
+        // Show loader while rendering cards
+        if (typeof showLoader === "function") showLoader();
+
+        // Ensure projects are loaded once (no duplication)
         if (typeof loadProjectsFromFirestore === "function") {
-            projectsArray = await loadProjectsFromFirestore();
+            await loadProjectsFromFirestore();
         }
 
-        // Scroll to hash after DOM fully rendered
+        // Scroll to hash if exists
         if (hash) {
             const target = document.querySelector(hash);
             if (target) {
-                setTimeout(() => {
-                    target.scrollIntoView({ behavior: "smooth", block: "center" });
-                    target.style.transition = "background 0.5s";
-                    target.style.backgroundColor = "rgba(255,255,0,0.3)";
-                    setTimeout(() => target.style.backgroundColor = "", 1500);
-                }, 50); // small delay
+                // Smooth scroll to target
+                target.scrollIntoView({ behavior: "smooth", block: "center" });
+
+                // Optional: briefly highlight the card
+                target.style.transition = "background 0.5s";
+                target.style.backgroundColor = "rgba(255,255,0,0.3)";
+                setTimeout(() => target.style.backgroundColor = "", 1500);
             }
         }
 
-        hideLoader();
-
-        // Render recent projects links
-        renderRecentProjects(projectsArray);
-    } else {
-        // On other pages, just render recent projects
-        renderRecentProjects("projects");
+        // Hide loader after projects are loaded & scroll complete
+        if (typeof hideLoader === "function") hideLoader();
     }
+
+    // Always render recent projects list (all pages)
+    renderRecentProjects("projects");
 });

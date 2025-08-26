@@ -18,6 +18,15 @@
 </head>
 
 <body>
+
+    <div class="loader-container" style="display: none;">
+        <div class="loader">
+            <div class="progress"></div>
+            <div class="progress"></div>
+            <div class="progress"></div>
+        </div>
+    </div>
+
     <div class="content-parent">
         <div class="thumbnail red-bordered">
             <img src="Assets/Images/thumbnail-background/pngegg.png" alt="thumbnail.png">
@@ -357,15 +366,15 @@
     </div>
 
     <!-- Firebase App (required) -->
-        <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
 
-        <!-- Firestore -->
-        <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+    <!-- Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
 
-        <!-- Auth (optional, if you plan to use it later) -->
-        <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+    <!-- Auth (optional, if you plan to use it later) -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
 
-        <script src="JS/index.js"></script>
+    <script src="JS/index.js"></script>
 
     <script>
         document.querySelectorAll('.menu-radio').forEach(radio => {
