@@ -21,7 +21,7 @@ window.hideLoader = window.hideLoader || function () {
 function previewImages(event, isEditMode = false) {
     const files = event.target.files;
 
-    // NEW images always go inside this container
+    // NEW images go inside this container
     const newPreviewContainer = document.querySelector(".preview-new-images");
 
     // In CREATE mode, clear old previews before adding new ones
@@ -30,7 +30,7 @@ function previewImages(event, isEditMode = false) {
     }
 
     Array.from(files).forEach((file, index) => {
-        if (!file.type.startsWith("image/")) return; // only preview images
+        if (!file.type.startsWith("image/")) return; // only allow images
 
         const reader = new FileReader();
         reader.onload = function (e) {
@@ -51,7 +51,7 @@ function previewImages(event, isEditMode = false) {
             removeBtn.addEventListener("click", function () {
                 filePreview.remove();
 
-                // Update FileList in <input type="file">
+                // Update <input type="file"> list when removed
                 const dt = new DataTransfer();
                 Array.from(files)
                     .filter((_, i) => i !== index)
@@ -70,7 +70,8 @@ function previewImages(event, isEditMode = false) {
 
 // ======================
 // SHOW EXISTING IMAGES (Edit Mode)
-// Called when loading a project for editing
+// - Displays images already stored in Firestore/Cloudinary
+// - Adds a ❌ remove button that just flags them for deletion
 // ======================
 function showExistingImages(existingImages = []) {
     const existingPreviewContainer = document.querySelector(".preview-existing-images");
@@ -94,7 +95,7 @@ function showExistingImages(existingImages = []) {
         removeBtn.addEventListener("click", function () {
             filePreview.remove();
 
-            // Mark this image as "removed" (so we can delete from Firestore/Cloudinary later)
+            // Mark this image as "removed" (handled later in edit save)
             imgObj._deleted = true;
         });
 
@@ -106,7 +107,7 @@ function showExistingImages(existingImages = []) {
 }
 
 // ======================
-// SUBMIT POST HANDLER
+// SUBMIT POST HANDLER (CREATE MODE)
 // ======================
 async function SubmitPost() {
     document.getElementById("post-btn").addEventListener("click", async function () {
@@ -132,7 +133,7 @@ async function SubmitPost() {
         const parentContainer = document.querySelector(".project-container-parent");
         parentContainer.style.display = "grid";
 
-        // ✅ Tags: comma-separated string → array
+        // ✅ Convert tags string → array
         const tagsArray = tagsInput.value.split(",").map(tag => tag.trim()).filter(Boolean);
 
         console.log("📱 Submitting post...");
@@ -147,7 +148,7 @@ async function SubmitPost() {
             const uploadedImages = [];
 
             for (const file of files) {
-                // 🔹 Step 1: compress
+                // 🔹 Step 1: compress image before upload
                 const compressedFile = await compressImage(file);
 
                 // 🔹 Step 2: upload to Cloudinary
@@ -169,7 +170,6 @@ async function SubmitPost() {
 
             // ======================
             // 2. SAVE TO FIRESTORE
-            // (In edit mode, you’d also merge with existing images minus deleted ones)
             // ======================
             const projectData = {
                 title: title.value,
@@ -177,7 +177,7 @@ async function SubmitPost() {
                 status: status.value,
                 date: date.value,
                 tags: tagsArray,
-                images: uploadedImages, // only new images in create mode
+                images: uploadedImages, // in create mode only new uploads
                 pdfLink: pdfLink.value,
                 projectLink: projectLink.value,
                 pinned: false,
@@ -201,6 +201,7 @@ async function SubmitPost() {
             pdfLink.value = "";
             projectLink.value = "";
             document.querySelector(".preview-new-images").innerHTML = "";
+            document.querySelector(".preview-existing-images").innerHTML = "";
 
         } catch (err) {
             console.error("❌ Error submitting project:", err);
