@@ -58,10 +58,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Show loader while rendering cards
         showLoader();
 
-        // Ensure projects are loaded once (no duplication)
-        if (typeof loadProjectsFromFirestore === "function") {
-            await loadProjectsFromFirestore();
-        }
 
         // Scroll to hash if exists
         if (hash) {

@@ -223,6 +223,10 @@ async function loadProjectsFromFirestore() {
     }
 }
 
+// =============================================================
+// ✅ Run loader on page start
+// =============================================================
+document.addEventListener("DOMContentLoaded", loadProjectsFromFirestore);
 
 // =============================================================
 // ✅ Sort cards: pinned first, newest date next
