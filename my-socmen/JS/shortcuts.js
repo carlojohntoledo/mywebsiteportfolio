@@ -53,28 +53,30 @@ function renderRecentProjects(collectionName) {
 document.addEventListener("DOMContentLoaded", async () => {
     const hash = window.location.hash;
 
-    // Only do this on projects.html
     if (window.location.pathname.endsWith("projects.html")) {
-        // Show loader while rendering cards
         showLoader();
 
+        // Wait until projects are fully rendered
+        if (typeof loadProjectsFromFirestore === "function") {
+            await loadProjectsFromFirestore();
+        }
 
-        // Scroll to hash if exists
+        // ✅ Ensure DOM is ready before scrolling
         if (hash) {
             const target = document.querySelector(hash);
             if (target) {
-                target.scrollIntoView({ behavior: "smooth", block: "center" });
-
-                // Optional: briefly highlight the card
-                target.style.transition = "background 0.5s";
-                target.style.backgroundColor = "rgba(255,255,0,0.3)";
-                setTimeout(() => target.style.backgroundColor = "", 1500);
+                // Small delay to let any styles/layout settle
+                setTimeout(() => {
+                    target.scrollIntoView({ behavior: "smooth", block: "center" });
+                    target.style.transition = "background 0.5s";
+                    target.style.backgroundColor = "rgba(255,255,0,0.3)";
+                    setTimeout(() => target.style.backgroundColor = "", 1500);
+                }, 50); // 50ms is usually enough
             }
         }
 
         hideLoader();
     }
 
-    // Always render recent projects list (all pages)
     renderRecentProjects("projects");
 });
