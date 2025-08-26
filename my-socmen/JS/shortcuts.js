@@ -8,7 +8,7 @@ function renderRecentProjects(collectionName) {
     const recentList = recentPanel.querySelector(".recent-projects-list");
     if (!recentList) return;
 
-    recentList.innerHTML = ""; // clear previous
+    recentList.innerHTML = ""; // clear previous items
 
     db.collection(collectionName)
         .orderBy("createdAt", "desc")
@@ -21,7 +21,7 @@ function renderRecentProjects(collectionName) {
 
                 const link = document.createElement("a");
 
-                // 🔹 Use hash for same page, full URL for different page
+                // 🔹 Hash if on projects page, full URL if on other page
                 if (window.location.pathname.endsWith("projects.html")) {
                     link.href = `#${uid}`;
                 } else {
@@ -30,11 +30,10 @@ function renderRecentProjects(collectionName) {
 
                 const li = document.createElement("li");
                 li.textContent = data.title || "Untitled Project";
-
                 link.appendChild(li);
                 recentList.appendChild(link);
 
-                // 🔹 Smooth scroll if on same page
+                // 🔹 Smooth scroll on same page
                 link.addEventListener("click", e => {
                     if (link.hash && window.location.pathname.endsWith("projects.html")) {
                         e.preventDefault();
@@ -49,22 +48,28 @@ function renderRecentProjects(collectionName) {
 }
 
 // =============================================================
-// ✅ Handle scrolling to hash AFTER projects loaded
+// ✅ Handle scrolling to hash AFTER projects page loaded
 // =============================================================
 document.addEventListener("DOMContentLoaded", async () => {
     const hash = window.location.hash;
 
+    // Only do this on projects.html
     if (window.location.pathname.endsWith("projects.html")) {
+        // Show loader while rendering cards
         showLoader();
 
-        // Wait for projects to render once
-        await loadProjectsFromFirestore();
+        // Ensure projects are loaded once (no duplication)
+        if (typeof loadProjectsFromFirestore === "function") {
+            await loadProjectsFromFirestore();
+        }
 
-        // Scroll if hash exists
+        // Scroll to hash if exists
         if (hash) {
             const target = document.querySelector(hash);
             if (target) {
                 target.scrollIntoView({ behavior: "smooth", block: "center" });
+
+                // Optional: briefly highlight the card
                 target.style.transition = "background 0.5s";
                 target.style.backgroundColor = "rgba(255,255,0,0.3)";
                 setTimeout(() => target.style.backgroundColor = "", 1500);
@@ -74,7 +79,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         hideLoader();
     }
 
-    // Always render recent projects list
+    // Always render recent projects list (all pages)
     renderRecentProjects("projects");
 });
-

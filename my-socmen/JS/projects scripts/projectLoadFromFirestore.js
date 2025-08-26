@@ -1,15 +1,13 @@
 // =============================================================
-// ✅ Firestore → Load Projects + Render UI
+// ✅ Firestore → Load Projects + Render UI (No duplication)
 // Handles mixed image formats: string, { url }, { imageUrl }
 // =============================================================
 
 // --- Helper: normalize any image item into a usable URL ---
 function getImageUrl(item) {
     if (!item) return null;
-
     if (typeof item === "string" && item.trim() !== "") return item;
     if (typeof item === "object") return item.imageUrl || item.url || null;
-
     return null;
 }
 
@@ -29,7 +27,7 @@ function getFirstImage(images) {
         const url = getImageUrl(img);
         if (url) return url;
     }
-    return "Assets/Images/placeholder.svg";
+    return "Assets/Images/placeholder.svg"; // fallback
 }
 
 // --- Helper: start carousel rotation for project images ---
@@ -41,7 +39,7 @@ function startCarousel(imgElement, images) {
     }
 
     let currentIndex = 0;
-    imgElement.src = urls[currentIndex];
+    imgElement.src = urls[currentIndex]; // show first image
 
     setInterval(() => {
         imgElement.style.opacity = 0;
@@ -56,19 +54,20 @@ function startCarousel(imgElement, images) {
 }
 
 // =============================================================
-// ✅ MAIN FUNCTION → Load from Firestore
+// ✅ MAIN FUNCTION → Load Projects from Firestore (No duplication)
 // =============================================================
 async function loadProjectsFromFirestore() {
     const container = document.querySelector(".project-container-parent");
     if (!container) {
         console.warn("⚠️ .project-container-parent not found. Skipping render.");
-        return Promise.resolve();
+        return;
     }
 
-    container.innerHTML = "";
-    showLoader(); // 🔵 Show loader while fetching projects
+    container.innerHTML = ""; // Clear old cards
+    showLoader(); // 🔵 Show loader while fetching
 
     try {
+        // Pull projects: pinned first, newest next
         const snapshot = await db.collection("projects")
             .orderBy("pinned", "desc")
             .orderBy("createdAt", "desc")
@@ -77,26 +76,27 @@ async function loadProjectsFromFirestore() {
         snapshot.forEach(doc => {
             const uid = doc.id;
             const data = doc.data();
-
             const firstImage = getFirstImage(data.images);
 
+            // Unique IDs for extra menu
             const toggleId = `toggle-${uid}`;
             const pinId = `pin-${uid}`;
             const editId = `edit-${uid}`;
             const removeId = `remove-${uid}`;
             const pinLabelText = data.pinned ? "Unpin Project" : "Pin Project";
 
-            // --- Build main project card container ---
+            // --- Build main project card ---
             const containerDiv = document.createElement("div");
             containerDiv.classList.add("project-container");
             containerDiv.setAttribute("data-id", uid);
             containerDiv.setAttribute("data-pinned", data.pinned ? "true" : "false");
             containerDiv.setAttribute("data-date", data.date || "");
-            containerDiv.id = uid; // ✅ Assign ID for hash scrolling
+            containerDiv.id = `project-${uid}`; // ✅ ID for hash scrolling
 
             containerDiv.innerHTML = `
                 <div class="project-card">
                     <div class="project-content" style="position: relative;">
+                        <!-- Extra Menu -->
                         <div class="post-extra-popup">
                             <input type="checkbox" id="${toggleId}" class="checkbox">
                             <label for="${toggleId}" class="post-extra-btn"><strong>. . .</strong></label>
@@ -109,6 +109,7 @@ async function loadProjectsFromFirestore() {
                             </div>
                         </div>
 
+                        <!-- Image + Indicators -->
                         <div class="project-image-container">
                             <div class="post-indicators">
                                 <h1 class="srv">Projects</h1>
@@ -119,6 +120,7 @@ async function loadProjectsFromFirestore() {
                             <img src="${firstImage}" alt="project image" class="project-image" id="project-image-${uid}">
                         </div>
 
+                        <!-- Title + Profile -->
                         <div class="project-title-container">
                             <h1 class="project-title">${data.title || ''}</h1>
                             <div class="project-details-container">
@@ -132,17 +134,20 @@ async function loadProjectsFromFirestore() {
                             </div>
                         </div>
 
+                        <!-- Tags -->
                         <div class="project-links-container scroll-fade">
                             <div class="project-tags-container project-tags">
                                 ${(data.tags || []).map(tag => `<span class="tag">${tag}</span>`).join("")}
                             </div>
                         </div>
 
+                        <!-- Description -->
                         <div class="project-desc-container">
                             <p class="desc-text project-description">${data.description || ''}</p>
                             <button class="toggle-desc">See More</button>
                         </div>
 
+                        <!-- Addons -->
                         <div class="addons-container">
                             ${data.pdfLink ? `<a href="${data.pdfLink}" class="project-pdf-download" target="_blank">Download PDF</a>` : ""}
                             ${data.projectLink ? `<a href="${data.projectLink}" class="project-link" target="_blank">Live Demo</a>` : ""}
@@ -151,22 +156,25 @@ async function loadProjectsFromFirestore() {
                 </div>
             `;
 
+            // Random pastel colors for tags
             const tagsHtml = (data.tags || [])
                 .map(tag => `<span class="tag" style="background-color:${getRandomPastelColor()}">${tag}</span>`)
                 .join("");
             containerDiv.querySelector(".project-tags-container").innerHTML = tagsHtml;
 
+            // Append card
             container.appendChild(containerDiv);
 
+            // Start carousel
             const imgElement = containerDiv.querySelector(`#project-image-${uid}`);
             startCarousel(imgElement, data.images);
 
-            // --- Extra menu actions ---
+            // --- Extra Menu Actions ---
             const pinCheckbox = containerDiv.querySelector(`#${pinId}`);
             pinCheckbox.addEventListener("change", async () => {
                 showLoader();
                 await db.collection("projects").doc(uid).update({ pinned: !data.pinned });
-                await loadProjectsFromFirestore();
+                await loadProjectsFromFirestore(); // reload cards only
                 hideLoader();
             });
 
@@ -202,9 +210,12 @@ async function loadProjectsFromFirestore() {
             });
         });
 
+        // ✅ Sort projects after rendering
         postSorter();
 
-        return Promise.resolve();
+        // ✅ NOTE: Do NOT call renderRecentProjects here to prevent doubling
+        // Recent projects will always be rendered by shortcuts.js
+
     } catch (err) {
         console.error("Error loading projects:", err);
     } finally {
@@ -229,11 +240,11 @@ function postSorter() {
     cards.sort((a, b) => {
         const aPinned = a.getAttribute('data-pinned') === 'true';
         const bPinned = b.getAttribute('data-pinned') === 'true';
-        if (aPinned !== bPinned) return bPinned - aPinned;
+        if (aPinned !== bPinned) return bPinned - aPinned; // pinned above unpinned
 
         const aTime = Date.parse(a.getAttribute('data-date')) || 0;
         const bTime = Date.parse(b.getAttribute('data-date')) || 0;
-        return bTime - aTime;
+        return bTime - aTime; // newest first
     });
 
     cards.forEach(card => parent.appendChild(card));
