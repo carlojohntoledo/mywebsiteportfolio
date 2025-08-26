@@ -11,7 +11,7 @@
     position: fixed;
     z-index: 999;
     background-color: rgba(0, 0, 0, 0.8);
-    display: none;
+    /* display: none; */
 }
 
 .edit-project-container {
