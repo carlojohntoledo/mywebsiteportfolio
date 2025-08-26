@@ -1,29 +1,60 @@
-
 // =============================================================
-// ✅ Render Recent Projects Panel
+// ✅ Render Recent Projects Panel with clickable links (hash mode)
 // =============================================================
-function renderRecentProjects(projectsArray) {
-    const listContainer = document.querySelector(".recent-projects-list");
-    if (!listContainer) return;
+function renderRecentProjects(collectionName = "projects") {
+    // --- Get the panel container ---
+    const recentPanel = document.querySelector(".recent-projects-panel");
+    if (!recentPanel) return console.warn("⚠️ .recent-projects-panel not found");
 
-    listContainer.innerHTML = ""; // clear old
+    const recentList = recentPanel.querySelector(".recent-projects-list");
+    if (!recentList) return console.warn("⚠️ .recent-projects-list not found");
 
-    // Take up to 4 most recent (already sorted by Firestore query)
-    const recent = projectsArray.slice(0, 4);
+    // --- Clear previous items ---
+    recentList.innerHTML = "";
 
-    recent.forEach(project => {
-        const a = document.createElement("a");
-        a.href = `#project-${project.id}`;
-        a.addEventListener("click", e => {
-            e.preventDefault();
-            const target = document.getElementById(`project-${project.id}`);
-            if (target) target.scrollIntoView({ behavior: "smooth", block: "center" });
-        });
+    // --- Fetch projects from Firestore ---
+    db.collection(collectionName)
+        .orderBy("pinned", "desc") // pinned projects first
+        .orderBy("createdAt", "desc") // newest first
+        .get()
+        .then(snapshot => {
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const uid = doc.id;
 
-        const li = document.createElement("li");
-        li.textContent = project.title || "Untitled Project";
+                // --- Create a link element pointing to the project via hash ---
+                const link = document.createElement("a");
+                link.href = `projects.html#${uid}`; // hash points to project ID
+                link.classList.add("recent-project-link");
 
-        a.appendChild(li);
-        listContainer.appendChild(a);
-    });
+                // --- Create list item with project title ---
+                const li = document.createElement("li");
+                li.textContent = data.title || "Untitled Project";
+
+                // --- Append li to link, and link to list ---
+                link.appendChild(li);
+                recentList.appendChild(link);
+            });
+        })
+        .catch(err => console.error("❌ Error fetching recent projects:", err));
 }
+
+// =============================================================
+// ✅ Smooth scroll to project if hash exists (run on projects page)
+// =============================================================
+document.addEventListener("DOMContentLoaded", () => {
+    // Only attempt scroll if there’s a hash in the URL
+    const hash = window.location.hash;
+    if (hash) {
+        const target = document.querySelector(hash);
+        if (target) {
+            // Smooth scroll to the target card
+            target.scrollIntoView({ behavior: "smooth", block: "center" });
+
+            // Optional: briefly highlight the card
+            target.style.transition = "background 0.5s";
+            target.style.backgroundColor = "rgba(255,255,0,0.3)";
+            setTimeout(() => { target.style.backgroundColor = ""; }, 1500);
+        }
+    }
+});
