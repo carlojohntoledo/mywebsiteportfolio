@@ -62,11 +62,9 @@ async function loadProjectsFromFirestore() {
     const container = document.querySelector(".project-container-parent");
     if (!container) {
         console.warn("⚠️ .project-container-parent not found. Skipping render.");
-        return;
+        return Promise.resolve();
     }
-
-    if (!container) return Promise.resolve();
-
+    
     container.innerHTML = "";
     showLoader(); // 🔵 Show loader while fetching projects
 
