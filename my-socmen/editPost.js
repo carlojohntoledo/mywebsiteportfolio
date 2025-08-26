@@ -153,6 +153,11 @@ async function openEditForm(projectId) {
                                 <div class="file-upload-form">
                                     <label class="file-upload-label">
                                         <div class="file-upload-design">
+                                            <svg viewBox="0 0 640 512" height="1em">
+                                                <path
+                                                    d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-217c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39V392c0 13.3 10.7 24 24 24s24-10.7 24-24V257.9l39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z">
+                                                </path>
+                                            </svg>
                                             <p>Drag and Drop</p>
                                             <p>or</p>
                                             <span class="browse-button">Browse file</span>
@@ -341,6 +346,17 @@ async function saveEdit(projectId, oldData, wrapper, removedImages = []) {
     }
     errorElement.style.display = "none";
 
+    // Ensure PDF link and project link start with https://
+        let pdfLinkValue = pdfLink.value.trim();
+        if (pdfLinkValue && !/^https?:\/\//i.test(pdfLinkValue)) {
+            pdfLinkValue = 'https://' + pdfLinkValue;
+        }
+
+        let projectLinkValue = projectLink.value.trim();
+        if (projectLinkValue && !/^https?:\/\//i.test(projectLinkValue)) {
+            projectLinkValue = 'https://' + projectLinkValue;
+        }
+
     try {
         showLoader();
 
@@ -350,7 +366,7 @@ async function saveEdit(projectId, oldData, wrapper, removedImages = []) {
         }
 
         // ✅ Tags
-        const tagsArray = tagsInput.value.split(",").map(tag => tag.trim()).filter(Boolean);
+        const tagsArray = tagsInput.value.split(",").map(tag => tag.replace(/\s+/g, '')).filter(Boolean);
 
         // 1. Keep existing images (skip removed ones)
         let updatedImages = (oldData.images || []).filter(img => {
@@ -380,8 +396,8 @@ async function saveEdit(projectId, oldData, wrapper, removedImages = []) {
             date: date.value,
             tags: tagsArray,
             images: updatedImages,
-            pdfLink: pdfLink.value,
-            projectLink: projectLink.value,
+            pdfLink: pdfLinkValue,
+            projectLink: projectLinkValue,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
