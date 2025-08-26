@@ -1,5 +1,5 @@
 // =============================================================
-// ✅ Firestore → Load Projects + Render UI
+// ✅ Firestore → Load Projects + Render UI + Recent Projects
 // Handles mixed image formats: string, { url }, { imageUrl }
 // =============================================================
 
@@ -7,14 +7,10 @@
 function getImageUrl(item) {
     if (!item) return null;
 
-    // Old saved projects: just a plain string URL
     if (typeof item === "string" && item.trim() !== "") return item;
-
-    // Newer saved projects: object formats
     if (typeof item === "object") {
         return item.imageUrl || item.url || null;
     }
-
     return null;
 }
 
@@ -48,7 +44,6 @@ function startCarousel(imgElement, images) {
     let currentIndex = 0;
     imgElement.src = urls[currentIndex]; // show first image
 
-    // Rotate every 10s with smooth fade
     setInterval(() => {
         imgElement.style.opacity = 0;
         imgElement.style.transform = "scale(1)";
@@ -65,47 +60,46 @@ function startCarousel(imgElement, images) {
 // ✅ MAIN FUNCTION → Load from Firestore
 // =============================================================
 async function loadProjectsFromFirestore() {
-    // --- Make sure the parent container exists in the DOM ---
     const container = document.querySelector(".project-container-parent");
     if (!container) {
         console.warn("⚠️ .project-container-parent not found. Skipping render.");
-        return; // ⛔ Prevents 'Cannot set properties of null' error
+        return;
     }
 
-    // --- Clear out old cards before re-rendering ---
-    container.innerHTML = "";
-
-    // 🔵 Show loader while fetching projects
-    showLoader();
+    container.innerHTML = ""; // Clear old cards
+    showLoader(); // 🔵 Show loader while fetching
 
     try {
-        // Pull all projects: pinned first, newest on top
         const snapshot = await db.collection("projects")
             .orderBy("pinned", "desc")
             .orderBy("createdAt", "desc")
             .get();
 
+        const projectsArray = []; // collect projects for "Recent Projects"
+
         snapshot.forEach(doc => {
             const uid = doc.id;
             const data = doc.data();
-
             const firstImage = getFirstImage(data.images);
 
-            // Unique IDs for checkboxes in the extra menu
+            // Collect data for later use in "Recent Projects"
+            projectsArray.push({ id: uid, ...data });
+
+            // Unique IDs for extra menu
             const toggleId = `toggle-${uid}`;
             const pinId = `pin-${uid}`;
             const editId = `edit-${uid}`;
             const removeId = `remove-${uid}`;
             const pinLabelText = data.pinned ? "Unpin Project" : "Pin Project";
 
-            // --- Build main project card container ---
+            // --- Build main project card ---
             const containerDiv = document.createElement("div");
             containerDiv.classList.add("project-container");
             containerDiv.setAttribute("data-id", uid);
             containerDiv.setAttribute("data-pinned", data.pinned ? "true" : "false");
             containerDiv.setAttribute("data-date", data.date || "");
+            containerDiv.id = `project-${uid}`; // ✅ ID for scroll target
 
-            // Card Markup
             containerDiv.innerHTML = `
                 <div class="project-card">
                     <div class="project-content" style="position: relative;">
@@ -169,32 +163,31 @@ async function loadProjectsFromFirestore() {
                 </div>
             `;
 
-            // --- Apply random pastel colors to each tag ---
+            // Random pastel colors for tags
             const tagsHtml = (data.tags || [])
                 .map(tag => `<span class="tag" style="background-color:${getRandomPastelColor()}">${tag}</span>`)
                 .join("");
             containerDiv.querySelector(".project-tags-container").innerHTML = tagsHtml;
 
-            // Append finished card
             container.appendChild(containerDiv);
 
-            // Start rotating carousel
+            // Start carousel
             const imgElement = containerDiv.querySelector(`#project-image-${uid}`);
             startCarousel(imgElement, data.images);
 
-            // --- Hook up Extra Menu Actions ---
+            // --- Extra Menu Actions ---
             const pinCheckbox = containerDiv.querySelector(`#${pinId}`);
             pinCheckbox.addEventListener("change", async () => {
-                showLoader(); // 🔵 Show loader while pinning/unpinning
+                showLoader();
                 await db.collection("projects").doc(uid).update({ pinned: !data.pinned });
                 await loadProjectsFromFirestore();
-                hideLoader(); // 🟢 Hide after reload
+                hideLoader();
             });
 
             const removeCheckbox = containerDiv.querySelector(`#${removeId}`);
             removeCheckbox.addEventListener("change", async () => {
                 if (confirm("Are you sure you want to delete this project?")) {
-                    showLoader(); // 🔵 Show loader during delete
+                    showLoader();
                     try {
                         if (data.images && data.images.length > 0) {
                             await Promise.all(
@@ -210,56 +203,62 @@ async function loadProjectsFromFirestore() {
                         console.error("❌ Error deleting project:", err);
                         alert("Something went wrong while deleting the project.");
                     } finally {
-                        hideLoader(); // 🟢 Hide loader no matter what
+                        hideLoader();
                     }
                 }
-                removeCheckbox.checked = false; // close menu toggle
+                removeCheckbox.checked = false;
             });
 
             const editCheckbox = containerDiv.querySelector(`#${editId}`);
             editCheckbox.addEventListener("change", () => {
-                openEditForm(uid, data); // 🔥 Pass project ID + its data to edit form
-                editCheckbox.checked = false; // close the menu toggle
+                openEditForm(uid, data);
+                editCheckbox.checked = false;
             });
         });
 
-        // ✅ After rendering all, sort DOM for safety
+        // ✅ Sort projects after rendering
         postSorter();
 
-        renderRecentProjects(projects);
+        // ✅ Render "Recent Projects" panel links
+        renderRecentProjects(projectsArray);
 
     } catch (err) {
         console.error("Error loading projects:", err);
     } finally {
-        hideLoader(); // 🟢 Always hide loader after Firestore load
+        hideLoader();
     }
+}
+
+// =============================================================
+// ✅ Render Recent Projects Panel
+// =============================================================
+function renderRecentProjects(projectsArray) {
+    const listContainer = document.querySelector(".recent-projects-list");
+    if (!listContainer) return;
+
+    listContainer.innerHTML = ""; // clear old
+
+    // Take up to 4 most recent (already sorted by Firestore query)
+    const recent = projectsArray.slice(0, 4);
+
+    recent.forEach(project => {
+        const a = document.createElement("a");
+        a.href = `#project-${project.id}`;
+        a.addEventListener("click", e => {
+            e.preventDefault();
+            const target = document.getElementById(`project-${project.id}`);
+            if (target) target.scrollIntoView({ behavior: "smooth", block: "center" });
+        });
+
+        const li = document.createElement("li");
+        li.textContent = project.title || "Untitled Project";
+
+        a.appendChild(li);
+        listContainer.appendChild(a);
+    });
 }
 
 // =============================================================
 // ✅ Run loader on page start
 // =============================================================
 document.addEventListener("DOMContentLoaded", loadProjectsFromFirestore);
-
-
-// =============================================================
-// ✅ Sort cards: pinned first, newest date next
-// =============================================================
-function postSorter() {
-    const parent = document.querySelector('.project-container-parent');
-    if (!parent) return;
-
-    const cards = Array.from(parent.querySelectorAll('.project-container'));
-
-    cards.sort((a, b) => {
-        const aPinned = a.getAttribute('data-pinned') === 'true';
-        const bPinned = b.getAttribute('data-pinned') === 'true';
-        if (aPinned !== bPinned) return bPinned - aPinned; // pinned above unpinned
-
-        // Date comes from user input (assumed YYYY-MM-DD). Fallback to 0 if invalid.
-        const aTime = Date.parse(a.getAttribute('data-date')) || 0;
-        const bTime = Date.parse(b.getAttribute('data-date')) || 0;
-        return bTime - aTime; // newest first
-    });
-
-    cards.forEach(card => parent.appendChild(card));
-}
