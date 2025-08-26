@@ -73,5 +73,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         hideLoader();
     }
+
+    // Always render recent projects list
+    renderRecentProjects("projects");
 });
 
