@@ -191,8 +191,8 @@ async function openEditForm(projectId) {
         dateInput.value = data.date || "";
         statusInput.value = data.status || "Published";
         tagsInput.value = data.tags ? data.tags.join(", ") : "";
-        pdfLinkInput.value = data.pdfLinkValue || "";
-        projectLinkInput.value = data.projectLinkValue || "";
+        pdfLinkInput.value = data.pdfLink || "";
+        projectLinkInput.value = data.projectLink || "";
 
         // ✅ Track removed images (publicIds)
         const removedImages = [];
