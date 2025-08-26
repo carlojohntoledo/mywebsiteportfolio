@@ -140,12 +140,12 @@
     /* border: 1px solid; */
     height: max-content;
     position: absolute;
-    z-index: 102;
     bottom: 0;
     right: 0;
     justify-content: end;
     gap: 0.5rem;
     margin: 1rem;
+    z-index: 3;
 }
 
 .srv {
@@ -156,6 +156,7 @@
     border-radius: 0.4rem;
     font-size: var(--font-xs);
     text-shadow: 0 0 10px rgb(255, 255, 255);
+    position: relative;
 }
 
 #pinned-post-indicator {
@@ -419,7 +420,7 @@
 .post-extra-popup {
     color: var(--text-color);
     position: absolute;
-    z-index: 110;
+    z-index: 9;
     user-select: none;
     right: 1rem;
     top: 0.5rem;
