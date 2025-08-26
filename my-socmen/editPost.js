@@ -226,7 +226,23 @@ async function openEditForm(projectId) {
                 filePreview.appendChild(removeBtn);
                 existingPreviewContainer.appendChild(filePreview);
             });
+
+            checkFormChanges();
         }
+
+        const form = wrapper.querySelector("#edit-project-form");
+        form.dataset.originalValues = JSON.stringify({
+            title: titleInput.value,
+            description: descInput.value,
+            date: dateInput.value,
+            status: statusInput.value,
+            tags: tagsInput.value,
+            pdfLink: pdfLinkInput.value,
+            projectLink: projectLinkInput.value,
+            fileCount: 0,
+            existingImagesCount: (data.images || []).length
+        });
+
 
         // ======================
         // Cancel button
@@ -242,38 +258,8 @@ async function openEditForm(projectId) {
             await saveEdit(projectId, data, wrapper, removedImages);
         });
 
-        // ======================
-        // Detect changes in form
-        // ======================
-        function checkFormChanges() {
-            const currentValues = {
-                title: titleInput.value,
-                description: descInput.value,
-                date: dateInput.value,
-                status: statusInput.value,
-                tags: tagsInput.value,
-                pdfLink: pdfLinkInput.value,
-                projectLink: projectLinkInput.value
-            };
 
-            const originalValues = {
-                title: data.title || "",
-                description: data.description || "",
-                date: data.date || "",
-                status: data.status || "Published",
-                tags: data.tags ? data.tags.join(", ") : "",
-                pdfLink: data.pdfLink || "",
-                projectLink: data.projectLink || ""
-            };
-
-            const filesChanged = wrapper.querySelector("#file").files.length > 0;
-            const imagesRemoved = removedImages.length > 0;
-
-            // Compare JSON stringified objects for changes
-            const hasChanged = JSON.stringify(currentValues) !== JSON.stringify(originalValues) || filesChanged || imagesRemoved;
-
-            saveBtn.disabled = !hasChanged;
-        }
+        checkFormChanges();
 
         // Add input listeners to detect changes
         [titleInput, descInput, dateInput, statusInput, tagsInput, pdfLinkInput, projectLinkInput]
@@ -283,6 +269,51 @@ async function openEditForm(projectId) {
         console.error("❌ Error opening edit form:", err);
     }
 }
+
+// ======================
+// Detect changes in form
+// ======================
+// ======================
+// TRACK CHANGES TO ENABLE SAVE BUTTON
+// ======================
+function checkFormChanges() {
+    const form = document.querySelector("#edit-project-form");
+    if (!form) return;
+
+    const saveBtn = document.querySelector("#save-edit-btn");
+    if (!saveBtn) return;
+
+    // Original values (when form opened)
+    const originalValues = form.dataset.originalValues
+        ? JSON.parse(form.dataset.originalValues)
+        : {};
+
+    // Current values
+    const currentValues = {
+        title: form.querySelector(".input-project-title")?.value || "",
+        description: form.querySelector(".input-project-description")?.value || "",
+        date: form.querySelector(".input-project-date")?.value || "",
+        status: form.querySelector(".input-project-status")?.value || "",
+        tags: form.querySelector(".input-project-tags")?.value || "",
+        pdfLink: form.querySelector(".input-project-pdf-link")?.value || "",
+        projectLink: form.querySelector(".input-project-link")?.value || "",
+        fileCount: form.querySelector("#file")?.files.length || 0,
+        existingImagesCount: form.querySelectorAll(".preview-existing-images img:not([data-removed])").length
+    };
+
+    // Compare values
+    let changed = false;
+    for (let key in currentValues) {
+        if (currentValues[key] !== originalValues[key]) {
+            changed = true;
+            break;
+        }
+    }
+
+    // Enable or disable save button
+    saveBtn.disabled = !changed;
+}
+
 
 // ======================
 // SAVE EDITED PROJECT
@@ -297,6 +328,9 @@ async function saveEdit(projectId, oldData, wrapper, removedImages = []) {
     const projectLink = wrapper.querySelector(".input-project-link");
     const fileInput = wrapper.querySelector("#file");
     const errorElement = wrapper.querySelector(".error");
+
+    fileInput.addEventListener("change", checkFormChanges);
+
 
     if (!title.value.trim() || !description.value.trim() || !date.value.trim() || !status.value.trim()) {
         errorElement.style.display = "flex";
