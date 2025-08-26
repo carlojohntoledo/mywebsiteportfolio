@@ -1,27 +1,27 @@
-function renderRecentProjects(projects) {
+
+// =============================================================
+// ✅ Render Recent Projects Panel
+// =============================================================
+function renderRecentProjects(projectsArray) {
     const listContainer = document.querySelector(".recent-projects-list");
     if (!listContainer) return;
 
-    listContainer.innerHTML = ""; // reset
+    listContainer.innerHTML = ""; // clear old
 
-    // Sort by date (latest first)
-    const sortedProjects = [...projects].sort((a, b) => b.updatedAt - a.updatedAt);
+    // Take up to 4 most recent (already sorted by Firestore query)
+    const recent = projectsArray.slice(0, 4);
 
-    // Take up to 4 recent projects
-    sortedProjects.slice(0, 4).forEach(project => {
+    recent.forEach(project => {
         const a = document.createElement("a");
-        a.href = `#project-${project.id}`; // anchor link
-        a.addEventListener("click", (e) => {
-            e.preventDefault(); // prevent default jump
+        a.href = `#project-${project.id}`;
+        a.addEventListener("click", e => {
+            e.preventDefault();
             const target = document.getElementById(`project-${project.id}`);
-            if (target) {
-                // scroll smoothly, center the target in viewport
-                target.scrollIntoView({ behavior: "smooth", block: "center" });
-            }
+            if (target) target.scrollIntoView({ behavior: "smooth", block: "center" });
         });
 
         const li = document.createElement("li");
-        li.textContent = project.title;
+        li.textContent = project.title || "Untitled Project";
 
         a.appendChild(li);
         listContainer.appendChild(a);
