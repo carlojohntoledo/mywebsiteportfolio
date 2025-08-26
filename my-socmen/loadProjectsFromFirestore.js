@@ -21,7 +21,8 @@ function getImageUrl(item) {
 // --- Helper: random pastel color for tag chips ---
 function getRandomPastelColor() {
     const colors = [
-        "var(--pastel-blue)", "var(--pastel-red)", "var(--pastel-orange)", "var(--pastel-yellow)", "var(--pastel-green)"
+        "var(--pastel-blue)", "var(--pastel-red)", "var(--pastel-orange)", 
+        "var(--pastel-yellow)", "var(--pastel-green)"
     ];
     return colors[Math.floor(Math.random() * colors.length)];
 }
@@ -64,10 +65,18 @@ function startCarousel(imgElement, images) {
 // ✅ MAIN FUNCTION → Load from Firestore
 // =============================================================
 async function loadProjectsFromFirestore() {
+    // --- Make sure the parent container exists in the DOM ---
     const container = document.querySelector(".project-container-parent");
-    container.innerHTML = ""; // clear old cards before re-render
+    if (!container) {
+        console.warn("⚠️ .project-container-parent not found. Skipping render.");
+        return; // ⛔ Prevents 'Cannot set properties of null' error
+    }
 
-    showLoader(); // 🔵 Show loader while fetching projects
+    // --- Clear out old cards before re-rendering ---
+    container.innerHTML = "";
+
+    // 🔵 Show loader while fetching projects
+    showLoader();
 
     try {
         // Pull all projects: pinned first, newest on top
@@ -230,6 +239,9 @@ async function loadProjectsFromFirestore() {
 document.addEventListener("DOMContentLoaded", loadProjectsFromFirestore);
 
 
+// =============================================================
+// ✅ Sort cards: pinned first, newest date next
+// =============================================================
 function postSorter() {
     const parent = document.querySelector('.project-container-parent');
     if (!parent) return;
