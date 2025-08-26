@@ -69,3 +69,23 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 });
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    // ✅ Render recent projects panel on any page
+    renderRecentProjects("projects");
+
+    // ✅ Smooth scroll if URL has a hash (works on projects.html)
+    const hash = window.location.hash;
+    if (hash) {
+        const target = document.querySelector(hash);
+        if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "center" });
+
+            // Optional: highlight
+            target.style.transition = "background 0.5s";
+            target.style.backgroundColor = "rgba(255,255,0,0.3)";
+            setTimeout(() => { target.style.backgroundColor = ""; }, 1500);
+        }
+    }
+});
