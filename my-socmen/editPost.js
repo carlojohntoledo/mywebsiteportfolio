@@ -77,6 +77,7 @@ async function openEditForm(projectId) {
         wrapper.classList.add("edit-card-container-parent");
         wrapper.style.display = "block";
 
+        // Inject the edit form
         wrapper.innerHTML = `
             <div class="edit-project-container">
                 <div class="edit-project-form-container">
@@ -96,19 +97,19 @@ async function openEditForm(projectId) {
                     <div class="edit-project-form-viewport scroll-fade">
                         <form id="edit-project-form">
 
-                            <!-- EDIT PROJECT TITLE CONTAINER -->
+                            <!-- PROJECT TITLE -->
                             <div class="edit-project-containers project-label">
                                 <input class="input-project-title" type="text" required>
                                 <label>Project Title*</label>
                             </div>
 
-                            <!--  edit PROJECT DESCRIPTION CONTAINER -->
+                            <!-- PROJECT DESCRIPTION -->
                             <div class="edit-project-containers project-label">
                                 <textarea class="input-project-description" required></textarea>
                                 <label>Project Description*</label>
                             </div>
 
-                            <!-- EDIT PROJECT DETAILS CONTAINER -->
+                            <!-- PROJECT DETAILS -->
                             <div class="flex-container">
                                 <div class="edit-project-containers project-label">
                                     <input class="input-project-date" type="date" required>
@@ -124,13 +125,13 @@ async function openEditForm(projectId) {
                                 </div>
                             </div>
 
-                            <!-- EDIT PROJECT TAGS CONTAINER -->
+                            <!-- PROJECT TAGS -->
                             <div class="edit-project-containers project-label">
                                 <input class="input-project-tags" placeholder="html, css, js..." type="text">
                                 <label>Project Tags</label>
                             </div>
 
-                            <!-- EDIT PROJECT ADD-ONS CONTAINER -->
+                            <!-- ADD-ONS -->
                             <div class="flex-container">
                                 <div class="edit-project-containers project-label">
                                     <div class="pdf-upload">
@@ -144,7 +145,7 @@ async function openEditForm(projectId) {
                                 </div>
                             </div>
 
-                            <!-- EDIT PROJECT IMAGE CONTAINER -->
+                            <!-- IMAGE UPLOAD -->
                             <div class="edit-project-image-container">
                                 <h1>Add Photos</h1>
                                 <div class="file-upload-form">
@@ -173,6 +174,24 @@ async function openEditForm(projectId) {
 
         const saveBtn = wrapper.querySelector("#save-edit-btn");
 
+        // ✅ Get form inputs
+        const titleInput = wrapper.querySelector(".input-project-title");
+        const descInput = wrapper.querySelector(".input-project-description");
+        const dateInput = wrapper.querySelector(".input-project-date");
+        const statusInput = wrapper.querySelector(".input-project-status");
+        const tagsInput = wrapper.querySelector(".input-project-tags");
+        const pdfLinkInput = wrapper.querySelector(".input-project-pdf-link");
+        const projectLinkInput = wrapper.querySelector(".input-project-link");
+
+        // ✅ Prefill inputs with existing data
+        titleInput.value = data.title || "";
+        descInput.value = data.description || "";
+        dateInput.value = data.date || "";
+        statusInput.value = data.status || "Published";
+        tagsInput.value = data.tags ? data.tags.join(", ") : "";
+        pdfLinkInput.value = data.pdfLink || "";
+        projectLinkInput.value = data.projectLink || "";
+
         // ✅ Track removed images (publicIds)
         const removedImages = [];
 
@@ -197,10 +216,7 @@ async function openEditForm(projectId) {
                     filePreview.remove();
                     image.dataset.removed = "true";
 
-                    // ✅ store publicId for later deletion
-                    if (img.publicId) {
-                        removedImages.push(img.publicId);
-                    }
+                    if (img.publicId) removedImages.push(img.publicId);
 
                     checkFormChanges();
                 });
@@ -212,17 +228,56 @@ async function openEditForm(projectId) {
             });
         }
 
-        // ✅ Cancel button (does not delete anything, just discard)
+        // ======================
+        // Cancel button
+        // ======================
         wrapper.querySelector("#cancel-edit-btn").addEventListener("click", () => {
-            wrapper.remove(); // removedImages array is discarded here
+            wrapper.remove();
         });
 
-        // ✅ Save button
+        // ======================
+        // Save button
+        // ======================
         saveBtn.addEventListener("click", async () => {
             await saveEdit(projectId, data, wrapper, removedImages);
         });
 
-        // ... checkFormChanges + input listeners (same as before) ...
+        // ======================
+        // Detect changes in form
+        // ======================
+        function checkFormChanges() {
+            const currentValues = {
+                title: titleInput.value,
+                description: descInput.value,
+                date: dateInput.value,
+                status: statusInput.value,
+                tags: tagsInput.value,
+                pdfLink: pdfLinkInput.value,
+                projectLink: projectLinkInput.value
+            };
+
+            const originalValues = {
+                title: data.title || "",
+                description: data.description || "",
+                date: data.date || "",
+                status: data.status || "Published",
+                tags: data.tags ? data.tags.join(", ") : "",
+                pdfLink: data.pdfLink || "",
+                projectLink: data.projectLink || ""
+            };
+
+            const filesChanged = wrapper.querySelector("#file").files.length > 0;
+            const imagesRemoved = removedImages.length > 0;
+
+            // Compare JSON stringified objects for changes
+            const hasChanged = JSON.stringify(currentValues) !== JSON.stringify(originalValues) || filesChanged || imagesRemoved;
+
+            saveBtn.disabled = !hasChanged;
+        }
+
+        // Add input listeners to detect changes
+        [titleInput, descInput, dateInput, statusInput, tagsInput, pdfLinkInput, projectLinkInput]
+            .forEach(input => input.addEventListener("input", checkFormChanges));
 
     } catch (err) {
         console.error("❌ Error opening edit form:", err);
@@ -252,7 +307,7 @@ async function saveEdit(projectId, oldData, wrapper, removedImages = []) {
     try {
         showLoader();
 
-        // ✅ Delete removed images from Cloudinary first
+        // ✅ Delete removed images from Cloudinary
         for (const publicId of removedImages) {
             await deleteFromCloudinary(publicId);
         }
@@ -260,7 +315,7 @@ async function saveEdit(projectId, oldData, wrapper, removedImages = []) {
         // ✅ Tags
         const tagsArray = tagsInput.value.split(",").map(tag => tag.trim()).filter(Boolean);
 
-        // 1. Handle existing images (skip removed ones)
+        // 1. Keep existing images (skip removed ones)
         let updatedImages = (oldData.images || []).filter(img => {
             const imgEl = [...wrapper.querySelectorAll(".preview-existing-images img")]
                 .find(el => el.src === img.imageUrl);
