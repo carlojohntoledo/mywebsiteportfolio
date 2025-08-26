@@ -54,27 +54,27 @@ function renderRecentProjects(collectionName) {
 document.addEventListener("DOMContentLoaded", async () => {
     const hash = window.location.hash;
 
-    // Only scroll if on projects page
-    if (window.location.pathname.endsWith("projects.html") && hash) {
-        showLoader(); // 🔵 show loader immediately
+    if (window.location.pathname.endsWith("projects.html")) {
+        showLoader();
 
-        // Wait until projects are loaded (assumes loadProjectsFromFirestore returns a Promise)
+        // Wait for projects to render once
         await loadProjectsFromFirestore();
 
-        // Scroll to the target project
-        const target = document.querySelector(hash);
-        if (target) {
-            target.scrollIntoView({ behavior: "smooth", block: "center" });
-
-            // Optional: highlight briefly
-            target.style.transition = "background 0.5s";
-            target.style.backgroundColor = "rgba(255,255,0,0.3)";
-            setTimeout(() => { target.style.backgroundColor = ""; }, 1500);
+        // Scroll if hash exists
+        if (hash) {
+            const target = document.querySelector(hash);
+            if (target) {
+                target.scrollIntoView({ behavior: "smooth", block: "center" });
+                target.style.transition = "background 0.5s";
+                target.style.backgroundColor = "rgba(255,255,0,0.3)";
+                setTimeout(() => target.style.backgroundColor = "", 1500);
+            }
         }
 
-        hideLoader(); // 🟢 hide loader after scroll
+        hideLoader();
     }
 
     // Always render recent projects list
     renderRecentProjects("projects");
 });
+

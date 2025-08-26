@@ -65,6 +65,8 @@ async function loadProjectsFromFirestore() {
         return;
     }
 
+    if (!container) return Promise.resolve();
+
     container.innerHTML = "";
     showLoader(); // 🔵 Show loader while fetching projects
 
@@ -205,6 +207,7 @@ async function loadProjectsFromFirestore() {
         postSorter();
         renderRecentProjects("projects");
 
+        return Promise.resolve();
     } catch (err) {
         console.error("Error loading projects:", err);
     } finally {
