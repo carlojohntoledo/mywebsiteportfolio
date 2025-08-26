@@ -162,8 +162,8 @@ async function loadProjectsFromFirestore() {
 
                         <!-- Addons -->
                         <div class="addons-container">
-                            ${data.pdfLink ? `<a href="${data.pdfLink}" class="project-pdf-download" target="_blank">Download PDF</a>` : ""}
-                            ${data.projectLink ? `<a href="${data.projectLink}" class="project-link" target="_blank">Live Demo</a>` : ""}
+                            ${data.pdfLinkVaue ? `<a href="${data.pdfLinkValue}" class="project-pdf-download" target="_blank">Download PDF</a>` : ""}
+                            ${data.projectLinkValue ? `<a href="${data.projectLinkValue}" class="project-link" target="_blank">Live Demo</a>` : ""}
                         </div>
                     </div>
                 </div>
