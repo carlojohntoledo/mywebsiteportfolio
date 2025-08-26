@@ -1,12 +1,8 @@
 // create post toggle
 // Show "Create Project" form
-document.getElementById('create-new-post').addEventListener('click', function () {
+document.getElementById('create-new-project').addEventListener('click', function () {
     const postCard = document.querySelector('.create-card-container-parent');
     postCard.style.display = 'grid';
-
-    // Reset all input fields
-    const form = postCard.querySelector('#create-project-form');
-    form.reset(); // resets text inputs, textareas, selects
 
     // Clear file previews
     const previewContainer = postCard.querySelector('#file-preview-container');
