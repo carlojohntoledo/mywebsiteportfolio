@@ -9,7 +9,7 @@
     display: grid;
     grid-template-columns: 100%;
     position: fixed;
-    z-index: 999;
+    z-index: 990;
     background-color: rgba(0, 0, 0, 0.8);
     /* display: none; */
 }
