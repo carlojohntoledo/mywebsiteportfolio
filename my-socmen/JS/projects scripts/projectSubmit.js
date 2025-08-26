@@ -57,6 +57,7 @@ function previewImages(event) {
     });
 }
 
+
 // ======================
 // SUBMIT POST HANDLER
 // ======================
@@ -181,6 +182,7 @@ async function SubmitPost() {
             e.target.textContent = text.classList.contains("expanded") ? "See Less" : "See More";
         }
     });
+
 }
 
 SubmitPost();

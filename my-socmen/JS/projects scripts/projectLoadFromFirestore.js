@@ -226,6 +226,8 @@ async function loadProjectsFromFirestore() {
         // ✅ After rendering all, sort DOM for safety
         postSorter();
 
+        renderRecentProjects(projects);
+
     } catch (err) {
         console.error("Error loading projects:", err);
     } finally {

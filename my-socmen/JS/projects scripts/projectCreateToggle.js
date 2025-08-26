@@ -17,3 +17,8 @@ document.getElementById('cancel-btn').addEventListener('click', function () {
     const postCard = document.querySelector('.create-card-container-parent');
     postCard.style.display = 'none';
 });
+
+document.querySelector('.error__close').addEventListener("click", function (e) {
+        const errorElement = document.querySelector(".error");
+        errorElement.style.display="none";
+    });
