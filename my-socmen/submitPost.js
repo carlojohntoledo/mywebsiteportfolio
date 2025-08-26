@@ -1,6 +1,4 @@
-// ======================
 // SUBMIT POST JS
-// ======================
 
 // --- Safe fallbacks so submitPost.js never crashes ---
 window.showLoader = window.showLoader || function () {
@@ -14,23 +12,14 @@ window.hideLoader = window.hideLoader || function () {
 
 // ======================
 // IMAGE PREVIEW HANDLER
-// - Works for both Create and Edit
-// - Create Mode: only new images
-// - Edit Mode: separate "existing" and "new" containers
 // ======================
-function previewImages(event, isEditMode = false) {
+function previewImages(event) {
     const files = event.target.files;
-
-    // NEW images go inside this container
-    const newPreviewContainer = document.querySelector(".preview-new-images");
-
-    // In CREATE mode, clear old previews before adding new ones
-    if (!isEditMode) {
-        newPreviewContainer.innerHTML = "";
-    }
+    const previewContainer = document.querySelector(".file-preview-container");
+    previewContainer.innerHTML = "";
 
     Array.from(files).forEach((file, index) => {
-        if (!file.type.startsWith("image/")) return; // only allow images
+        if (!file.type.startsWith("image/")) return; // only preview images
 
         const reader = new FileReader();
         reader.onload = function (e) {
@@ -44,14 +33,14 @@ function previewImages(event, isEditMode = false) {
             img.src = e.target.result;
             img.alt = `Preview ${index + 1}`;
 
-            // ❌ Remove button for new previews
+            // ❌ Remove preview button
             const removeBtn = document.createElement("button");
             removeBtn.classList.add("remove-preview");
             removeBtn.innerHTML = "&times;";
             removeBtn.addEventListener("click", function () {
                 filePreview.remove();
 
-                // Update <input type="file"> list when removed
+                // Update FileList in <input type="file">
                 const dt = new DataTransfer();
                 Array.from(files)
                     .filter((_, i) => i !== index)
@@ -62,52 +51,14 @@ function previewImages(event, isEditMode = false) {
             imgWrapper.appendChild(img);
             filePreview.appendChild(imgWrapper);
             filePreview.appendChild(removeBtn);
-            newPreviewContainer.appendChild(filePreview);
+            previewContainer.appendChild(filePreview);
         };
         reader.readAsDataURL(file);
     });
 }
 
 // ======================
-// SHOW EXISTING IMAGES (Edit Mode)
-// - Displays images already stored in Firestore/Cloudinary
-// - Adds a ❌ remove button that just flags them for deletion
-// ======================
-function showExistingImages(existingImages = []) {
-    const existingPreviewContainer = document.querySelector(".preview-existing-images");
-    existingPreviewContainer.innerHTML = ""; // clear before populating
-
-    existingImages.forEach((imgObj, index) => {
-        const filePreview = document.createElement("div");
-        filePreview.classList.add("file-preview");
-
-        const imgWrapper = document.createElement("div");
-        imgWrapper.classList.add("image-preview");
-
-        const img = document.createElement("img");
-        img.src = imgObj.imageUrl;
-        img.alt = `Existing ${index + 1}`;
-
-        // ❌ Remove button for existing images
-        const removeBtn = document.createElement("button");
-        removeBtn.classList.add("remove-preview");
-        removeBtn.innerHTML = "&times;";
-        removeBtn.addEventListener("click", function () {
-            filePreview.remove();
-
-            // Mark this image as "removed" (handled later in edit save)
-            imgObj._deleted = true;
-        });
-
-        imgWrapper.appendChild(img);
-        filePreview.appendChild(imgWrapper);
-        filePreview.appendChild(removeBtn);
-        existingPreviewContainer.appendChild(filePreview);
-    });
-}
-
-// ======================
-// SUBMIT POST HANDLER (CREATE MODE)
+// SUBMIT POST HANDLER
 // ======================
 async function SubmitPost() {
     document.getElementById("post-btn").addEventListener("click", async function () {
@@ -133,7 +84,7 @@ async function SubmitPost() {
         const parentContainer = document.querySelector(".project-container-parent");
         parentContainer.style.display = "grid";
 
-        // ✅ Convert tags string → array
+        // ✅ Tags: comma-separated string → array
         const tagsArray = tagsInput.value.split(",").map(tag => tag.trim()).filter(Boolean);
 
         console.log("📱 Submitting post...");
@@ -142,13 +93,13 @@ async function SubmitPost() {
             if (typeof showLoader === "function") showLoader();
 
             // ======================
-            // 1. UPLOAD NEW IMAGES
+            // 1. UPLOAD IMAGES
             // ======================
             const files = Array.from(fileInput.files);
             const uploadedImages = [];
 
             for (const file of files) {
-                // 🔹 Step 1: compress image before upload
+                // 🔹 Step 1: compress
                 const compressedFile = await compressImage(file);
 
                 // 🔹 Step 2: upload to Cloudinary
@@ -177,7 +128,7 @@ async function SubmitPost() {
                 status: status.value,
                 date: date.value,
                 tags: tagsArray,
-                images: uploadedImages, // in create mode only new uploads
+                images: uploadedImages, // array of { imageUrl, publicId }
                 pdfLink: pdfLink.value,
                 projectLink: projectLink.value,
                 pinned: false,
@@ -200,8 +151,7 @@ async function SubmitPost() {
             fileInput.value = "";
             pdfLink.value = "";
             projectLink.value = "";
-            document.querySelector(".preview-new-images").innerHTML = "";
-            document.querySelector(".preview-existing-images").innerHTML = "";
+            document.querySelector(".file-preview-container").innerHTML = "";
 
         } catch (err) {
             console.error("❌ Error submitting project:", err);

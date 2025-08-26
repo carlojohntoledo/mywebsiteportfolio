@@ -1,57 +1,26 @@
-// ==========================
-// editPost.js (EDIT MODE)
-// ==========================
+// ======================
+// EDIT POST JS
+// ======================
 
-// Global arrays to track images in Edit mode
-let existingImages = []; // holds images already saved in Firestore
-let newFiles = [];       // holds files newly added during editing
+// --- Safe fallbacks so editPost.js never crashes ---
+window.showLoader = window.showLoader || function () {
+    const loader = document.querySelector('.loader-container');
+    if (loader) loader.style.display = 'flex';
+};
+window.hideLoader = window.hideLoader || function () {
+    const loader = document.querySelector('.loader-container');
+    if (loader) loader.style.display = 'none';
+};
 
-// ---------------------------------------
-// Helper: Render existing images (old ones)
-// ---------------------------------------
-function showExistingImages(images) {
-    const container = document.querySelector(".preview-existing-images");
-    container.innerHTML = ""; // clear old previews
-    existingImages = [...images]; // copy to global
+// ======================
+// IMAGE PREVIEW HANDLER FOR EDIT FORM
+// ======================
+function previewEditImages(event) {
+    const files = event.target.files;
+    const previewContainer = document.querySelector(".preview-new-images");
+    previewContainer.innerHTML = ""; // reset only "new" previews
 
-    images.forEach((img, index) => {
-        const filePreview = document.createElement("div");
-        filePreview.classList.add("file-preview");
-
-        const imgWrapper = document.createElement("div");
-        imgWrapper.classList.add("image-preview");
-
-        const imageEl = document.createElement("img");
-        imageEl.src = img.imageUrl;
-        imageEl.alt = `Existing ${index + 1}`;
-
-        // ❌ Remove button for existing images
-        const removeBtn = document.createElement("button");
-        removeBtn.classList.add("remove-preview");
-        removeBtn.innerHTML = "&times;";
-        removeBtn.addEventListener("click", function () {
-            filePreview.remove();
-
-            // Remove from global existingImages
-            existingImages = existingImages.filter((_, i) => i !== index);
-        });
-
-        imgWrapper.appendChild(imageEl);
-        filePreview.appendChild(imgWrapper);
-        filePreview.appendChild(removeBtn);
-        container.appendChild(filePreview);
-    });
-}
-
-// ---------------------------------------
-// Helper: Render newly added files
-// ---------------------------------------
-function showNewImages(files) {
-    const container = document.querySelector(".preview-new-images");
-    container.innerHTML = ""; // always refresh to avoid duplication
-    newFiles = [...files]; // save to global
-
-    newFiles.forEach((file, index) => {
+    Array.from(files).forEach((file, index) => {
         if (!file.type.startsWith("image/")) return;
 
         const reader = new FileReader();
@@ -64,149 +33,210 @@ function showNewImages(files) {
 
             const img = document.createElement("img");
             img.src = e.target.result;
-            img.alt = `New ${index + 1}`;
+            img.alt = `Preview ${index + 1}`;
 
-            // ❌ Remove button for new images
+            // ❌ Remove preview button
             const removeBtn = document.createElement("button");
             removeBtn.classList.add("remove-preview");
             removeBtn.innerHTML = "&times;";
             removeBtn.addEventListener("click", function () {
                 filePreview.remove();
 
-                // Remove from global newFiles
-                newFiles = newFiles.filter((_, i) => i !== index);
-                showNewImages(newFiles); // re-render updated list
+                // Update FileList in <input type="file">
+                const dt = new DataTransfer();
+                Array.from(files)
+                    .filter((_, i) => i !== index)
+                    .forEach((f) => dt.items.add(f));
+                event.target.files = dt.files;
             });
 
             imgWrapper.appendChild(img);
             filePreview.appendChild(imgWrapper);
             filePreview.appendChild(removeBtn);
-            container.appendChild(filePreview);
+            previewContainer.appendChild(filePreview);
         };
         reader.readAsDataURL(file);
     });
 }
 
-// ---------------------------------------
-// Open Edit Form
-// ---------------------------------------
+// ======================
+// OPEN EDIT FORM
+// ======================
 async function openEditForm(projectId) {
     try {
         const doc = await db.collection("projects").doc(projectId).get();
-        if (!doc.exists) return;
+        if (!doc.exists) return alert("Project not found!");
 
-        const project = doc.data();
+        const data = doc.data();
 
-        // 1. Show edit form
-        const form = document.querySelector(".create-card-container-parent");
-        form.style.display = "block";
+        // 🔹 Inject the full edit form directly
+        const section = document.querySelector(".project-section");
+        section.innerHTML = `
+            <div class="edit-card-container-parent">
+                <div class="edit-card-container">
+                    <h2>Edit Project</h2>
+                    <div class="error">All required fields must be filled</div>
 
-        // 2. Fill input values
-        document.querySelector(".input-project-title").value = project.title || "";
-        document.querySelector(".input-project-description").value = project.description || "";
-        document.querySelector(".input-project-date").value = project.date || "";
-        document.querySelector(".input-project-status").value = project.status || "";
-        document.querySelector(".input-project-tags").value = (project.tags || []).join(", ");
-        document.querySelector(".input-project-pdf-link").value = project.pdfLink || "";
-        document.querySelector(".input-project-link").value = project.projectLink || "";
+                    <input type="text" class="input-project-title" placeholder="Project Title" />
+                    <textarea class="input-project-description" placeholder="Project Description"></textarea>
+                    <input type="date" class="input-project-date" />
+                    
+                    <select class="input-project-status">
+                        <option value="Published">Published</option>
+                        <option value="Draft">Draft</option>
+                    </select>
+                    
+                    <input type="text" class="input-project-tags" placeholder="Tags (comma separated)" />
+                    <input type="url" class="input-project-pdf-link" placeholder="PDF Link" />
+                    <input type="url" class="input-project-link" placeholder="Project Link" />
 
-        // 3. Switch form to "Edit" mode
-        const titleElement = document.querySelector(".card-title");
-        titleElement.textContent = "Edit Post";
-        postBtn.textContent = "Save";
+                    <!-- ✅ File input for new uploads -->
+                    <input type="file" id="file" multiple accept="image/*" onchange="previewEditImages(event)" />
 
-        // 4. Load existing images
-        showExistingImages(project.images || []);
+                    <!-- ✅ Two separate preview containers -->
+                    <div class="preview-existing-images"></div>
+                    <div class="preview-new-images"></div>
 
-        // 5. Reset new images container
-        document.querySelector(".preview-new-images").innerHTML = "";
-        newFiles = [];
+                    <!-- Action buttons -->
+                    <div class="edit-actions">
+                        <button id="save-edit-btn">Save</button>
+                        <button id="cancel-edit-btn">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        `;
 
-        // 6. Handle Save button (update Firestore)
+        // ✅ Fill in existing values
+        document.querySelector(".input-project-title").value = data.title || "";
+        document.querySelector(".input-project-description").value = data.description || "";
+        document.querySelector(".input-project-date").value = data.date || "";
+        document.querySelector(".input-project-status").value = data.status || "Published";
+        document.querySelector(".input-project-tags").value = data.tags ? data.tags.join(", ") : "";
+        document.querySelector(".input-project-pdf-link").value = data.pdfLink || "";
+        document.querySelector(".input-project-link").value = data.projectLink || "";
 
-        // Get the existing button element
-        const oldBtn = document.getElementById("post-btn");
+        // ✅ Show existing images
+        const existingPreviewContainer = document.querySelector(".preview-existing-images");
+        existingPreviewContainer.innerHTML = "";
+        if (data.images && data.images.length > 0) {
+            data.images.forEach((img, index) => {
+                const filePreview = document.createElement("div");
+                filePreview.classList.add("file-preview");
 
-        // Clone it to remove ALL old event listeners (from create mode)
-        const clonedBtn = oldBtn.cloneNode(true);
+                const imgWrapper = document.createElement("div");
+                imgWrapper.classList.add("image-preview");
 
-        // Replace the old button in the DOM with the clean clone
-        oldBtn.parentNode.replaceChild(clonedBtn, oldBtn);
+                const image = document.createElement("img");
+                image.src = img.imageUrl;
+                image.alt = `Existing ${index + 1}`;
 
-        // Now safely re-select it
-        const postBtn = document.getElementById("post-btn");
-
-        // Change label to "Save"
-        postBtn.textContent = "Save";
-
-        // Assign new onclick for UPDATE
-        postBtn.onclick = async function () {
-            const title = document.querySelector(".input-project-title").value.trim();
-            const description = document.querySelector(".input-project-description").value.trim();
-            const date = document.querySelector(".input-project-date").value.trim();
-            const status = document.querySelector(".input-project-status").value.trim();
-            const tagsInput = document.querySelector(".input-project-tags").value.trim();
-            const pdfLink = document.querySelector(".input-project-pdf-link").value.trim();
-            const projectLink = document.querySelector(".input-project-link").value.trim();
-
-            const tagsArray = tagsInput.split(",").map(tag => tag.trim()).filter(Boolean);
-
-            try {
-                if (typeof showLoader === "function") showLoader();
-
-                // 1. Upload new images
-                const uploadedNewImages = [];
-                for (const file of newFiles) {
-                    const compressed = await compressImage(file);
-                    const result = await uploadToCloudinary(compressed);
-                    if (result) {
-                        uploadedNewImages.push({
-                            imageUrl: result.imageUrl,
-                            publicId: result.publicId
-                        });
-                    }
-                }
-
-                // 2. Merge existing + new
-                const finalImages = [...existingImages, ...uploadedNewImages];
-
-                // 3. Update Firestore (no new doc created)
-                await db.collection("projects").doc(projectId).update({
-                    title,
-                    description,
-                    status,
-                    date,
-                    tags: tagsArray,
-                    images: finalImages,
-                    pdfLink,
-                    projectLink,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                // ❌ Remove existing image
+                const removeBtn = document.createElement("button");
+                removeBtn.classList.add("remove-preview");
+                removeBtn.innerHTML = "&times;";
+                removeBtn.addEventListener("click", function () {
+                    filePreview.remove();
+                    image.dataset.removed = "true"; // mark for removal
                 });
 
-                console.log("✅ Project updated:", projectId);
+                imgWrapper.appendChild(image);
+                filePreview.appendChild(imgWrapper);
+                filePreview.appendChild(removeBtn);
+                existingPreviewContainer.appendChild(filePreview);
+            });
+        }
 
-                // Reload + close
-                await loadProjectsFromFirestore();
-                form.style.display = "none";
-
-            } catch (err) {
-                console.error("❌ Error saving project:", err);
-                alert("Error: " + err.message);
-            } finally {
-                if (typeof hideLoader === "function") hideLoader();
-            }
-        };
-
-
-
-        // 7. Bind file input for new images
-        const fileInput = document.getElementById("file");
-        fileInput.onchange = function (e) {
-            const files = Array.from(e.target.files);
-            showNewImages(files);
-        };
+        // ✅ Buttons
+        document.getElementById("cancel-edit-btn").addEventListener("click", () => {
+            section.innerHTML = ""; // close form
+            loadProjectsFromFirestore();
+        });
+        document.getElementById("save-edit-btn").addEventListener("click", () => saveEdit(projectId, data));
 
     } catch (err) {
         console.error("❌ Error opening edit form:", err);
+    }
+}
+
+
+
+// ======================
+// SAVE EDITED PROJECT
+// ======================
+async function saveEdit(projectId, oldData) {
+    const title = document.querySelector(".input-project-title");
+    const description = document.querySelector(".input-project-description");
+    const date = document.querySelector(".input-project-date");
+    const status = document.querySelector(".input-project-status");
+    const tagsInput = document.querySelector(".input-project-tags");
+    const pdfLink = document.querySelector(".input-project-pdf-link");
+    const projectLink = document.querySelector(".input-project-link");
+    const fileInput = document.getElementById("file");
+    const errorElement = document.querySelector(".error");
+
+    // ❌ Stop if required fields are empty
+    if (!title.value.trim() || !description.value.trim() || !date.value.trim() || !status.value.trim()) {
+        errorElement.style.display = "flex";
+        return;
+    }
+    errorElement.style.display = "none";
+
+    try {
+        if (typeof showLoader === "function") showLoader();
+
+        // ✅ Tags: comma-separated → array
+        const tagsArray = tagsInput.value.split(",").map(tag => tag.trim()).filter(Boolean);
+
+        // ======================
+        // 1. Handle existing images
+        // ======================
+        let updatedImages = (oldData.images || []).filter(img => {
+            const imgEl = [...document.querySelectorAll(".preview-existing-images img")].find(el => el.src === img.imageUrl);
+            return imgEl && !imgEl.dataset.removed; // keep if not removed
+        });
+
+        // ======================
+        // 2. Upload new images
+        // ======================
+        const files = Array.from(fileInput.files);
+        for (const file of files) {
+            const compressedFile = await compressImage(file);
+            const result = await uploadToCloudinary(compressedFile);
+            if (result) {
+                updatedImages.push({
+                    imageUrl: result.imageUrl,
+                    publicId: result.publicId
+                });
+            }
+        }
+
+        // ======================
+        // 3. Update Firestore
+        // ======================
+        await db.collection("projects").doc(projectId).update({
+            title: title.value,
+            description: description.value,
+            status: status.value,
+            date: date.value,
+            tags: tagsArray,
+            images: updatedImages,
+            pdfLink: pdfLink.value,
+            projectLink: projectLink.value,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        console.log("✅ Project updated:", projectId);
+
+        // ======================
+        // 4. Reload + close form
+        // ======================
+        document.querySelector(".edit-card-container-parent").style.display = "none";
+        await loadProjectsFromFirestore();
+
+    } catch (err) {
+        console.error("❌ Error saving edit:", err);
+        alert("Error: " + err.message);
+    } finally {
+        if (typeof hideLoader === "function") hideLoader();
     }
 }
