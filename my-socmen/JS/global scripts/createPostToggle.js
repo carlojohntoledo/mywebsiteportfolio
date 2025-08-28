@@ -128,7 +128,7 @@ function getFormTemplate(page) {
                             <p>Drag and Drop</p>
                             <p>or</p>
                             <span class="browse-button">Browse file</span>
-                            <input id="file" type="file" multiple accept="image/*" onchange="previewImages(event, 'activity-preview')" />
+                            <input id="file" type="file" multiple accept="image/*" onchange="previewImages(event, '#activity-preview')" />
                         </div>
                         </label>
                     </div>
@@ -236,7 +236,7 @@ function getFormTemplate(page) {
                             <p>Drag and Drop</p>
                             <p>or</p>
                             <span class="browse-button">Browse file</span>
-                            <input id="file" type="file" multiple accept="image/*" onchange="previewImages(event, 'service-preview')" />
+                            <input id="file" type="file" multiple accept="image/*" onchange="previewImages(event, '#service-preview')" />
                         </div>
                         </label>
                     </div>
@@ -344,7 +344,7 @@ function getFormTemplate(page) {
                             <p>Drag and Drop</p>
                             <p>or</p>
                             <span class="browse-button">Browse file</span>
-                            <input id="file" type="file" multiple accept="image/*" onchange="previewImages(event, 'project-preview')" />
+                            <input id="file" type="file" multiple accept="image/*" onchange="previewImages(event, '#project-preview')" />
                         </div>
                         </label>
                     </div>
