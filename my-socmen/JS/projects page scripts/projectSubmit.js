@@ -7,12 +7,12 @@ function initSubmitHandlers(page) {
     const postBtn = document.getElementById(postBtnId);
     if (!postBtn) return; // button not found
 
-    // ✅ Remove old listeners by replacing with a clone
-    const newBtn = postBtn.cloneNode(true);
-    postBtn.parentNode.replaceChild(newBtn, postBtn);
+    // ✅ Remove old listener if exists
+    postBtn.replaceWith(postBtn.cloneNode(true));
+    const freshBtn = document.getElementById(postBtnId);
 
-    // ✅ Attach click listener
-    newBtn.addEventListener("click", async (e) => {
+    // ✅ Attach click listener once
+    freshBtn.addEventListener("click", async (e) => {
         e.preventDefault();
         console.log(`📌 ${page.toUpperCase()} post button clicked`);
 
@@ -96,7 +96,7 @@ function initSubmitHandlers(page) {
             // ======================
             // 3. Reload + Clear Form
             // ======================
-            await loadPostsFromFirestore(page); // ✅ unified loader
+            await loadPostsFromFirestore(page);
 
             title.value = "";
             description.value = "";
