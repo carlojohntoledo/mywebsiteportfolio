@@ -1,5 +1,5 @@
 
-document.querySelector('.project-section').addEventListener('click', function (e) {
+document.querySelector('.projects-section').addEventListener('click', function (e) {
     if (e.target.id === 'theme-toggle') {
         const body = document.body;
         body.classList.toggle('light-theme');
