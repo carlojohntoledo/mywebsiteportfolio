@@ -51,3 +51,9 @@ async function saveProjectToFirestore(projectData) {
         return null;
     }
 }
+
+// 🔧 Global helper
+function getPageContainer() {
+  const page = document.body.dataset.page; // "home", "service", "project"
+  return document.querySelector(`.${page}-create-card-container-parent`);
+}
