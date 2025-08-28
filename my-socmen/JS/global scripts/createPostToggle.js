@@ -27,7 +27,7 @@ function showCreateForm() {
 }
 
 // Example: open form when clicking "Create New"
-document.getElementById("create-new-project").addEventListener("click", showCreateForm);
+document.getElementById("create-new-post").addEventListener("click", showCreateForm);
 
 
 
