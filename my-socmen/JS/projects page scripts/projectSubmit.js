@@ -6,7 +6,9 @@ async function SubmitPost() {
     const singular = page.slice(0, -1); // "project" | "service" | "activity"
 
     const postBtn = document.getElementById("post-btn");
-    if (!postBtn) return; // fail-safe
+    if (!postBtn)
+        console.warn("Post button not found");
+        return; // fail-safe
 
     // Prevent duplicate listeners
     postBtn.replaceWith(postBtn.cloneNode(true));
