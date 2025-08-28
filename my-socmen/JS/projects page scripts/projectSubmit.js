@@ -6,15 +6,17 @@ async function SubmitPost() {
     const singular = page.slice(0, -1); // "project" | "service" | "activity"
 
     const postBtn = document.getElementById("post-btn");
-    if (!postBtn)
+    if (!postBtn) {
         console.warn("Post button not found");
         return; // fail-safe
+    }
 
     // Prevent duplicate listeners
     postBtn.replaceWith(postBtn.cloneNode(true));
     const newPostBtn = document.getElementById("post-btn");
 
     newPostBtn.addEventListener("click", async function () {
+        // Grab inputs dynamically per page
         const title = document.querySelector(`.input-${singular}-title`);
         const description = document.querySelector(`.input-${singular}-description`);
         const date = document.querySelector(`.input-${singular}-date`);
@@ -38,7 +40,10 @@ async function SubmitPost() {
         if (parentContainer) parentContainer.style.display = "grid";
 
         // ✅ Tags: comma-separated string → array
-        const tagsArray = tagsInput?.value.split(",").map(tag => tag.replace(/\s+/g, '')).filter(Boolean) || [];
+        const tagsArray = tagsInput?.value
+            .split(",")
+            .map(tag => tag.replace(/\s+/g, ""))
+            .filter(Boolean) || [];
 
         // Ensure links start with https://
         const normalizeLink = (val) => {
