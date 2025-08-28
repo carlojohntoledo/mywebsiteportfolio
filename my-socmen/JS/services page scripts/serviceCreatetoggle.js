@@ -3,7 +3,7 @@
 // Create post toggle
 // ===================================================
 
-// Show "Create Project" form
+// Show "Create Service" form
 document.getElementById('create-new-service').addEventListener('click', function () {
     const postCard = getPageContainer();
     if (!postCard) return; // fail-safe

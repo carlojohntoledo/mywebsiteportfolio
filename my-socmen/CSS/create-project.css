@@ -1,6 +1,6 @@
 /* ---------- CRATE PROJECT FORM ----------- */
 
-.create-card-container-parent {
+.create-card-container-parent {  /* Common for both service and project */
     width: 100%;
     left: 0;
     top: 0;

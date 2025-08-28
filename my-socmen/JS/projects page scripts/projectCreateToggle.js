@@ -1,24 +1,31 @@
-// create post toggle
+
+// ===================================================
+// Create post toggle
+// ===================================================
+
 // Show "Create Project" form
 document.getElementById('create-new-project').addEventListener('click', function () {
-    const postCard = document.querySelector('.create-card-container-parent');
+    const postCard = getPageContainer();
+    if (!postCard) return; // fail-safe
+
     postCard.style.display = 'grid';
 
     // Clear file previews
     const previewContainer = postCard.querySelector('#file-preview-container');
-    previewContainer.innerHTML = "";
+    if (previewContainer) previewContainer.innerHTML = "";
 
     const errorElement = document.querySelector(".error");
-    errorElement.style.display = "none";
+    if (errorElement) errorElement.style.display = "none";
 });
 
-
+// Cancel button
 document.getElementById('cancel-btn').addEventListener('click', function () {
-    const postCard = document.querySelector('.create-card-container-parent');
-    postCard.style.display = 'none';
+    const postCard = getPageContainer();
+    if (postCard) postCard.style.display = 'none';
 });
 
-document.querySelector('.error__close').addEventListener("click", function (e) {
-        const errorElement = document.querySelector(".error");
-        errorElement.style.display="none";
-    });
+// Error close button
+document.querySelector('.error__close').addEventListener("click", function () {
+    const errorElement = document.querySelector(".error");
+    if (errorElement) errorElement.style.display = "none";
+});
