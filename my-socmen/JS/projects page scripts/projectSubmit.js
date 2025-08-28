@@ -72,7 +72,7 @@ async function SubmitPost() {
         const projectLink = document.querySelector(".input-project-link");
         const fileInput = document.getElementById("file");
         const errorElement = document.querySelector(".error");
-        const postCard = document.querySelector(".create-card-container-parent");
+        const postCard = getPageContainer();
 
         // ❌ Stop if required fields are empty
         if (!title.value.trim() || !description.value.trim() || !date.value.trim() || !status.value.trim()) {
