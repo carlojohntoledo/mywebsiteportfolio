@@ -5,7 +5,7 @@ async function SubmitPost() {
     const page = document.body.dataset.page; // "projects" | "services" | "activities"
     const singular = page.slice(0, -1); // "project" | "service" | "activity"
 
-    const postBtn = document.getElementById("post-btn");
+    const postBtn = document.querySelector(`#${page}-post-btn, #post-btn`);
     if (!postBtn) {
         console.warn("Post button not found");
         return; // fail-safe

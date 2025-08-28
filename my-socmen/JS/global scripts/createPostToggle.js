@@ -41,7 +41,7 @@ function getFormTemplate(page) {
                 <div class="create-${page}-header">
                 <h1 class="card-title">Create ${type.slice(0, -1)}</h1>
                 <span class="create-${page}-button-container red-btn" id="cancel-btn">Cancel</span>
-                <span class="create-${page}-button-container green-btn" id="post-btn">Post</span>
+                <span class="create-${page}-button-container green-btn" id="activities-post-btn">Post</span>
                 </div>
 
                 <div class="error" id="form-warning"> 
@@ -149,7 +149,7 @@ function getFormTemplate(page) {
                 <div class="create-${page}-header">
                 <h1 class="card-title">Create ${type.slice(0, -1)}</h1>
                 <span class="create-${page}-button-container red-btn" id="cancel-btn">Cancel</span>
-                <span class="create-${page}-button-container green-btn" id="post-btn">Post</span>
+                <span class="create-${page}-button-container green-btn" id="services-post-btn">Post</span>
                 </div>
 
                 <div class="error" id="form-warning"> 
@@ -257,7 +257,7 @@ function getFormTemplate(page) {
                 <div class="create-${page}-header">
                 <h1 class="card-title">Create ${type.slice(0, -1)}</h1>
                 <span class="create-${page}-button-container red-btn" id="cancel-btn">Cancel</span>
-                <span class="create-${page}-button-container green-btn" id="post-btn">Post</span>
+                <span class="create-${page}-button-container green-btn" id="projects-post-btn">Post</span>
                 </div>
 
                 <div class="error" id="form-warning"> 
