@@ -93,9 +93,7 @@ function initSubmitHandlers(page) {
                 // ======================
                 // 3. Reload + Clear Form
                 // ======================
-                if (page === "projects") await loadProjectsFromFirestore();
-                if (page === "activities") await loadActivitiesFromFirestore();
-                if (page === "services") await loadServicesFromFirestore();
+                await loadPostsFromFirestore(page); // ✅ unified loader
 
                 title.value = "";
                 description.value = "";
