@@ -13,7 +13,7 @@ async function SubmitPost() {
 
     // Prevent duplicate listeners
     postBtn.replaceWith(postBtn.cloneNode(true));
-    const newPostBtn = document.getElementById("post-btn");
+    const newPostBtn = document.getElementById(`${page}-post-btn`);
 
     newPostBtn.addEventListener("click", async function () {
         // Grab inputs dynamically per page
