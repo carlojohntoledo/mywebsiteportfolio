@@ -55,5 +55,5 @@ async function saveProjectToFirestore(projectData) {
 // 🔧 Global helper
 function getPageContainer() {
   const page = document.body.dataset.page; // "home", "service", "project"
-  return document.querySelector(`.${page}-create-card-container-parent`);
+  return document.querySelector(`.${page}-create-card`);
 }

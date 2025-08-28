@@ -4,7 +4,7 @@
 // ===================================================
 
 // Show "Create Project" form
-document.getElementById('create-new-project').addEventListener('click', function () {
+document.getElementById('create-new-service').addEventListener('click', function () {
     const postCard = getPageContainer();
     if (!postCard) return; // fail-safe
 

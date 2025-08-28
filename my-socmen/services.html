@@ -1,346 +1,389 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Potfolio Website Layout</title>
-    <!-- <link rel="stylesheet" href="CSS/debug-borders.css"> -->
-    <link rel="stylesheet" href="CSS/menu-nav.css">
-    <link rel="stylesheet" href="CSS/extras-navbar.css">
-    <link rel="stylesheet" href="CSS/style.css">
-    <link rel="stylesheet" href="CSS/shortcut-section.css">
-    <link rel="stylesheet" href="CSS/contacts-section.css">
-    <link rel="stylesheet" href="CSS/thumbnail.css">
-    <link rel="stylesheet" href="CSS/services.css">
-    <link rel="stylesheet" href="CSS/logo.css">
-    <link rel="stylesheet" href="CSS/download-cv.css">
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <title>Potfolio Website Layout</title>
+        <!-- <link rel="stylesheet" href="CSS/debug-borders.css"> -->
+        <link rel="stylesheet" href="CSS/menu-nav.css">
+        <link rel="stylesheet" href="CSS/extras-navbar.css">
+        <link rel="stylesheet" href="CSS/style.css">
+        <link rel="stylesheet" href="CSS/shortcut-section.css">
+        <link rel="stylesheet" href="CSS/contacts-section.css">
+        <link rel="stylesheet" href="CSS/thumbnail.css">
+        <link rel="stylesheet" href="CSS/services.css">
+        <link rel="stylesheet" href="CSS/logo.css">
+        <link rel="stylesheet" href="CSS/download-cv.css">
+    </head>
 
-<body data-page="services">
-
-    <div class="loader-container" style="display: none;">
+    <body data-page="services">
+        <div class="loader-container" style="display: none;">
             <div class="loader">
                 <div class="progress"></div>
                 <div class="progress"></div>
                 <div class="progress"></div>
             </div>
         </div>
-        
-    <div class="content-parent">
-        <div class="thumbnail red-bordered">
-            <img src="Assets/Images/thumbnail-background/pngegg.png" alt="thumbnail.png">
-        </div>
-        <nav class="menu-nav yellow-bordered">
-            <div class="logo-panel blue-bordered">
-                <button class="logo" data-text="Awesome">
-                    <span class="actual-text">&nbsp;KOALO&nbsp;</span>
-                    <span aria-hidden="true" class="hover-text">&nbsp;KOALO&nbsp;</span>
-                </button>
-            </div>
-            <div class="menu-btn-panel blue-bordered">
-                <div class="radio-inputs">
-                    <label class="menu-radio" data-href="index.html">
-                        <input name="radio" type="radio" />
-                        <span class="name">Activity</span>
-                    </label>
-                    <label class="menu-radio" data-href="profile.html">
-                        <input name="radio" type="radio" />
-                        <span class="name">Profile</span>
-                    </label>
-                    <label class="menu-radio" data-href="services.html">
-                        <input name="radio" type="radio" checked />
-                        <span class="name">Services</span>
-                    </label>
-                    <label class="menu-radio" data-href="projects.html">
-                        <input name="radio" type="radio" />
-                        <span class="name">Projects</span>
-                    </label>
-                </div>
-            </div>
-            <div class="extras-panel blue-bordered">
 
-                <div class="extras-dropdown-button-container">
-                    <input hidden="" class="check-icon" id="check-icon" name="check-icon" type="checkbox">
-                    <label class="icon-menu" for="check-icon">
-                        <div class="bar bar--1"></div>
-                        <div class="bar bar--2"></div>
-                        <div class="bar bar--3"></div>
-                    </label>
-                    <!-- Popup -->
-                    <div class="extras-popup">
-                        <h2>MENU</h2>
-                        <ul>
-                            <div class="search-section red-bordered" style="background-color: transparent;">
-                                <div class="search-container">
-                                    <svg class="search_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"
-                                        alt="search icon">
-                                        <path
-                                            d="M46.599 46.599a4.498 4.498 0 0 1-6.363 0l-7.941-7.941C29.028 40.749 25.167 42 21 42 9.402 42 0 32.598 0 21S9.402 0 21 0s21 9.402 21 21c0 4.167-1.251 8.028-3.342 11.295l7.941 7.941a4.498 4.498 0 0 1 0 6.363zM21 6C12.717 6 6 12.714 6 21s6.717 15 15 15c8.286 0 15-6.714 15-15S29.286 6 21 6z">
-                                        </path>
-                                    </svg>
-                                    <input class="inputBox" id="inputBox" type="text" placeholder="Search">
-                                </div>
-                            </div>
-                            <a href="#">
-                                <li>Option 1</li>
-                            </a>
-                            <a href="#">
-                                <li>Option 1</li>
-                            </a>
-                            <a href="#">
-                                <li>Option 1</li>
-                            </a>
-                            <hr>
-                            </hr>
-                            <a href="#">
-                                <li>Option 1</li>
-                            </a>
-                            <a href="#">
-                                <li>Option 1</li>
-                            </a>
-                            <a href="#">
-                                <li>Option 1</li>
-                            </a>
-                        </ul>
+        <div class="content-parent">
+            <nav class="menu-nav yellow-bordered">
+                <div class="logo-panel blue-bordered">
+                    <button class="logo" data-text="Awesome">
+                        <span class="actual-text">&nbsp;KOALO&nbsp;</span>
+                        <span aria-hidden="true" class="hover-text">&nbsp;KOALO&nbsp;</span>
+                    </button>
+                </div>
+                <div class="menu-btn-panel blue-bordered">
+                    <div class="radio-inputs">
+                        <label class="menu-radio" data-href="index.html">
+                            <input name="radio" type="radio" />
+                            <span class="name">Activity</span>
+                        </label>
+                        <label class="menu-radio" data-href="profile.html">
+                            <input name="radio" type="radio" />
+                            <span class="name">Profile</span>
+                        </label>
+                        <label class="menu-radio" data-href="services.html">
+                            <input name="radio" type="radio" />
+                            <span class="name">Services</span>
+                        </label>
+                        <label class="menu-radio" data-href="projects.html">
+                            <input name="radio" type="radio" checked />
+                            <span class="name">Projects</span>
+                        </label>
                     </div>
                 </div>
-            </div>
+                <div class="extras-panel blue-bordered">
 
-        </nav>
-        <div class="main-content blue-bordered">
-            <section class="shortcuts-section white-bordered scroll-fade">
-                <div class="search-section red-bordered">
-                    <div class="search-container">
-                        <svg class="search_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"
-                            alt="search icon">
-                            <path
-                                d="M46.599 46.599a4.498 4.498 0 0 1-6.363 0l-7.941-7.941C29.028 40.749 25.167 42 21 42 9.402 42 0 32.598 0 21S9.402 0 21 0s21 9.402 21 21c0 4.167-1.251 8.028-3.342 11.295l7.941 7.941a4.498 4.498 0 0 1 0 6.363zM21 6C12.717 6 6 12.714 6 21s6.717 15 15 15c8.286 0 15-6.714 15-15S29.286 6 21 6z">
-                            </path>
-                        </svg>
-                        <input class="inputBox" id="inputBox" type="text" placeholder="Search">
-                    </div>
-                </div>
-                <div class="pinned-section red-bordered">
-                    <div class="pinned-activities-panel blue-bordered">
-                        <h2>Pinned Activities</h2>
-                        <ul class="pinned-activities-list">
-                            <a href="#">
-                                <li>Pinned Activity Title 1</li>
-                            </a>
-                            <a href="#">
-                                <li>Pinned Activity Title 2</li>
-                            </a>
-                            <a href="#">
-                                <li>Pinned Activity Title 3</li>
-                            </a>
-                            <a href="#">
-                                <li>Pinned Activity Title 4</li>
-                            </a>
-                        </ul>
-                    </div>
-                    <div class="pinned-projects-panel blue-bordered">
-                        <h2>Pinned Projects</h2>
-                        <ul class="pinned-projects-list">
-                            <a href="#">
-                                <li>Pinned Projects Title 1</li>
-                            </a>
-                            <a href="#">
-                                <li>Pinned Projects Title 2</li>
-                            </a>
-                            <a href="#">
-                                <li>Pinned Projects Title 3</li>
-                            </a>
-                            <a href="#">
-                                <li>Pinned Projects Title 4</li>
-                            </a>
-                        </ul>
-                    </div>
-                    <div class="pinned-skills-panel blue-bordered">
-                        <h2>Pinned Skills</h2>
-                        <ul class="pinned-skills-list">
-                            <a href="#">
-                                <li>Pinned Skills Title 1</li>
-                            </a>
-                            <a href="#">
-                                <li>Pinned Skills Title 2</li>
-                            </a>
-                            <a href="#">
-                                <li>Pinned Skills Title 3</li>
-                            </a>
-                            <a href="#">
-                                <li>Pinned Skills Title 4</li>
-                            </a>
-                        </ul>
-                    </div>
-                </div>
-                <div class="recent-section red-bordered">
-                    <div class="recent-activities-panel blue-bordered">
-                        <h2>Recent Activities</h2>
-                        <ul class="recent-activities-list">
-                            <a href="#">
-                                <li>Recent Activities Title 1</li>
-                            </a>
-                            <a href="#">
-                                <li>Recent Activities Title 2</li>
-                            </a>
-                            <a href="#">
-                                <li>Recent Activities Title 3</li>
-                            </a>
-                            <a href="#">
-                                <li>Recent Activities Title 4</li>
-                            </a>
-                        </ul>
-                    </div>
-                    <div class="recent-projects-panel blue-bordered">
-                        <h2>Recent Projects</h2>
-                        <ul class="recent-projects-list">
-                            <a href="#">
-                                <li>Recent Projects Title 1</li>
-                            </a>
-                            <a href="#">
-                                <li>Recent Projects Title 2</li>
-                            </a>
-                            <a href="#">
-                                <li>Recent Projects Title 3</li>
-                            </a>
-                            <a href="#">
-                                <li>Recent Projects Title 4</li>
-                            </a>
-                        </ul>
-                    </div>
-                    <div class="recent-search-panel blue-bordered">
-                        <h2>Recent Search</h2>
-                        <ul class="recent-search-list">
-                            <a href="#">
-                                <li>Recent Search Title 1</li>
-                            </a>
-                            <a href="#">
-                                <li>Recent Search Title 2</li>
-                            </a>
-                            <a href="#">
-                                <li>Recent Search Title 3</li>
-                            </a>
-                            <a href="#">
-                                <li>Recent Search Title 4</li>
-                            </a>
-                        </ul>
-                    </div>
-                </div>
-            </section>
-            <section class="service-section white-bordered scroll-fade">
-                <div class="service-container-parent">
-                    <div class="service-container">
-                        <div class="service-card">
-                            <div class="service-content">
-                                <div class="service-image-container">
-                                    <h1 class="srv">SERVICES</h1>
-                                    <div class="service-logo-container">
-                                        <h1 class="service-logo-panel">KOALO</h1>
-                                    </div>
-                                    <img src="Assets\Images\placeholder.svg" alt="service image" class="service-image"
-                                        id="service-image">
-                                </div>
-                                <div class="service-title-container">
-                                    <h1 id="service-title">SERVICE TITLE</h1>
-                                    <p id="experience">Experience: 1 year</p>
-                                </div>
-
-                                <div class="services-links-container scroll-fade">
-                                    <div class="services-tag-container">
-                                        <div>programming</div>
-                                        <div>webdesigning</div>
-                                        <div>web development</div>
-                                        <div>multimedia</div>
-                                        <div>etc</div>
+                    <div class="extras-dropdown-button-container">
+                        <input hidden="" class="check-icon" id="check-icon" name="check-icon" type="checkbox">
+                        <label class="icon-menu" for="check-icon">
+                            <div class="bar bar--1"></div>
+                            <div class="bar bar--2"></div>
+                            <div class="bar bar--3"></div>
+                        </label>
+                        <!-- Popup -->
+                        <div class="extras-popup">
+                            <h2>MENU</h2>
+                            <ul>
+                                <div class="search-section red-bordered" style="background-color: transparent;">
+                                    <div class="search-container">
+                                        <svg class="search_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"
+                                            alt="search icon">
+                                            <path
+                                                d="M46.599 46.599a4.498 4.498 0 0 1-6.363 0l-7.941-7.941C29.028 40.749 25.167 42 21 42 9.402 42 0 32.598 0 21S9.402 0 21 0s21 9.402 21 21c0 4.167-1.251 8.028-3.342 11.295l7.941 7.941a4.498 4.498 0 0 1 0 6.363zM21 6C12.717 6 6 12.714 6 21s6.717 15 15 15c8.286 0 15-6.714 15-15S29.286 6 21 6z">
+                                            </path>
+                                        </svg>
+                                        <input class="inputBox" id="inputBox" type="text" placeholder="Search">
                                     </div>
                                 </div>
-                                <div class="service-desc-container">
-                                    <p class="desc-text" id="service-description">Lorem ipsum dolor sit amet consectetur
-                                        adipisicing elit.
-                                        Quia nostrum aliquid hic
-                                        ipsam corporis possimus illo voluptatibus delectus cupiditate quidem iusto ad
-                                        quo
-                                        fugiat nulla tempora, similique nisi. Deserunt, recusandae.Lorem ipsum dolor sit
-                                        amet consectetur adipisicing elit. Quia nostrum aliquid hic
-                                        ipsam corporis possimus illo voluptatibus delectus cupiditate quidem iusto ad
-                                        quo
-                                        fugiat nulla tempora, similique nisi. Deserunt, recusandae.Lorem ipsum dolor sit
-                                        amet consectetur adipisicing elit. Quia nostrum aliquid hic
-                                        ipsam corporis possimus illo voluptatibus delectus cupiditate quidem iusto ad
-                                        quo
-                                        fugiat nulla tempora, similique nisi. Deserunt, recusandae.Lorem ipsum dolor sit
-                                        amet consectetur adipisicing elit. Quia nostrum aliquid hic
-                                        ipsam corporis possimus illo voluptatibus delectus cupiditate quidem iusto ad
-                                        quo
-                                        fugiat nulla tempora, similique nisi. Deserunt, recusandae.
-                                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia nostrum aliquid
-                                        hic
-                                        ipsam corporis possimus illo voluptatibus delectus cupiditate quidem iusto ad
-                                        quo
-                                        fugiat nulla tempora, similique nisi. Deserunt, recusandae.
-                                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia nostrum aliquid
-                                        hic
-                                        ipsam corporis possimus illo voluptatibus delectus cupiditate quidem iusto ad
-                                        quo
-                                        fugiat nulla tempora, similique nisi. Deserunt, recusandae.
-                                    </p>
-                                    <button class="toggle-desc">See More</button>
+                                <a href="#">
+                                    <li>Option 1</li>
+                                </a>
+                                <a href="#">
+                                    <li>Option 1</li>
+                                </a>
+                                <a href="#">
+                                    <li>Option 1</li>
+                                </a>
+                                <hr>
+                                </hr>
+                                <a href="#">
+                                    <li>Option 1</li>
+                                </a>
+                                <a href="#">
+                                    <li>Option 1</li>
+                                </a>
+                                <a href="#">
+                                    <li>Option 1</li>
+                                </a>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </nav>
+            <div class="main-content blue-bordered">
+                <section class="shortcuts-section white-bordered scroll-fade">
+                    <div class="search-section red-bordered">
+                        <div class="search-container">
+                            <svg class="search_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"
+                                alt="search icon">
+                                <path
+                                    d="M46.599 46.599a4.498 4.498 0 0 1-6.363 0l-7.941-7.941C29.028 40.749 25.167 42 21 42 9.402 42 0 32.598 0 21S9.402 0 21 0s21 9.402 21 21c0 4.167-1.251 8.028-3.342 11.295l7.941 7.941a4.498 4.498 0 0 1 0 6.363zM21 6C12.717 6 6 12.714 6 21s6.717 15 15 15c8.286 0 15-6.714 15-15S29.286 6 21 6z">
+                                </path>
+                            </svg>
+                            <input class="inputBox" id="inputBox" type="text" placeholder="Search">
+                        </div>
+                    </div>
+                    <div class="pinned-section red-bordered">
+                        <div class="pinned-activities-panel blue-bordered">
+                            <h2>Pinned Activities</h2>
+                            <ul class="pinned-activities-list">
+                                <a href="#">
+                                    <li>Pinned Activity Title 1</li>
+                                </a>
+                                <a href="#">
+                                    <li>Pinned Activity Title 2</li>
+                                </a>
+                                <a href="#">
+                                    <li>Pinned Activity Title 3</li>
+                                </a>
+                                <a href="#">
+                                    <li>Pinned Activity Title 4</li>
+                                </a>
+                            </ul>
+                        </div>
+                        <div class="pinned-projects-panel blue-bordered">
+                            <h2>Pinned Projects</h2>
+                            <ul class="pinned-projects-list">
+                                <a href="#">
+                                    <li>Pinned Projects Title 1</li>
+                                </a>
+                                <a href="#">
+                                    <li>Pinned Projects Title 2</li>
+                                </a>
+                                <a href="#">
+                                    <li>Pinned Projects Title 3</li>
+                                </a>
+                                <a href="#">
+                                    <li>Pinned Projects Title 4</li>
+                                </a>
+                            </ul>
+                        </div>
+                        <div class="pinned-skills-panel blue-bordered">
+                            <h2>Pinned Skills</h2>
+                            <ul class="pinned-skills-list">
+                                <a href="#">
+                                    <li>Pinned Skills Title 1</li>
+                                </a>
+                                <a href="#">
+                                    <li>Pinned Skills Title 2</li>
+                                </a>
+                                <a href="#">
+                                    <li>Pinned Skills Title 3</li>
+                                </a>
+                                <a href="#">
+                                    <li>Pinned Skills Title 4</li>
+                                </a>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="recent-section red-bordered">
+                        <div class="recent-activities-panel blue-bordered">
+                            <h2>Recent Activities</h2>
+                            <ul class="recent-activities-list">
+                                <a href="#">
+                                    <li>Recent Activities Title 1</li>
+                                </a>
+                                <a href="#">
+                                    <li>Recent Activities Title 2</li>
+                                </a>
+                                <a href="#">
+                                    <li>Recent Activities Title 3</li>
+                                </a>
+                                <a href="#">
+                                    <li>Recent Activities Title 4</li>
+                                </a>
+                            </ul>
+                        </div>
+                        <div class="recent-projects-panel blue-bordered">
+                            <h2>Recent Projects</h2>
+                            <ul class="recent-projects-list">
+                                
+                            </ul>
+                        </div>
+                        <div class="recent-search-panel blue-bordered">
+                            <h2>Recent Search</h2>
+                            <ul class="recent-search-list">
+                                <a href="#">
+                                    <li>Recent Search Title 1</li>
+                                </a>
+                                <a href="#">
+                                    <li>Recent Search Title 2</li>
+                                </a>
+                                <a href="#">
+                                    <li>Recent Search Title 3</li>
+                                </a>
+                                <a href="#">
+                                    <li>Recent Search Title 4</li>
+                                </a>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                <section class="project-section white-bordered scroll-fade">
+                    <div class="create-post-toggle-container-parent" id="create-new-service">
+                        <p>Create New Service</p>
+                        <p>+</p>
+                    </div>
+                    <!-- Create Project Form -->
+                    <div class="service-create-card create-card-container-parent">
+                        <div class="create-project-container">
+                            <div class="create-project-form-container">
+                                <div class="create-project-header">
+                                    <h1 class="card-title">Create Service</h1>
+                                    <span class="create-project-button-container red-btn" id="cancel-btn">Cancel</span>
+                                    <span class="create-project-button-container green-btn" id="post-btn">Post</span>
+                                </div>
+                                <div class="error" id="form-warning">
+                                    <div class="form-warning-cont">
+                                        <div class="error__icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 24 24"
+                                                height="24" fill="none">
+                                                <path fill="#393a37"
+                                                    d="m13 13h-2v-6h2zm0 4h-2v-2h2zm-1-15c-1.3132 0-2.61358.25866-3.82683.7612-1.21326.50255-2.31565 1.23915-3.24424 2.16773-1.87536 1.87537-2.92893 4.41891-2.92893 7.07107 0 2.6522 1.05357 5.1957 2.92893 7.0711.92859.9286 2.03098 1.6651 3.24424 2.1677 1.21325.5025 2.51363.7612 3.82683.7612 2.6522 0 5.1957-1.0536 7.0711-2.9289 1.8753-1.8754 2.9289-4.4189 2.9289-7.0711 0-1.3132-.2587-2.61358-.7612-3.82683-.5026-1.21326-1.2391-2.31565-2.1677-3.24424-.9286-.92858-2.031-1.66518-3.2443-2.16773-1.2132-.50254-2.5136-.7612-3.8268-.7612z">
+                                                </path>
+                                            </svg>
+                                        </div>
+                                        <div class="error__title">Please fill-in required (*) details.</div>
+                                        <div class="error__close" id="close-error"><svg xmlns="http://www.w3.org/2000/svg"
+                                                width="20" viewBox="0 0 20 20" height="20">
+                                                <path fill="#393a37"
+                                                    d="m15.8333 5.34166-1.175-1.175-4.6583 4.65834-4.65833-4.65834-1.175 1.175 4.65833 4.65834-4.65833 4.6583 1.175 1.175 4.65833-4.6583 4.6583 4.6583 1.175-1.175-4.6583-4.6583z">
+                                                </path>
+                                            </svg>
+                                        </div>
+                                    </div>
                                 </div>
 
+                                <div class="create-project-form-viewport scroll-fade">
+                                    <form id="create-project-form">
+
+                                        <!-- CREATE PROJECT TITLE CONTAINER -->
+                                        <div class="create-project-containers project-label">
+                                            <input class="input-project-title" type="text" required>
+                                            <label for="input-project-title">Project Title*</label>
+                                        </div>
+
+                                        <!--  CREATE PROJECT DESCRIPTION CONTAINER -->
+                                        <div class="create-project-containers project-label">
+                                            <textarea class="input-project-description" required></textarea>
+                                            <label for="input-project-description">Project Description*</label>
+                                        </div>
+
+                                        <!-- CREATE PROJECT DETAILS CONTAINER -->
+                                        <div class="flex-container">
+                                            <div class="create-project-containers project-label">
+                                                <input class="input-project-date" placeholder="" type="date" required>
+                                                <label for="input-project-date">Project Start Date*</label>
+                                            </div>
+                                            <div class="create-project-containers project-label">
+                                                <select class="input-project-status" required>
+                                                    <option value="Published">Published</option>
+                                                    <option value="Under Development">Under Development</option>
+                                                    <option value="Planned">Planned</option>
+                                                </select>
+                                                <label for="project-status">Project Status*</label>
+                                            </div>
+                                        </div>
+
+                                        <!-- CREATE PROJECT TAGS CONTAINER -->
+                                        <div class="create-project-containers project-label">
+                                            <input class="input-project-tags" placeholder="html, css, js..." type="text">
+                                            <label for="input-project-tags">Project Tags</label>
+                                        </div>
+
+                                        <!-- CREATE PROJECT ADD-ONS CONTAINER -->
+                                        <div class="flex-container">
+                                            <div class="create-project-containers project-label">
+                                                <div class="pdf-upload">
+                                                    <input class="input-project-pdf-link"
+                                                        placeholder="https//:www.projects-pdf.app" type="url">
+                                                    <label for="input-project-pdf-link">PDF Link</label>
+                                                </div>
+                                            </div>
+                                            <div class="create-project-containers project-label">
+                                                <input class="input-project-link"
+                                                    placeholder="https//:www.projects-link.app" type="url">
+                                                <label for="input-project-link">Project Link</label>
+                                            </div>
+                                        </div>
+
+                                        <!-- CREATE PROJECT IMAGE CONTAINER -->
+                                        <div class="create-project-image-container">
+                                            <h1>Add Photos</h1>
+                                            <div class="file-upload-form">
+                                                <label for="file" class="file-upload-label">
+                                                    <div class="file-upload-design">
+                                                        <svg viewBox="0 0 640 512" height="1em">
+                                                            <path
+                                                                d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-217c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39V392c0 13.3 10.7 24 24 24s24-10.7 24-24V257.9l39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z">
+                                                            </path>
+                                                        </svg>
+                                                        <p>Drag and Drop</p>
+                                                        <p>or</p>
+                                                        <span class="browse-button">Browse file</span>
+                                                        <input id="file" type="file" multiple accept="image/*"
+                                                            onchange="previewImages(event)" />
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <!-- CREATE PROJECT IMAGE PREVIEW CONTAINER -->
+                                        <div id="file-preview-container" class="file-preview-container"></div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- This is where the created project will be posted -->
+                    <div class="project-container-parent">
+
+                    </div>
+
                     <div class="end-indicator">
                         Nothing more to show.
                     </div>
-                </div>
 
-            </section>
-            <section class="contacts-section white-bordered scroll-fade">
-                <div class="download-cv-section red-bordered">
-                    <h2>Download Resume</h2>
-                    <div class="folder-container">
-                        <div class="folder">
-                            <img src="Assets/Images/folder-rear.png" alt="">
-                            <a href="Assets/Images/cv.pdf" download class="folder-inner">
-                                <img src="Assets/Images/CV Image.jpg" alt="Download CV">
-                            </a>
-                            <div class="cover">
-                                <img src="Assets/Images/folder-front.png" alt="">
-                                <p class="folder-text">Download Resume</p>
+                </section>
+                <section class="contacts-section white-bordered scroll-fade">
+                    <div class="download-cv-section red-bordered">
+                        <h2>Download Resume</h2>
+                        <div class="folder-container">
+                            <div class="folder">
+                                <img src="Assets/Images/folder-rear.png" alt="">
+                                <a href="Assets/Images/cv.pdf" download class="folder-inner">
+                                    <img src="Assets/Images/CV Image.jpg" alt="Download CV">
+                                </a>
+                                <div class="cover">
+                                    <img src="Assets/Images/folder-front.png" alt="">
+                                    <p class="folder-text">Download Resume</p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="contact-info-section red-bordered">
-                    <div class="recent-activities-panel blue-bordered">
-                        <h2>Contact</h2>
-                        <ul class="recent-activities-list">
-                            <a href="#">
-                                <li>toledocarlojohn@gmail.com</li>
-                            </a>
-                            <a href="#">
-                                <li>github.io/carlojohntoledo</li>
-                            </a>
-                            <a href="#">
-                                <li>instagram@koalo</li>
-                            </a>
-                            <a href="#">
-                                <li>ytchannel@koalomusic.ph</li>
-                            </a>
-                            <a href="#">
-                                <li>tiktok/koalo</li>
-                            </a>
-                        </ul>
+                    <div class="contact-info-section red-bordered">
+                        <div class="recent-activities-panel blue-bordered">
+                            <h2>Contact</h2>
+                            <ul class="recent-activities-list">
+                                <a href="#">
+                                    <li>toledocarlojohn@gmail.com</li>
+                                </a>
+                                <a href="#">
+                                    <li>github.io/carlojohntoledo</li>
+                                </a>
+                                <a href="#">
+                                    <li>instagram@koalo</li>
+                                </a>
+                                <a href="#">
+                                    <li>ytchannel@koalomusic.ph</li>
+                                </a>
+                                <a href="#">
+                                    <li>tiktok/koalo</li>
+                                </a>
+                            </ul>
+                        </div>
                     </div>
-                </div>
-                <div class="email-me-section red-bordered">email me</div>
-            </section>
+                    <div class="email-me-section red-bordered">email me</div>
+                </section>
+            </div>
         </div>
-    </div>
 
-    <!-- Firebase App (required) -->
+        <!-- Firebase App (required) -->
         <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
 
         <!-- Firestore -->
@@ -351,22 +394,26 @@
 
         <script src="JS/global scripts/index.js"></script>
 
-    <script src="JS/shortcuts section scripts/shortcuts.js"></script>
+        <script src="JS/navigation bar scripts/navbar-menu-script.js"></script>
 
-    <script src="JS/navigation bar scripts/navbar-menu-script.js"></script>
+        <script src="JS/global scripts/theme-toggle.js"></script>
 
-    <script>
-        document.querySelectorAll('.service-desc-container').forEach(container => {
-            const toggleBtn = container.querySelector('.toggle-desc');
-            const text = container.querySelector('.desc-text');
+        <script src="JS/global scripts/getImageUrl.js"></script>
 
-            toggleBtn.addEventListener('click', () => {
-                text.classList.toggle('expanded');
-                toggleBtn.textContent = text.classList.contains('expanded') ? 'See Less' : 'See More';
-            });
-        });
-    </script>
+        <script src="JS/global scripts/startCarousel.js"></script>
 
-</body>
+        <script src="JS/projects page scripts/projectCreateToggle.js"></script>
+
+        <script src="JS/projects page scripts/projectUploadToCloudinary.js"></script>
+
+        <script src="JS/projects page scripts/projectSubmit.js"></script>
+
+        <script src="JS/shortcuts section scripts/shortcuts.js"></script>
+
+        <script src="JS/projects page scripts/projectLoadFromFirestore.js"></script>
+
+        <script src="JS/projects page scripts/projectEdit.js"></script>
+
+    </body>
 
 </html>
