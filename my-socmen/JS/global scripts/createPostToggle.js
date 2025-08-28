@@ -363,27 +363,52 @@ function getFormTemplate(page) {
     }
 }
 
-// ✅ Preview multiple images before upload
-function previewImages(event, previewContainerId) {
+function previewImages(event, containerSelector = ".file-preview-container") {
     const files = event.target.files;
-    const container = document.getElementById(previewContainerId);
+    const previewContainer = document.querySelector(containerSelector);
 
-    if (!container) {
-        console.warn(`⚠️ Preview container #${previewContainerId} not found`);
+    if (!previewContainer) {
+        console.warn(`⚠️ Preview container ${containerSelector} not found`);
         return;
     }
 
-    container.innerHTML = ""; // clear old previews
+    previewContainer.innerHTML = ""; // clear old previews
 
-    Array.from(files).forEach(file => {
-        if (!file.type.startsWith("image/")) return; // skip non-images
+    Array.from(files).forEach((file, index) => {
+        if (!file.type.startsWith("image/")) return;
 
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = function (e) {
+            const filePreview = document.createElement("div");
+            filePreview.classList.add("file-preview");
+
+            const imgWrapper = document.createElement("div");
+            imgWrapper.classList.add("image-preview");
+
             const img = document.createElement("img");
             img.src = e.target.result;
-            img.classList.add("preview-thumb"); // style with CSS
-            container.appendChild(img);
+            img.alt = `Preview ${index + 1}`;
+
+            // ❌ Remove preview button
+            const removeBtn = document.createElement("button");
+            removeBtn.classList.add("remove-preview");
+            removeBtn.innerHTML = "&times;";
+
+            removeBtn.addEventListener("click", function () {
+                filePreview.remove();
+
+                // Update FileList in <input type="file">
+                const dt = new DataTransfer();
+                Array.from(files)
+                    .filter((_, i) => i !== index)
+                    .forEach((f) => dt.items.add(f));
+                event.target.files = dt.files;
+            });
+
+            imgWrapper.appendChild(img);
+            filePreview.appendChild(imgWrapper);
+            filePreview.appendChild(removeBtn);
+            previewContainer.appendChild(filePreview);
         };
         reader.readAsDataURL(file);
     });
