@@ -138,4 +138,8 @@ async function SubmitPost() {
     });
 }
 
-SubmitPost();
+
+document.addEventListener("DOMContentLoaded", () => {
+    SubmitPost();
+});
+
