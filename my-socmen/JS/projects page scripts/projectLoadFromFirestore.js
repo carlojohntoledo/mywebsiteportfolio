@@ -1,50 +1,48 @@
-
 // =============================================================
-// ✅ MAIN FUNCTION → Load from Firestore
-// Returns a Promise that resolves after all cards are rendered
+// ✅ MAIN FUNCTION → Load posts (Projects, Services, Activities)
 // =============================================================
-async function loadProjectsFromFirestore() {
-    const container = document.querySelector(".project-container-parent");
+async function loadPostsFromFirestore(type = "projects") {
+    const container = document.querySelector(`.${type}-container-parent`);
     if (!container) {
-        console.warn("⚠️ .project-container-parent not found. Skipping render.");
+        console.warn(`⚠️ .${type}-container-parent not found. Skipping render.`);
         return Promise.resolve([]);
     }
 
     container.innerHTML = ""; // clear old cards
-    showLoader(); // 🔵 show loader
+    showLoader();
 
     try {
-        const snapshot = await db.collection("projects")
+        const snapshot = await db.collection(type)
             .orderBy("pinned", "desc")
             .orderBy("createdAt", "desc")
             .get();
 
-        const projectsArray = []; // collect for "Recent Projects"
+        const postsArray = [];
 
         snapshot.forEach(doc => {
             const uid = doc.id;
             const data = doc.data();
             const firstImage = getFirstImage(data.images);
 
-            projectsArray.push({ id: uid, ...data });
+            postsArray.push({ id: uid, ...data });
 
             const toggleId = `toggle-${uid}`;
             const pinId = `pin-${uid}`;
             const editId = `edit-${uid}`;
             const removeId = `remove-${uid}`;
-            const pinLabelText = data.pinned ? "Unpin Project" : "Pin Project";
+            const pinLabelText = data.pinned ? `Unpin ${capitalize(type)}` : `Pin ${capitalize(type)}`;
 
-            // --- Build project card ---
+            // --- Build post card ---
             const containerDiv = document.createElement("div");
-            containerDiv.classList.add("project-container");
+            containerDiv.classList.add(`${type}-container`);
             containerDiv.setAttribute("data-id", uid);
             containerDiv.setAttribute("data-pinned", data.pinned ? "true" : "false");
             containerDiv.setAttribute("data-date", data.date || "");
             containerDiv.id = uid; // ✅ for hash scrolling
 
             containerDiv.innerHTML = `
-                <div class="project-card">
-                    <div class="project-content" style="position: relative;">
+                <div class="${type}-card">
+                    <div class="${type}-content" style="position: relative;">
                         <!-- Extra Menu -->
                         <div class="post-extra-popup">
                             <input type="checkbox" id="${toggleId}" class="checkbox">
@@ -52,54 +50,54 @@ async function loadProjectsFromFirestore() {
                             <div class="post-extra-list-container">
                                 <ul class="post-extra-list">
                                     <li><input type="checkbox" id="${pinId}" hidden><label for="${pinId}"><span>${pinLabelText}</span></label></li>
-                                    <li><input type="checkbox" id="${editId}" hidden><label for="${editId}"><span>Edit Project</span></label></li>
-                                    <li><input type="checkbox" id="${removeId}" hidden><label for="${removeId}"><span>Remove Project</span></label></li>
+                                    <li><input type="checkbox" id="${editId}" hidden><label for="${editId}"><span>Edit ${capitalize(type)}</span></label></li>
+                                    <li><input type="checkbox" id="${removeId}" hidden><label for="${removeId}"><span>Remove ${capitalize(type)}</span></label></li>
                                 </ul>
                             </div>
                         </div>
 
                         <!-- Image + Indicators -->
-                        <div class="project-image-container">
+                        <div class="${type}-image-container">
                             <div class="post-indicators">
-                                <h1 class="srv">Projects</h1>
-                                <h1 class="srv project-status">${data.status || ''}</h1>
+                                <h1 class="srv">${capitalize(type)}</h1>
+                                <h1 class="srv ${type}-status">${data.status || ''}</h1>
                                 <h1 class="srv" id="pinned-post-indicator" style="${data.pinned ? 'display:block' : 'display:none'};">Pinned</h1>
                             </div>
-                            <div class="project-logo-container"><h1 class="project-logo-panel">KOALO</h1></div>
-                            <img src="${firstImage}" alt="project image" class="project-image" id="project-image-${uid}">
+                            <div class="${type}-logo-container"><h1 class="${type}-logo-panel">KOALO</h1></div>
+                            <img src="${firstImage}" alt="${type} image" class="${type}-image" id="${type}-image-${uid}">
                         </div>
 
                         <!-- Title + Profile -->
-                        <div class="project-title-container">
-                            <h1 class="project-title">${data.title || ''}</h1>
-                            <div class="project-details-container">
-                                <div class="project-name-container">
+                        <div class="${type}-title-container">
+                            <h1 class="${type}-title">${data.title || ''}</h1>
+                            <div class="${type}-details-container">
+                                <div class="${type}-name-container">
                                     <img class="xs-profilepic" src="Assets/Images/Profile Pictures/default-profile-picture.jpg" alt="profile picture">
                                     <p>Carlo John Toledo</p>
                                 </div>
-                                <div class="project-status-container">
-                                    <p class="project-date">${data.date || ''}</p>
+                                <div class="${type}-status-container">
+                                    <p class="${type}-date">${data.date || ''}</p>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Tags -->
-                        <div class="project-links-container scroll-fade">
-                            <div class="project-tags-container project-tags">
+                        <div class="${type}-links-container scroll-fade">
+                            <div class="${type}-tags-container ${type}-tags">
                                 ${(data.tags || []).map(tag => `<span class="tag">${tag}</span>`).join("")}
                             </div>
                         </div>
 
                         <!-- Description -->
-                        <div class="project-desc-container">
-                            <p class="desc-text project-description">${data.description || ''}</p>
+                        <div class="${type}-desc-container">
+                            <p class="desc-text ${type}-description">${data.description || ''}</p>
                             <button class="toggle-desc">See More</button>
                         </div>
 
                         <!-- Addons -->
                         <div class="addons-container">
-                            ${data.pdfLink ? `<a href="${data.pdfLink}" class="project-pdf-download" target="_blank">Download PDF</a>` : ""}
-                            ${data.projectLink ? `<a href="${data.projectLink}" class="project-link" target="_blank">Live Demo</a>` : ""}
+                            ${data.pdfLink ? `<a href="${data.pdfLink}" class="${type}-pdf-download" target="_blank">Download PDF</a>` : ""}
+                            ${data.projectLink ? `<a href="${data.projectLink}" class="${type}-link" target="_blank">Live Demo</a>` : ""}
                         </div>
                     </div>
                 </div>
@@ -109,24 +107,24 @@ async function loadProjectsFromFirestore() {
             const tagsHtml = (data.tags || [])
                 .map(tag => `<span class="tag" style="background-color:${getRandomPastelColor()}">${tag}</span>`)
                 .join("");
-            containerDiv.querySelector(".project-tags-container").innerHTML = tagsHtml;
+            containerDiv.querySelector(`.${type}-tags-container`).innerHTML = tagsHtml;
 
             container.appendChild(containerDiv);
 
             // Start carousel
-            const imgElement = containerDiv.querySelector(`#project-image-${uid}`);
+            const imgElement = containerDiv.querySelector(`#${type}-image-${uid}`);
             startCarousel(imgElement, data.images);
 
             // --- Extra Menu Actions ---
             containerDiv.querySelector(`#${pinId}`).addEventListener("change", async () => {
                 showLoader();
-                await db.collection("projects").doc(uid).update({ pinned: !data.pinned });
-                await loadProjectsFromFirestore();
+                await db.collection(type).doc(uid).update({ pinned: !data.pinned });
+                await loadPostsFromFirestore(type);
                 hideLoader();
             });
 
             containerDiv.querySelector(`#${removeId}`).addEventListener("change", async () => {
-                if (confirm("Are you sure you want to delete this project?")) {
+                if (confirm(`Are you sure you want to delete this ${type}?`)) {
                     showLoader();
                     try {
                         if (data.images && data.images.length > 0) {
@@ -137,11 +135,11 @@ async function loadProjectsFromFirestore() {
                                 })
                             );
                         }
-                        await db.collection("projects").doc(uid).delete();
-                        await loadProjectsFromFirestore();
+                        await db.collection(type).doc(uid).delete();
+                        await loadPostsFromFirestore(type);
                     } catch (err) {
                         console.error(err);
-                        alert("Error deleting project.");
+                        alert(`Error deleting ${type}.`);
                     } finally {
                         hideLoader();
                     }
@@ -150,17 +148,17 @@ async function loadProjectsFromFirestore() {
             });
 
             containerDiv.querySelector(`#${editId}`).addEventListener("change", () => {
-                openEditForm(uid, data);
+                openEditForm(uid, data, type);
                 containerDiv.querySelector(`#${editId}`).checked = false;
             });
         });
 
         // ✅ Sort cards: pinned first, newest date next
-        postSorter();
+        postSorter(type);
 
-        return projectsArray; // return array for Recent Projects
+        return postsArray;
     } catch (err) {
-        console.error("Error loading projects:", err);
+        console.error(`Error loading ${type}:`, err);
         return [];
     } finally {
         hideLoader();
@@ -168,12 +166,12 @@ async function loadProjectsFromFirestore() {
 }
 
 // =============================================================
-// ✅ Sort cards: pinned first, newest date next
+// ✅ Sort cards per type
 // =============================================================
-function postSorter() {
-    const parent = document.querySelector('.project-container-parent');
+function postSorter(type = "projects") {
+    const parent = document.querySelector(`.${type}-container-parent`);
     if (!parent) return;
-    const cards = Array.from(parent.querySelectorAll('.project-container'));
+    const cards = Array.from(parent.querySelectorAll(`.${type}-container`));
     cards.sort((a, b) => {
         const aPinned = a.getAttribute('data-pinned') === 'true';
         const bPinned = b.getAttribute('data-pinned') === 'true';
@@ -183,4 +181,11 @@ function postSorter() {
         return bTime - aTime;
     });
     cards.forEach(card => parent.appendChild(card));
+}
+
+// =============================================================
+// ✅ Utility → Capitalize text
+// =============================================================
+function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }

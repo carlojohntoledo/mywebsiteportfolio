@@ -43,18 +43,22 @@ async function compressImage(file, maxMB = 2, quality = 0.7) {
 }
 
 // ✅ Upload a single file to Cloudinary
-async function uploadToCloudinary(file) {
+async function uploadToCloudinary(file, type = "projects") {
     try {
-        // 🔹 Compress before upload (so 108MP won’t break Cloudinary)
-        const compressedFile = await compressImage(file, 2, 0.7);
-
-        console.log("📤 Uploading to Cloudinary:", compressedFile.name, compressedFile.type, compressedFile.size);
+        console.log(`📤 Uploading to Cloudinary (${type}):`, file.name);
 
         const url = `https://api.cloudinary.com/v1_1/dglegfflv/upload`;
         const formData = new FormData();
-        formData.append("file", compressedFile);
-        formData.append("upload_preset", "mysocmed_projects");
-        formData.append("folder", "mysocmed/projects");
+        formData.append("file", file);
+
+        const presetMap = {
+            projects: "mysocmed_projects",
+            services: "mysocmed_services",
+            activities: "mysocmed_activities"
+        };
+
+        formData.append("upload_preset", presetMap[type] || "mysocmed_projects");
+        formData.append("folder", `mysocmed/${type}`);
 
         const response = await fetch(url, { method: "POST", body: formData });
         if (!response.ok) {
@@ -64,13 +68,12 @@ async function uploadToCloudinary(file) {
 
         const data = await response.json();
 
-        // ✅ Always return the same keys
         return {
             imageUrl: data.secure_url || "",
             publicId: data.public_id || ""
         };
     } catch (err) {
         console.error("❌ Cloudinary upload error:", err);
-        return null; // never undefined
+        return null;
     }
 }
