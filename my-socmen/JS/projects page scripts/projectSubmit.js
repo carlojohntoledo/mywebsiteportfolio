@@ -5,17 +5,17 @@ async function SubmitPost() {
     const page = document.body.dataset.page; // "projects" | "services" | "activities"
     const singular = page.slice(0, -1); // "project" | "service" | "activity"
 
-    const postBtn = document.querySelector(`#${page}-post-btn, #post-btn`);
+    let postBtn = document.querySelector(`#${page}-post-btn, #post-btn`);
     if (!postBtn) {
         console.warn("Post button not found");
         return; // fail-safe
     }
 
-    // Prevent duplicate listeners
+    // 🔹 Replace button with a fresh clone (removes any old listeners)
     postBtn.replaceWith(postBtn.cloneNode(true));
-    const newPostBtn = document.getElementById(`${page}-post-btn`);
+    postBtn = document.querySelector(`#${page}-post-btn, #post-btn`);
 
-    newPostBtn.addEventListener("click", async function () {
+    postBtn.addEventListener("click", async function () {
         // Grab inputs dynamically per page
         const title = document.querySelector(`.input-${singular}-title`);
         const description = document.querySelector(`.input-${singular}-description`);
@@ -126,8 +126,14 @@ async function SubmitPost() {
             if (typeof hideLoader === "function") hideLoader();
         }
     });
+}
 
-    // Expand/Collapse description toggle (still global)
+// ======================
+// GLOBAL LISTENERS
+// ======================
+
+// 🔹 Only bind once to prevent duplicates
+if (!document.toggleDescBound) {
     document.addEventListener("click", function (e) {
         if (e.target.classList.contains("toggle-desc")) {
             const container = e.target.closest(".project-desc-container");
@@ -136,10 +142,9 @@ async function SubmitPost() {
             e.target.textContent = text.classList.contains("expanded") ? "See Less" : "See More";
         }
     });
+    document.toggleDescBound = true;
 }
-
 
 document.addEventListener("DOMContentLoaded", () => {
     SubmitPost();
 });
-
