@@ -148,9 +148,10 @@ async function loadPostsFromFirestore(type = "projects") {
             });
 
             containerDiv.querySelector(`#${editId}`).addEventListener("change", () => {
-                openEditForm(uid, data, type);
+                openPostForm(type, "edit", data, uid);   // ✅ use the new unified form
                 containerDiv.querySelector(`#${editId}`).checked = false;
             });
+
         });
 
         // ✅ Sort cards: pinned first, newest date next
