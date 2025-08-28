@@ -9,6 +9,8 @@ function showCreateForm() {
   const page = document.body.dataset.page; // "projects" | "services" | "activities"
   const container = getPageContainer();    // our earlier helper
 
+  initSubmitHandlers(page);
+
   if (!container) return;
 
   container.innerHTML = getFormTemplate(page); // inject form HTML
