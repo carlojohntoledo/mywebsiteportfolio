@@ -1,6 +1,6 @@
-/* ---------- CRATE PROJECT FORM ----------- */
+/* ---------- CRATE projects FORM ----------- */
 
-.create-card-container-parent {  /* Common for both service and project */
+.create-card-container-parent {  /* Common for both service and projects */
     width: 100%;
     left: 0;
     top: 0;
@@ -28,7 +28,7 @@
     /* border: 1px solid green; */
 }
 
-.create-project-header {
+.create-projects-header {
     /* border: 1px solid; */
     height: max-content;
     display: grid;
@@ -40,12 +40,12 @@
     margin: auto;
 }
 
-.create-project-header h1 {
+.create-projects-header h1 {
     flex-grow: 1;
     /* border: 1px solid; */
 }
 
-.create-project-button-container {
+.create-projects-button-container {
     padding: 0.5rem 0.1rem;
     border-radius: 0.5rem;
     color: var(--text-color);
@@ -56,14 +56,14 @@
     cursor: pointer;
 }
 
-.create-project-form-container {
+.create-projects-form-container {
     display: grid;
     /* border: 1px solid; */
     align-items: center;
     grid-template-columns: 100%;
 }
 
-.create-project-form-viewport {
+.create-projects-form-viewport {
     /* border: 1px solid red; */
     height: 75vh;
     overflow-y: overlay;
@@ -71,7 +71,7 @@
     border-radius: 1rem;
 }
 
-.create-project-form-container form {
+.create-projects-form-container form {
     display: grid;
     /* border: 1px solid blue; */
     /* justify-content: center; */
@@ -90,7 +90,7 @@
     gap: 0.5rem;
 }
 
-.create-project-containers {
+.create-projects-containers {
     width: 100%;
     position: relative;
     margin: auto;
@@ -99,9 +99,9 @@
     */
 }
 
-.create-project-containers input,
-.create-project-containers textarea,
-.create-project-containers select {
+.create-projects-containers input,
+.create-projects-containers textarea,
+.create-projects-containers select {
     background-color: transparent;
     resize: none;
     max-width: 100%;
@@ -117,16 +117,16 @@
     transition: all 0.5s ease;
 }
 
-.create-project-containers input:focus,
-.create-project-containers textarea:focus {
+.create-projects-containers input:focus,
+.create-projects-containers textarea:focus {
     border: 0.1rem solid var(--accent-color);
 }
 
-.create-project-description-container textarea {
+.create-projects-description-container textarea {
     height: 5rem;
 }
 
-.create-project-containers select option {
+.create-projects-containers select option {
     background-color: var(--tertiary-color);
     border: 0.1rem solid var(--primary-color);
 }
@@ -135,7 +135,7 @@
     background-color: var(--accent-color);
 }
 
-.project-label label {
+.projects-label label {
     position: absolute;
     transform: translate(1rem, -50%);
     left: 0;
@@ -149,7 +149,7 @@
     /* border: 1px solid green; */
 }
 
-.create-project-image-container {
+.create-projects-image-container {
     margin: auto;
     height: max-content;
     width: 100%;
@@ -166,7 +166,7 @@
     position: relative;
 }
 
-.create-project-image-container h1 {
+.create-projects-image-container h1 {
     position: absolute;
     background-color: var(--tertiary-color);
     padding: 0.1rem 1rem;
@@ -175,7 +175,7 @@
     color: var(--text-color);
 }
 
-.create-project-image-container p {
+.create-projects-image-container p {
     margin: 0;
     /* border: 1px solid; */
 }
@@ -273,7 +273,7 @@
 }
 
 
-#project-image {
+#projects-image {
     transition: opacity 0.5s ease-in-out;
 }
 
@@ -327,7 +327,7 @@
     height: 2rem;
 }
 
-.project-image {
+.projects-image {
     transition: opacity 0.5s ease-in-out;
 }
 
@@ -343,16 +343,16 @@
     }
 
 
-    .create-project-container {
+    .create-projects-container {
         width: 100%;
         border-radius: 0;
     }
 
-    .create-project-form-container form {
+    .create-projects-form-container form {
         border-radius: 0;
     }
 
-    .create-project-form-viewport {
+    .create-projects-form-viewport {
         /* border: 1px solid red; */
         height: 80vh;
         overflow-y: overlay;
