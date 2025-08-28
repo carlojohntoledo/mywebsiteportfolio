@@ -128,14 +128,14 @@ function getFormTemplate(page) {
                             <p>Drag and Drop</p>
                             <p>or</p>
                             <span class="browse-button">Browse file</span>
-                            <input id="file" type="file" multiple accept="image/*" onchange="previewImages(event)" />
+                            <input id="file" type="file" multiple accept="image/*" onchange="previewImages(event, 'activity-preview')" />
                         </div>
                         </label>
                     </div>
                     </div>
 
                     <!-- PREVIEW -->
-                    <div id="file-preview-container" class="file-preview-container"></div>
+                    <div id="activity-preview" class="file-preview-container"></div>
                 </form>
                 </div>
             </div>
@@ -236,14 +236,14 @@ function getFormTemplate(page) {
                             <p>Drag and Drop</p>
                             <p>or</p>
                             <span class="browse-button">Browse file</span>
-                            <input id="file" type="file" multiple accept="image/*" onchange="previewImages(event)" />
+                            <input id="file" type="file" multiple accept="image/*" onchange="previewImages(event, 'service-preview')" />
                         </div>
                         </label>
                     </div>
                     </div>
 
                     <!-- PREVIEW -->
-                    <div id="file-preview-container" class="file-preview-container"></div>
+                    <div id="service-preview" class="file-preview-container"></div>
                 </form>
                 </div>
             </div>
@@ -344,14 +344,14 @@ function getFormTemplate(page) {
                             <p>Drag and Drop</p>
                             <p>or</p>
                             <span class="browse-button">Browse file</span>
-                            <input id="file" type="file" multiple accept="image/*" onchange="previewImages(event)" />
+                            <input id="file" type="file" multiple accept="image/*" onchange="previewImages(event, 'project-preview')" />
                         </div>
                         </label>
                     </div>
                     </div>
 
                     <!-- PREVIEW -->
-                    <div id="file-preview-container" class="file-preview-container"></div>
+                    <div id="project-preview" class="file-preview-container"></div>
                 </form>
                 </div>
             </div>
@@ -361,4 +361,30 @@ function getFormTemplate(page) {
         default:
         return `<p>Unknown page type: ${page}</p>`; 
     }
+}
+
+// ✅ Preview multiple images before upload
+function previewImages(event, previewContainerId) {
+    const files = event.target.files;
+    const container = document.getElementById(previewContainerId);
+
+    if (!container) {
+        console.warn(`⚠️ Preview container #${previewContainerId} not found`);
+        return;
+    }
+
+    container.innerHTML = ""; // clear old previews
+
+    Array.from(files).forEach(file => {
+        if (!file.type.startsWith("image/")) return; // skip non-images
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = document.createElement("img");
+            img.src = e.target.result;
+            img.classList.add("preview-thumb"); // style with CSS
+            container.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+    });
 }
