@@ -170,7 +170,7 @@ async function loadPostsFromFirestore(type = "projects") {
 // ✅ INITIAL PAGE LOADER → Detects current page and loads posts
 // =============================================================
 document.addEventListener("DOMContentLoaded", async () => {
-    showLoader();
+    if (typeof showLoader === "function") showLoader();
 
     // detect which container exists
     if (document.querySelector(".projects-container-parent")) {
@@ -181,7 +181,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         await loadPostsFromFirestore("activities");
     }
 
-    hideLoader();
+    if (typeof hideLoader === "function") hideLoader();
 });
 
 // =============================================================
