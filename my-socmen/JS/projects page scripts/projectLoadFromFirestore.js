@@ -13,6 +13,8 @@ async function loadPostsFromFirestore(type = "projects") {
     showLoader();
 
     try {
+
+
         const snapshot = await db.collection(type)
             .orderBy("pinned", "desc")
             .orderBy("createdAt", "desc")
@@ -171,19 +173,23 @@ async function loadPostsFromFirestore(type = "projects") {
 // ✅ INITIAL PAGE LOADER → Detects current page and loads posts
 // =============================================================
 document.addEventListener("DOMContentLoaded", async () => {
-    if (typeof showLoader === "function") showLoader();
-
-    // detect which container exists
-    if (document.querySelector(".projects-container-parent")) {
-        await loadPostsFromFirestore("projects");
-    } else if (document.querySelector(".services-container-parent")) {
-        await loadPostsFromFirestore("services");
-    } else if (document.querySelector(".activities-container-parent")) {
-        await loadPostsFromFirestore("activities");
-    }
-
-    if (typeof hideLoader === "function") hideLoader();
+    let attempts = 0;
+    const interval = setInterval(async () => {
+        const container = document.querySelector(".projects-container-parent, .services-container-parent, .activities-container-parent");
+        if (container || attempts > 20) { // wait max ~2s
+            clearInterval(interval);
+            if (document.querySelector(".projects-container-parent")) {
+                await loadPostsFromFirestore("projects");
+            } else if (document.querySelector(".services-container-parent")) {
+                await loadPostsFromFirestore("services");
+            } else if (document.querySelector(".activities-container-parent")) {
+                await loadPostsFromFirestore("activities");
+            }
+        }
+        attempts++;
+    }, 100);
 });
+
 
 // =============================================================
 // ✅ Sort cards per type
