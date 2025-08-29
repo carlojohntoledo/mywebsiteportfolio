@@ -1,4 +1,4 @@
-.service-section {
+.services-section {
     display: grid;
     align-items: start;
     justify-content: start;
@@ -10,7 +10,7 @@
 
 }
 
-.service-container-parent {
+.services-container-parent {
     display: grid;
     gap: 0.5rem;
     width: 95%;
@@ -21,7 +21,7 @@
     margin: 0 auto;
 }
 
-.service-container {
+.services-container {
     width: 100%;
     height: max-content;
     /* border: 1px solid; */
@@ -35,13 +35,13 @@
     margin: 0 auto;
 }
 
-.service-content {
+.services-content {
     overflow: hidden;
     /* position: relative; */
 }
 
 
-.service-image-container {
+.services-image-container {
     /* border: 1px solid red; */
     position: relative;
     width: 100%;
@@ -53,7 +53,7 @@
     overflow: hidden;
 }
 
-.service-logo-container {
+.services-logo-container {
     border-bottom-right-radius: 5rem;
     height: 10%;
     width: 70%;
@@ -67,7 +67,7 @@
     filter: drop-shadow(0 0 1rem rgba(0, 0, 0, 0.827));
 }
 
-.service-logo-panel {
+.services-logo-panel {
     /* border: 1px solid; */
     transform: skew(40deg);
     margin-left: 3rem;
@@ -128,8 +128,8 @@
     text-shadow: 0 0 10px rgb(255, 255, 255);
 }
 
-.service-image-container::before,
-.service-image-container::after {
+.services-image-container::before,
+.services-image-container::after {
     content: "";
     position: absolute;
     inset: 0;
@@ -138,17 +138,17 @@
 }
 
 /* Top to bottom vignette */
-.service-image-container::before {
+.services-image-container::before {
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.607), transparent 40%);
 }
 
 /* Bottom to top vignette */
-.service-image-container::after {
+.services-image-container::after {
     background: linear-gradient(to top, rgba(24, 24, 24, 0.926), transparent 80%);
 }
 
 
-.service-image-container img {
+.services-image-container img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -160,7 +160,7 @@
     background-color: black;
 }
 
-.service-title-container {
+.services-title-container {
     /* border: 1px solid; */
     margin: 1rem;
     border-bottom: 0.1rem solid var(--primary-color);
@@ -170,14 +170,14 @@
     align-items: center;
 }
 
-.service-title-container h1 {
+.services-title-container h1 {
     font-size: var(--font-xl);
     color: var(--text-color);
     font-weight: 600;
     margin: 0;
 }
 
-.service-title-container p {
+.services-title-container p {
     font-size: var(--font-xs);
     color: var(--text-color-sub);
     text-align: right;
@@ -214,7 +214,7 @@
     height: fit-content;
 }
 
-.service-desc-container {
+.services-desc-container {
     margin: 1rem;
     font-size: var(--font-sm);
     color: var(--text-color-sub);
@@ -267,11 +267,11 @@
 }
 
 @media only screen and (max-width: 768px) {
-    .service-container-parent {
+    .services-container-parent {
         width: 100%;
     }
 
-    .service-container {
+    .services-container {
         border-radius: 0;
     }
 
