@@ -27,11 +27,22 @@ function showCreateForm() {
         if (errorElement) errorElement.style.display = "none";
     });
 
+    initSubmitHandlers(page);
+
 }
 
 // Example: open form when clicking "Create New"
-document.getElementById("create-new-post").addEventListener("click", showCreateForm);
-
+document.addEventListener("DOMContentLoaded", () => {
+  const createBtn = document.getElementById("create-new-post"); // adjust selector if different
+  if (createBtn) {
+    createBtn.addEventListener("click", () => {
+      console.log("✅ Create button clicked"); // test log
+      showCreateForm();
+    });
+  } else {
+    console.warn("⚠️ Create button not found");
+  }
+});
 
 
 function getFormTemplate(page) {
