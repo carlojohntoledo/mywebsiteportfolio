@@ -27,7 +27,6 @@ function showCreateForm() {
         if (errorElement) errorElement.style.display = "none";
     });
 
-    initSubmitHandlers(page);
 }
 
 // Example: open form when clicking "Create New"
