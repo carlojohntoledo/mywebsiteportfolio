@@ -44,42 +44,25 @@ async function compressImage(file, maxMB = 2, quality = 0.7) {
 
 // ✅ Upload a single file to Cloudinary
 async function uploadToCloudinary(file, type = "projects") {
-    try {
-        if (!["projects", "services", "activities"].includes(type)) {
-            console.warn(`⚠️ Unknown type "${type}", defaulting to projects`);
-            type = "projects";
-        }
+    const url = `https://api.cloudinary.com/v1_1/dglegfflv/upload`;
+    const formData = new FormData();
+    formData.append("file", file);
 
-        console.log(`📤 Uploading to Cloudinary (${type}):`, file.name);
+    // Map preset per type (if you want separate presets)
+    const presetMap = {
+        projects: "mysocmed_projects",
+        services: "mysocmed_services",
+        activities: "mysocmed_activities"
+    };
 
-        const url = `https://api.cloudinary.com/v1_1/dglegfflv/upload`;
-        const formData = new FormData();
-        formData.append("file", file);
+    formData.append("upload_preset", presetMap[type] || "mysocmed_projects");
 
-        const presetMap = {
-            projects: "mysocmed_projects",
-            services: "mysocmed_services",
-            activities: "mysocmed_activities"
-        };
-
-        formData.append("upload_preset", presetMap[type]);
-        formData.append("folder", `mysocmed/${type}`);
-
-        const response = await fetch(url, { method: "POST", body: formData });
-        if (!response.ok) {
-            console.error("❌ Cloudinary upload failed:", response.status, await response.text());
-            return null;
-        }
-
-        const data = await response.json();
-
-        return {
-            imageUrl: data.secure_url || "",
-            publicId: data.public_id || ""
-        };
-    } catch (err) {
-        console.error("❌ Cloudinary upload error:", err);
-        return null;
-    }
+    const response = await fetch(url, { method: "POST", body: formData });
+    const data = await response.json();
+    return {
+        imageUrl: data.secure_url || "",
+        publicId: data.public_id || ""
+    };
 }
+
 
