@@ -15,19 +15,111 @@
 .create-post-toggle-container-parent {
     width: 90%;
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 100%;
+    grid-template-rows: 50% 50%;
     align-items: center;
-    background-color: var(--primary-color);
+    background-color: var(--tertiary-color);
     margin: 0 auto;
-    padding: 0.5rem 0.1rem;
+    /* padding: 0.5rem 0.5rem; */
     cursor: pointer;
+    border-radius: 1rem;
+    padding: 0rem 1rem;
 }
 
-.create-post-toggle-container-parent:hover {
-    background-color: var(--secondary-color);
+.create-post-group-top {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    margin: 0 auto;
+    border-bottom: 0.1rem solid var(--secondary-color);
+    padding: 1rem;
+    gap: 0.5rem;
+    /* border: 1px solid; */
 }
+
+.create-post-group-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 5rem;
+    justify-content: center;
+    /* gap: 0.25rem; */
+    align-items: center;
+    margin: 1rem auto;
+    /* border: 1px solid; */
+    width: 100%;
+}
+
 .create-post-toggle-container-parent p {
     margin: 1rem;
+    /* border: 1px solid; */
+    
+}
+
+.create-post-textarea {
+    margin: auto;
+    position: relative;
+    width: 100%;
+    background-color: var(--primary-color);
+    resize: none;
+    border: none;
+    border-radius: 2rem;
+    height: 100%;
+    /* border-bottom: 0.1rem solid var(--text-color-sub); */
+}
+
+
+.create-post-textarea:hover,
+.create-post-textarea:focus {
+    outline: none;
+    /* border-bottom: 0.1rem solid var(--text-color); */
+    background-color: var(--secondary-color);
+}
+
+.create-post-textarea::placeholder {
+    color: var(--text-color-sub);
+    font-size: var(--font-lg);
+    top: 0;
+    transform: translateY(50%);
+    left: 1rem;
+    position: absolute;
+}
+
+.create-post-btn {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: 100%;
+    height: 2.5rem;
+    width: 100%;
+    border-radius: 1rem;
+    /* border: 1px solid; */
+    cursor: pointer;
+    text-align: left;
+    margin: auto;
+    padding: 1rem 0rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.create-post-btn svg {
+    margin: auto;
+    height: 100%;
+}
+
+.create-post-btn p {
+    margin: auto;
+    width: max-content;
+    font-weight: bold;
+    color: var(--text-color);
+    line-clamp: 1;
+    white-space: nowrap;
+    /* border: 1px solid; */
+}
+
+.create-post-btn:hover {
+    background-color: var(--primary-color);
 }
 
 .projects-container-parent {
@@ -245,7 +337,7 @@
 .projects-name-container img {
     border-radius: 100%;
     aspect-ratio: 1/1;
-    width: var(--font-xl);
+    /* width: var(--font-xl); */
 }
 
 .projects-status-container {
