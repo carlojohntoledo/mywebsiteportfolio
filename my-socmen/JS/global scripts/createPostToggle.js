@@ -6,30 +6,45 @@
 // Show "Create Service" form
 
 function showCreateForm() {
-    const page = document.body.dataset.page; // "projects" | "services" | "activities"
-    const container = getPageContainer();    // our earlier helper
+  const page = document.body.dataset.page; 
+  const container = getPageContainer();    
 
+  console.log("Page:", page);
+  console.log("Container:", container);
 
+  if (!container) {
+    console.warn("⚠️ No container found for page", page);
+    return;
+  }
 
-    if (!container) return;
+  container.innerHTML = getFormTemplate(page);
+  console.log("Injected form HTML:", container.innerHTML.slice(0, 100)); // preview only first 100 chars
 
-    container.innerHTML = getFormTemplate(page); // inject form HTML
-    container.style.display = "grid";
-
-    // rebind cancel button after injection
-    container.querySelector('#cancel-btn').addEventListener('click', () => {
-        container.style.display = "none";
-        container.innerHTML = ""; // optional clear
+  container.style.display = "grid";
+  
+  // rebind cancel button
+  const cancelBtn = container.querySelector('#cancel-btn');
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', () => {
+      container.style.display = "none";
+      container.innerHTML = "";
     });
+  } else {
+    console.warn("⚠️ Cancel button not found in injected form.");
+  }
 
-    container.querySelector('.error__close').addEventListener("click", function () {
-        const errorElement = document.querySelector(".error");
-        if (errorElement) errorElement.style.display = "none";
+  // error close button
+  const errorClose = container.querySelector('.error__close');
+  if (errorClose) {
+    errorClose.addEventListener("click", function () {
+      const errorElement = document.querySelector(".error");
+      if (errorElement) errorElement.style.display = "none";
     });
+  }
 
-    initSubmitHandlers(page);
-
+  initSubmitHandlers(page);
 }
+
 
 // Example: open form when clicking "Create New"
 document.addEventListener("DOMContentLoaded", () => {
