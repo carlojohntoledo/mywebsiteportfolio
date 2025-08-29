@@ -6,26 +6,28 @@
 // Show "Create Service" form
 
 function showCreateForm() {
-  const page = document.body.dataset.page; // "projects" | "services" | "activities"
-  const container = getPageContainer();    // our earlier helper
+    const page = document.body.dataset.page; // "projects" | "services" | "activities"
+    const container = getPageContainer();    // our earlier helper
 
-  initSubmitHandlers(page);
 
-  if (!container) return;
 
-  container.innerHTML = getFormTemplate(page); // inject form HTML
-  container.style.display = "grid";
+    if (!container) return;
 
-  // rebind cancel button after injection
-  container.querySelector('#cancel-btn').addEventListener('click', () => {
-    container.style.display = "none";
-    container.innerHTML = ""; // optional clear
-  });
+    container.innerHTML = getFormTemplate(page); // inject form HTML
+    container.style.display = "grid";
 
-  container.querySelector('.error__close').addEventListener("click", function () {
-    const errorElement = document.querySelector(".error");
-    if (errorElement) errorElement.style.display = "none";
-});
+    // rebind cancel button after injection
+    container.querySelector('#cancel-btn').addEventListener('click', () => {
+        container.style.display = "none";
+        container.innerHTML = ""; // optional clear
+    });
+
+    container.querySelector('.error__close').addEventListener("click", function () {
+        const errorElement = document.querySelector(".error");
+        if (errorElement) errorElement.style.display = "none";
+    });
+
+    initSubmitHandlers(page);
 }
 
 // Example: open form when clicking "Create New"
@@ -33,11 +35,11 @@ document.getElementById("create-new-post").addEventListener("click", showCreateF
 
 
 
-function getFormTemplate(page) { 
-  const type = page.charAt(0).toUpperCase() + page.slice(1); // Projects → "Projects"
-  switch (page) {
-    case "activities":
-        return `
+function getFormTemplate(page) {
+    const type = page.charAt(0).toUpperCase() + page.slice(1); // Projects → "Projects"
+    switch (page) {
+        case "activities":
+            return `
             <div class="create-post-container">
             <div class="create-${page}-form-container">
                 <div class="create-${page}-header">
@@ -145,7 +147,7 @@ function getFormTemplate(page) {
         `;
 
         case "services":
-        return `
+            return `
             <div class="create-post-container">
             <div class="create-${page}-form-container">
                 <div class="create-${page}-header">
@@ -253,7 +255,7 @@ function getFormTemplate(page) {
         `;
 
         case "projects":
-        return `
+            return `
             <div class="create-post-container">
             <div class="create-${page}-form-container">
                 <div class="create-${page}-header">
@@ -361,7 +363,7 @@ function getFormTemplate(page) {
         `;
 
         default:
-        return `<p>Unknown page type: ${page}</p>`; 
+            return `<p>Unknown page type: ${page}</p>`;
     }
 }
 
