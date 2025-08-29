@@ -240,16 +240,6 @@ function getFormTemplate(page) {
                     </div>
 
                     <!-- LINKS -->
-                    <div class="flex-container">
-                    <div class="create-${page}-containers ${page}-label">
-                        <input class="input-${page}-pdf-link" type="url" placeholder="https://...">
-                        <label>${type.slice(0, -1)} PDF Link</label>
-                    </div>
-                    <div class="create-${page}-containers ${page}-label">
-                        <input class="input-${page}-link" type="url" placeholder="https://...">
-                        <label>${type.slice(0, -1)} Link</label>
-                    </div>
-                    </div>
 
                     <!-- IMAGE UPLOAD -->
                     <div class="create-${page}-image-container">
