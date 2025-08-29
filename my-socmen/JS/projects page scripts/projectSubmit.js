@@ -4,6 +4,7 @@
 function initSubmitHandlers(page) {
     // Example: page = "projects" | "activities" | "services"
     const postBtnId = `${page}-post-btn`;
+    console.log(`🔔 Initializing submit handler for ${page} with button ID: ${postBtnId}`);
 
     // Remove any previous listener to avoid duplicates
     document.removeEventListener("click", handlePostClick);
