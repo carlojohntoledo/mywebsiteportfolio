@@ -45,6 +45,11 @@ async function compressImage(file, maxMB = 2, quality = 0.7) {
 // ✅ Upload a single file to Cloudinary
 async function uploadToCloudinary(file, type = "projects") {
     try {
+        if (!["projects", "services", "activities"].includes(type)) {
+            console.warn(`⚠️ Unknown type "${type}", defaulting to projects`);
+            type = "projects";
+        }
+
         console.log(`📤 Uploading to Cloudinary (${type}):`, file.name);
 
         const url = `https://api.cloudinary.com/v1_1/dglegfflv/upload`;
@@ -57,7 +62,7 @@ async function uploadToCloudinary(file, type = "projects") {
             activities: "mysocmed_activities"
         };
 
-        formData.append("upload_preset", presetMap[type] || "mysocmed_projects");
+        formData.append("upload_preset", presetMap[type]);
         formData.append("folder", `mysocmed/${type}`);
 
         const response = await fetch(url, { method: "POST", body: formData });
@@ -77,3 +82,4 @@ async function uploadToCloudinary(file, type = "projects") {
         return null;
     }
 }
+

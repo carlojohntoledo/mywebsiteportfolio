@@ -63,7 +63,7 @@ function initSubmitHandlers(page) {
 
                 for (const file of files) {
                     const compressedFile = await compressImage(file);
-                    const result = await uploadToCloudinary(compressedFile);
+                    const result = await uploadToCloudinary(compressedFile, page);
                     if (result) {
                         uploadedImages.push({
                             imageUrl: result.imageUrl,
