@@ -61,104 +61,131 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 function getFormTemplate(page) {
-    const type = page.charAt(0).toUpperCase() + page.slice(1); // Projects → "Projects"
+    const type = page.charAt(0).toUpperCase() + page.slice(0); // Projects → "Projects"
+
+    const singularMap = {
+        projects: "Project",
+        services: "Service",
+        activities: "Activity"
+    };
+    const singular = singularMap[page] || page; // fallback
+    const plural = singular + "s"; // just in case you need plural again
+    
     switch (page) {
         case "activities":
             return `
             <div class="create-post-container">
-                <div class="create-${page}-form-container">
-                    <!-- HEADER -->
-                    <div class="create-${page}-header">
-                        <h1 class="card-title">Create ${type.slice(0, 0)}</h1>
-                        <span class="create-${page}-button-container red-btn" id="cancel-btn">Cancel</span>
-                        <span class="create-${page}-button-container green-btn" id="activities-post-btn">Post</span>
-                    </div>
+            <div class="create-${page}-form-container">
+                <div class="create-${page}-header">
+                <h1 class="card-title">Create ${singular}</h1>
+                <span class="create-${page}-button-container red-btn" id="cancel-btn">Cancel</span>
+                <span class="create-${page}-button-container green-btn" id="activities-post-btn">Post</span>
+                </div>
 
-                    <!-- ERROR BOX -->
-                    <div class="error" id="form-warning"> 
-                        <div class="form-warning-cont">
-                            <div class="error__icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                    <path fill="#393a37"
-                                        d="M13 13h-2V7h2zm0 4h-2v-2h2zm-1-15C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 
-                                        10-10S17.5 2 12 2z"/>
-                                </svg>
-                            </div>
-                            <div class="error__title">Please fill-in required (*) details.</div>
-                            <div class="error__close" id="close-error">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
-                                    <path fill="#393a37" d="M15.8 5.3l-1.2-1.2-4.6 4.6-4.6-4.6-1.2 1.2 4.6 4.6-4.6 4.6 1.2 1.2 4.6-4.6 
-                                    4.6 4.6 1.2-1.2-4.6-4.6z"/>
-                                </svg>
-                            </div>
+                <div class="error" id="form-warning"> 
+                    <div class="form-warning-cont">
+                        <div class="error__icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 24 24"
+                                height="24" fill="none">
+                                <path fill="#393a37"
+                                    d="m13 13h-2v-6h2zm0 4h-2v-2h2zm-1-15c-1.3132 0-2.61358.25866-3.82683.7612-1.21326.50255-2.31565 1.23915-3.24424 2.16773-1.87536 1.87537-2.92893 4.41891-2.92893 7.07107 0 2.6522 1.05357 5.1957 2.92893 7.0711.92859.9286 2.03098 1.6651 3.24424 2.1677 1.21325.5025 2.51363.7612 3.82683.7612 2.6522 0 5.1957-1.0536 7.0711-2.9289 1.8753-1.8754 2.9289-4.4189 2.9289-7.0711 0-1.3132-.2587-2.61358-.7612-3.82683-.5026-1.21326-1.2391-2.31565-2.1677-3.24424-.9286-.92858-2.031-1.66518-3.2443-2.16773-1.2132-.50254-2.5136-.7612-3.8268-.7612z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="error__title">Please fill-in required (*) details.</div>
+                        <div class="error__close" id="close-error"><svg xmlns="http://www.w3.org/2000/svg"
+                                width="20" viewBox="0 0 20 20" height="20">
+                                <path fill="#393a37"
+                                    d="m15.8333 5.34166-1.175-1.175-4.6583 4.65834-4.65833-4.65834-1.175 1.175 4.65833 4.65834-4.65833 4.6583 1.175 1.175 4.65833-4.6583 4.6583 4.6583 1.175-1.175-4.6583-4.6583z">
+                                </path>
+                            </svg>
                         </div>
                     </div>
-
-                    <!-- FORM -->
-                    <div class="create-${page}-form-viewport scroll-fade">
-                        <form id="create-${page}-form">
-
-                            <!-- TITLE -->
-                            <div class="create-${page}-containers ${page}-label">
-                                <input class="input-${page}-title" type="text" required>
-                                <label>${type.slice(0, -1)} Title*</label>
-                            </div>
-
-                            <!-- DESCRIPTION -->
-                            <div class="create-${page}-containers ${page}-label">
-                                <textarea class="input-${page}-description" required></textarea>
-                                <label>${type.slice(0, -1)} Description*</label>
-                            </div>
-
-                            <!-- DATE -->
-                            <div class="create-${page}-containers ${page}-label">
-                                <input class="input-${page}-date" type="date" required>
-                                <label>${type.slice(0, -1)} Date*</label>
-                            </div>
-
-                            <!-- IMAGE UPLOAD -->
-                            <div class="create-${page}-image-container">
-                                <h1>Add Photos</h1>
-                                <div class="file-upload-form">
-                                    <label for="file" class="file-upload-label">
-                                        <div class="file-upload-design">
-                                            <svg viewBox="0 0 640 512" height="1em">
-                                                <path d="M144 480C64.5 480 0 415.5 0 336c0-62.8 
-                                                    40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 
-                                                    71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 
-                                                    102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 
-                                                    23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 
-                                                    128-128 128H144zm79-217c-9.4 9.4-9.4 24.6 0 
-                                                    33.9s24.6 9.4 33.9 0l39-39V392c0 13.3 10.7 
-                                                    24 24 24s24-10.7 24-24V257.9l39 
-                                                    39c9.4 9.4 24.6 9.4 33.9 
-                                                    0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 
-                                                    0l-80 80z"/>
-                                            </svg>
-                                            <p>Drag and Drop</p>
-                                            <p>or</p>
-                                            <span class="browse-button">Browse file</span>
-                                            <input id="file" type="file" multiple accept="image/*" onchange="previewImages(event, '#activity-preview')" />
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- PREVIEW -->
-                            <div id="activity-preview" class="file-preview-container"></div>
-                        </form>
-                    </div>
                 </div>
+
+                <div class="create-${page}-form-viewport scroll-fade">
+                <form id="create-${page}-form">
+
+                    <!-- TITLE -->
+                    <div class="create-${page}-containers ${page}-label">
+                    <input class="input-${page}-title" type="text" required>
+                    <label>${singular} Title*</label>
+                    </div>
+
+                    <!-- DESCRIPTION -->
+                    <div class="create-${page}-containers ${page}-label">
+                    <textarea class="input-${page}-description" required></textarea>
+                    <label>${singular} Description*</label>
+                    </div>
+
+                    <!-- DATE + STATUS -->
+                    <div class="flex-container">
+                    <div class="create-${page}-containers ${page}-label">
+                        <input class="input-${page}-date" type="date" required>
+                        <label>${singular} Date*</label>
+                    </div>
+                    <div class="create-${page}-containers ${page}-label">
+                        <select class="input-${page}-status" required>
+                        <option value="Published">Published</option>
+                        <option value="Under Development">Under Development</option>
+                        <option value="Planned">Planned</option>
+                        </select>
+                        <label>${singular} Status*</label>
+                    </div>
+                    </div>
+
+                    <!-- TAGS -->
+                    <div class="create-${page}-containers ${page}-label">
+                    <input class="input-${page}-tags" placeholder="html, css, js..." type="text">
+                    <label>${singular} Tags</label>
+                    </div>
+
+                    <!-- LINKS -->
+                    <div class="flex-container">
+                    <div class="create-${page}-containers ${page}-label">
+                        <input class="input-${page}-pdf-link" type="url" placeholder="https://...">
+                        <label>${singular} PDF Link</label>
+                    </div>
+                    <div class="create-${page}-containers ${page}-label">
+                        <input class="input-${page}-link" type="url" placeholder="https://...">
+                        <label>${singular} Link</label>
+                    </div>
+                    </div>
+
+                    <!-- IMAGE UPLOAD -->
+                    <div class="create-${page}-image-container">
+                    <h1>Add Photos</h1>
+                    <div class="file-upload-form">
+                        <label for="file" class="file-upload-label">
+                        <div class="file-upload-design">
+                            <svg viewBox="0 0 640 512" height="1em">
+                                <path
+                                    d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-217c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39V392c0 13.3 10.7 24 24 24s24-10.7 24-24V257.9l39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z">
+                                </path>
+                            </svg>
+                            <p>Drag and Drop</p>
+                            <p>or</p>
+                            <span class="browse-button">Browse file</span>
+                            <input id="file" type="file" multiple accept="image/*" onchange="previewImages(event, '#activity-preview')" />
+                        </div>
+                        </label>
+                    </div>
+                    </div>
+
+                    <!-- PREVIEW -->
+                    <div id="activity-preview" class="file-preview-container"></div>
+                </form>
+                </div>
+            </div>
             </div>
         `;
 
-
         case "services":
             return `
-            <div class="create-post-container">
+                <div class="create-post-container">
                 <div class="create-${page}-form-container">
                     <div class="create-${page}-header">
-                    <h1 class="card-title">Create ${type.slice(0, -1)}</h1>
+                    <h1 class="card-title">Create ${singular}</h1>
                     <span class="create-${page}-button-container red-btn" id="cancel-btn">Cancel</span>
                     <span class="create-${page}-button-container green-btn" id="services-post-btn">Post</span>
                     </div>
@@ -190,13 +217,13 @@ function getFormTemplate(page) {
                         <!-- TITLE -->
                         <div class="create-${page}-containers ${page}-label">
                             <input class="input-${page}-title" type="text" required>
-                            <label>${type.slice(0, -1)} Title*</label>
+                            <label>${singular} Title*</label>
                         </div>
 
                         <!-- DESCRIPTION -->
                         <div class="create-${page}-containers ${page}-label">
                             <textarea class="input-${page}-description" required></textarea>
-                            <label>${type.slice(0, -1)} Description*</label>
+                            <label>${singular} Description*</label>
                         </div>
 
                         <!-- EXPERIENCE + STATUS -->
@@ -210,7 +237,7 @@ function getFormTemplate(page) {
                                     <option value="5-10yrs">5 - 10 years</option>
                                     <option value="10+yrs">More than 10 years</option>
                                 </select>
-                                <label>${type.slice(0, -1)} Experience*</label>
+                                <label>${singular} Experience*</label>
                             </div>
 
                             <!-- Updated STATUS OPTIONS -->
@@ -221,14 +248,14 @@ function getFormTemplate(page) {
                                     <option value="Completed">Completed</option>
                                     <option value="Unavailable">Unavailable</option>
                                 </select>
-                                <label>${type.slice(0, -1)} Status*</label>
+                                <label>${singular} Status*</label>
                             </div>
                         </div>
 
                         <!-- TAGS -->
                         <div class="create-${page}-containers ${page}-label">
                             <input class="input-${page}-tags" placeholder="design, seo, consulting..." type="text">
-                            <label>${type.slice(0, -1)} Tags</label>
+                            <label>${singular} Tags</label>
                         </div>
 
                         <!-- IMAGE UPLOAD -->
@@ -256,8 +283,8 @@ function getFormTemplate(page) {
                     </form>
                     </div>
                 </div>
-            </div>
-        `;
+                </div>
+                `;
 
 
         case "projects":
@@ -265,7 +292,7 @@ function getFormTemplate(page) {
             <div class="create-post-container">
             <div class="create-${page}-form-container">
                 <div class="create-${page}-header">
-                <h1 class="card-title">Create ${type.slice(0, -1)}</h1>
+                <h1 class="card-title">Create ${singular}</h1>
                 <span class="create-${page}-button-container red-btn" id="cancel-btn">Cancel</span>
                 <span class="create-${page}-button-container green-btn" id="projects-post-btn">Post</span>
                 </div>
@@ -297,20 +324,20 @@ function getFormTemplate(page) {
                     <!-- TITLE -->
                     <div class="create-${page}-containers ${page}-label">
                     <input class="input-${page}-title" type="text" required>
-                    <label>${type.slice(0, -1)} Title*</label>
+                    <label>${singular} Title*</label>
                     </div>
 
                     <!-- DESCRIPTION -->
                     <div class="create-${page}-containers ${page}-label">
                     <textarea class="input-${page}-description" required></textarea>
-                    <label>${type.slice(0, -1)} Description*</label>
+                    <label>${singular} Description*</label>
                     </div>
 
                     <!-- DATE + STATUS -->
                     <div class="flex-container">
                     <div class="create-${page}-containers ${page}-label">
                         <input class="input-${page}-date" type="date" required>
-                        <label>${type.slice(0, -1)} Date*</label>
+                        <label>${singular} Date*</label>
                     </div>
                     <div class="create-${page}-containers ${page}-label">
                         <select class="input-${page}-status" required>
@@ -318,25 +345,25 @@ function getFormTemplate(page) {
                         <option value="Under Development">Under Development</option>
                         <option value="Planned">Planned</option>
                         </select>
-                        <label>${type.slice(0, -1)} Status*</label>
+                        <label>${singular} Status*</label>
                     </div>
                     </div>
 
                     <!-- TAGS -->
                     <div class="create-${page}-containers ${page}-label">
                     <input class="input-${page}-tags" placeholder="html, css, js..." type="text">
-                    <label>${type.slice(0, -1)} Tags</label>
+                    <label>${singular} Tags</label>
                     </div>
 
                     <!-- LINKS -->
                     <div class="flex-container">
                     <div class="create-${page}-containers ${page}-label">
                         <input class="input-${page}-pdf-link" type="url" placeholder="https://...">
-                        <label>${type.slice(0, -1)} PDF Link</label>
+                        <label>${singular} PDF Link</label>
                     </div>
                     <div class="create-${page}-containers ${page}-label">
                         <input class="input-${page}-link" type="url" placeholder="https://...">
-                        <label>${type.slice(0, -1)} Link</label>
+                        <label>${singular} Link</label>
                     </div>
                     </div>
 
