@@ -166,7 +166,7 @@ function getFormTemplate(page) {
                     </div>
 
                     <!-- PREVIEW -->
-                    <div id="activity-preview" class="file-preview-container"></div>
+                    <div id="activities-preview" class="file-preview-container"></div>
                 </form>
                 </div>
             </div>
@@ -272,7 +272,7 @@ function getFormTemplate(page) {
                         </div>
 
                         <!-- PREVIEW -->
-                        <div id="service-preview" class="file-preview-container"></div>
+                        <div id="services-preview" class="file-preview-container"></div>
                     </form>
                     </div>
                 </div>
@@ -381,7 +381,7 @@ function getFormTemplate(page) {
                     </div>
 
                     <!-- PREVIEW -->
-                    <div id="project-preview" class="file-preview-container"></div>
+                    <div id="projects-preview" class="file-preview-container"></div>
                 </form>
                 </div>
             </div>
