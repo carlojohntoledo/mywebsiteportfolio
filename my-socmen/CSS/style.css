@@ -249,6 +249,14 @@ textarea {
 }
 
 .sm-profilepic {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    object-fit: cover;
+    aspect-ratio: 1/1;
+}
+
+.md-profilepic {
     width: 3.5rem;
     height: 3.5rem;
     border-radius: 50%;

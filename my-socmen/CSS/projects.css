@@ -623,6 +623,10 @@
         grid-template-rows: 100%;
     }
 
+    .create-post-textarea {
+        height: 75%;
+    }
+
     .create-post-group-bottom {
         font-size: var(--font-xs);
         display: none;
