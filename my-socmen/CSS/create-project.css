@@ -1,6 +1,7 @@
 /* ---------- CRATE projects FORM ----------- */
 
-.create-card-container-parent {  /* Common for both service and projects */
+.create-card-container-parent {
+    /* Common for both service and projects */
     width: 100%;
     left: 0;
     top: 0;
@@ -146,6 +147,7 @@
     color: var(--text-color);
     margin: auto;
     background-color: var(--tertiary-color);
+    font-size: var(--font-sm);
     /* border: 1px solid green; */
 }
 
@@ -343,7 +345,7 @@
     }
 
 
-    .create-projects-container {
+    .create-post-container {
         width: 100%;
         border-radius: 0;
     }
