@@ -1,385 +1,421 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>My SocMed</title>
-    <!-- <link rel="stylesheet" href="CSS/debug-borders.css"> -->
-    <link rel="stylesheet" href="CSS/menu-nav.css">
-    <link rel="stylesheet" href="CSS/extras-navbar.css">
-    <link rel="stylesheet" href="CSS/style.css">
-    <link rel="stylesheet" href="CSS/shortcut-section.css">
-    <link rel="stylesheet" href="CSS/contacts-section.css">
-    <link rel="stylesheet" href="CSS/thumbnail.css">
-    <link rel="stylesheet" href="CSS/activity-panel.css">
-    <link rel="stylesheet" href="CSS/logo.css">
-    <link rel="stylesheet" href="CSS/download-cv.css">
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <title>My SocMed</title>
+        <!-- <link rel="stylesheet" href="CSS/debug-borders.css"> -->
+        <link rel="stylesheet" href="CSS/menu-nav.css">
+        <link rel="stylesheet" href="CSS/extras-navbar.css">
+        <link rel="stylesheet" href="CSS/style.css">
+        <link rel="stylesheet" href="CSS/shortcut-section.css">
+        <link rel="stylesheet" href="CSS/contacts-section.css">
+        <link rel="stylesheet" href="CSS/thumbnail.css">
+        <link rel="stylesheet" href="CSS/activities.css">
+        <link rel="stylesheet" href="CSS/logo.css">
+        <link rel="stylesheet" href="CSS/download-cv.css">
+        <link rel="stylesheet" href="CSS/create-activities.css">
+        <link rel="stylesheet" href="CSS/edit-project.css">
+        
+        <link rel="stylesheet" href="CSS/projects.css">
+    </head>
 
-<body data-page="activity">
-
-    <div class="loader-container" style="display: none;">
-        <div class="loader">
-            <div class="progress"></div>
-            <div class="progress"></div>
-            <div class="progress"></div>
-        </div>
-    </div>
-
-    <div class="content-parent">
-        <div class="thumbnail red-bordered">
-            <img src="Assets/Images/thumbnail-background/pngegg.png" alt="thumbnail.png">
-        </div>
-        <nav class="menu-nav yellow-bordered">
-            <div class="logo-panel blue-bordered">
-                <!-- From Uiverse.io by satyamchaudharydev -->
-                <button class="logo" data-text="Awesome">
-                    <span class="actual-text">&nbsp;KOALO&nbsp;</span>
-                    <span aria-hidden="true" class="hover-text">&nbsp;KOALO&nbsp;</span>
-                </button>
+    <body data-page="activities">
+        <div class="loader-container" style="display: none;">
+            <div class="loader">
+                <div class="progress"></div>
+                <div class="progress"></div>
+                <div class="progress"></div>
             </div>
-            <div class="menu-btn-panel blue-bordered">
-                <div class="radio-inputs">
-                    <label class="menu-radio" data-href="index.html">
-                        <input name="radio" type="radio" checked />
-                        <span class="name">Activity</span>
-                    </label>
-                    <label class="menu-radio" data-href="profile.html">
-                        <input name="radio" type="radio" />
-                        <span class="name">Profile</span>
-                    </label>
-                    <label class="menu-radio" data-href="services.html">
-                        <input name="radio" type="radio" />
-                        <span class="name">Services</span>
-                    </label>
-                    <label class="menu-radio" data-href="projects.html">
-                        <input name="radio" type="radio" />
-                        <span class="name">Projects</span>
-                    </label>
+        </div>
+
+        <div class="content-parent">
+            <nav class="menu-nav yellow-bordered">
+                <div class="logo-panel blue-bordered">
+                    <button class="logo" data-text="Awesome">
+                        <span class="actual-text">&nbsp;KOALO&nbsp;</span>
+                        <span aria-hidden="true" class="hover-text">&nbsp;KOALO&nbsp;</span>
+                    </button>
+                </div>
+                <div class="menu-btn-panel blue-bordered">
+                    <div class="radio-inputs">
+                        <label class="menu-radio" data-href="index.html">
+                            <input name="radio" type="radio" checked/>
+                            <span class="name">Activity</span>
+                        </label>
+                        <label class="menu-radio" data-href="profile.html">
+                            <input name="radio" type="radio" />
+                            <span class="name">Profile</span>
+                        </label>
+                        <label class="menu-radio" data-href="services.html">
+                            <input name="radio" type="radio"/>
+                            <span class="name">Services</span>
+                        </label>
+                        <label class="menu-radio" data-href="projects.html">
+                            <input name="radio" type="radio" />
+                            <span class="name">Projects</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="extras-panel blue-bordered">
+
+                    <div class="extras-dropdown-button-container">
+                        <input hidden="" class="check-icon" id="check-icon" name="check-icon" type="checkbox">
+                        <label class="icon-menu" for="check-icon">
+                            <div class="bar bar--1"></div>
+                            <div class="bar bar--2"></div>
+                            <div class="bar bar--3"></div>
+                        </label>
+                        <!-- Popup -->
+                        <div class="extras-popup">
+                            <h2>MENU</h2>
+                            <ul>
+                                <div class="search-section red-bordered" style="background-color: transparent;">
+                                    <div class="search-container">
+                                        <svg class="search_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"
+                                            alt="search icon">
+                                            <path
+                                                d="M46.599 46.599a4.498 4.498 0 0 1-6.363 0l-7.941-7.941C29.028 40.749 25.167 42 21 42 9.402 42 0 32.598 0 21S9.402 0 21 0s21 9.402 21 21c0 4.167-1.251 8.028-3.342 11.295l7.941 7.941a4.498 4.498 0 0 1 0 6.363zM21 6C12.717 6 6 12.714 6 21s6.717 15 15 15c8.286 0 15-6.714 15-15S29.286 6 21 6z">
+                                            </path>
+                                        </svg>
+                                        <input class="inputBox" id="inputBox" type="text" placeholder="Search">
+                                    </div>
+                                </div>
+                                <a href="#">
+                                    <li>Option 1</li>
+                                </a>
+                                <a href="#">
+                                    <li>Option 1</li>
+                                </a>
+                                <a href="#">
+                                    <li>Option 1</li>
+                                </a>
+                                <hr>
+                                </hr>
+                                <a href="#">
+                                    <li>Option 1</li>
+                                </a>
+                                <a href="#">
+                                    <li>Option 1</li>
+                                </a>
+                                <a href="#">
+                                    <li>Option 1</li>
+                                </a>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
 
-            </div>
-            <div class="extras-panel blue-bordered">
+            </nav>
+            <div class="main-content blue-bordered">
+                <section class="shortcuts-section white-bordered scroll-fade">
+                    <div class="search-section red-bordered">
+                        <div class="search-container">
+                            <svg class="search_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"
+                                alt="search icon">
+                                <path
+                                    d="M46.599 46.599a4.498 4.498 0 0 1-6.363 0l-7.941-7.941C29.028 40.749 25.167 42 21 42 9.402 42 0 32.598 0 21S9.402 0 21 0s21 9.402 21 21c0 4.167-1.251 8.028-3.342 11.295l7.941 7.941a4.498 4.498 0 0 1 0 6.363zM21 6C12.717 6 6 12.714 6 21s6.717 15 15 15c8.286 0 15-6.714 15-15S29.286 6 21 6z">
+                                </path>
+                            </svg>
+                            <input class="inputBox" id="inputBox" type="text" placeholder="Search">
+                        </div>
+                    </div>
+                    <div class="pinned-section red-bordered">
+                        <div class="pinned-activities-panel blue-bordered">
+                            <h2>Pinned Activities</h2>
+                            <ul class="pinned-activities-list">
+                                <a href="#">
+                                    <li>Pinned Activity Title 1</li>
+                                </a>
+                                <a href="#">
+                                    <li>Pinned Activity Title 2</li>
+                                </a>
+                                <a href="#">
+                                    <li>Pinned Activity Title 3</li>
+                                </a>
+                                <a href="#">
+                                    <li>Pinned Activity Title 4</li>
+                                </a>
+                            </ul>
+                        </div>
+                        <div class="pinned-projects-panel blue-bordered">
+                            <h2>Pinned Projects</h2>
+                            <ul class="pinned-projects-list">
+                                <a href="#">
+                                    <li>Pinned Projects Title 1</li>
+                                </a>
+                                <a href="#">
+                                    <li>Pinned Projects Title 2</li>
+                                </a>
+                                <a href="#">
+                                    <li>Pinned Projects Title 3</li>
+                                </a>
+                                <a href="#">
+                                    <li>Pinned Projects Title 4</li>
+                                </a>
+                            </ul>
+                        </div>
+                        <div class="pinned-skills-panel blue-bordered">
+                            <h2>Pinned Skills</h2>
+                            <ul class="pinned-skills-list">
+                                <a href="#">
+                                    <li>Pinned Skills Title 1</li>
+                                </a>
+                                <a href="#">
+                                    <li>Pinned Skills Title 2</li>
+                                </a>
+                                <a href="#">
+                                    <li>Pinned Skills Title 3</li>
+                                </a>
+                                <a href="#">
+                                    <li>Pinned Skills Title 4</li>
+                                </a>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="recent-section red-bordered">
+                        <div class="recent-activities-panel blue-bordered">
+                            <h2>Recent Activities</h2>
+                            <ul class="recent-activities-list">
+                                <a href="#">
+                                    <li>Recent Activities Title 1</li>
+                                </a>
+                                <a href="#">
+                                    <li>Recent Activities Title 2</li>
+                                </a>
+                                <a href="#">
+                                    <li>Recent Activities Title 3</li>
+                                </a>
+                                <a href="#">
+                                    <li>Recent Activities Title 4</li>
+                                </a>
+                            </ul>
+                        </div>
+                        <div class="recent-projects-panel blue-bordered">
+                            <h2>Recent Projects</h2>
+                            <ul class="recent-projects-list">
+                                
+                            </ul>
+                        </div>
+                        <div class="recent-search-panel blue-bordered">
+                            <h2>Recent Search</h2>
+                            <ul class="recent-search-list">
+                                <a href="#">
+                                    <li>Recent Search Title 1</li>
+                                </a>
+                                <a href="#">
+                                    <li>Recent Search Title 2</li>
+                                </a>
+                                <a href="#">
+                                    <li>Recent Search Title 3</li>
+                                </a>
+                                <a href="#">
+                                    <li>Recent Search Title 4</li>
+                                </a>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                <section class="activities-section white-bordered scroll-fade">
+                    <div class="create-post-toggle-container-parent" id="create-new-post">
+                    <div class="create-post-group-top">
+                        <img class="sm-profilepic" src="Assets/Images/Profile Pictures/default-profile-picture.jpg"
+                            alt="profile picture">
+                        <textarea class="create-post-textarea" type="text"
+                            placeholder="Create new activity"></textarea>
 
-                <div class="extras-dropdown-button-container">
-                    <input hidden="" class="check-icon" id="check-icon" name="check-icon" type="checkbox">
-                    <label class="icon-menu" for="check-icon">
-                        <div class="bar bar--1"></div>
-                        <div class="bar bar--2"></div>
-                        <div class="bar bar--3"></div>
-                    </label>
-                    <!-- Popup -->
-                    <div class="extras-popup">
-                        <h2>MENU</h2>
-                        <ul>
-                            <div class="search-section red-bordered" style="background-color: transparent;">
-                                <div class="search-container">
-                                    <svg class="search_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"
-                                        alt="search icon">
+                        <svg viewBox="-4 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="#000000">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <path
+                                    d="M5.112.011c-2.802 0-5.073 2.273-5.073 5.074v53.841c0 2.803 2.272 5.074 5.073 5.074h45.775c2.801 0 5.074-2.271 5.074-5.074v-38.605l-18.904-20.31h-31.945z"
+                                    fill-rule="evenodd" clip-rule="evenodd" fill="#eb3d60"></path>
+                                <path
+                                    d="M10.133 37.439h21.564v2.059h-21.564zm0 4.801h21.564v2.057h-21.564zm0 4.801h21.564v2.057h-21.564zm0 4.8h12.233v2.058h-12.233z"
+                                    fill="#ffffff"></path>
+                                <g fill-rule="evenodd" clip-rule="evenodd">
+                                    <path
+                                        d="M55.96 20.377v1h-12.799s-6.312-1.26-6.129-6.707c0 0 .208 5.707 6.004 5.707h12.924z"
+                                        fill="#e42f41"></path>
+                                    <path d="M37.058.025v14.561c0 1.656 1.104 5.791 6.104 5.791h12.799l-18.903-20.352z"
+                                        opacity=".5" fill="#ffffff"></path>
+                                </g>
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="create-post-group-bottom">
+                        <div class="create-post-btn" id="add-photo-btn">
+                            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier">
+                                    <path
+                                        d="M25.6 0H6.4C2.86538 0 0 2.86538 0 6.4V25.6C0 29.1346 2.86538 32 6.4 32H25.6C29.1346 32 32 29.1346 32 25.6V6.4C32 2.86538 29.1346 0 25.6 0Z"
+                                        fill="url(#paint0_linear_103_1789)"></path>
+                                    <path
+                                        d="M5.9577 24.8845C5.42578 25.9483 6.19937 27.2 7.38878 27.2H18.2111C19.4005 27.2 20.1741 25.9483 19.6422 24.8845L14.231 14.0622C13.6414 12.8829 11.9585 12.8829 11.3688 14.0622L5.9577 24.8845Z"
+                                        fill="white"></path>
+                                    <path
+                                        d="M15.5577 24.8845C15.0258 25.9483 15.7994 27.2 16.9888 27.2H24.6111C25.8005 27.2 26.5741 25.9483 26.0422 24.8845L22.231 17.2622C21.6414 16.0829 19.9585 16.0829 19.3688 17.2622L15.5577 24.8845Z"
+                                        fill="white" fill-opacity="0.6"></path>
+                                    <path
+                                        d="M24.0002 11.2C25.7675 11.2 27.2002 9.76726 27.2002 7.99995C27.2002 6.23264 25.7675 4.79995 24.0002 4.79995C22.2329 4.79995 20.8002 6.23264 20.8002 7.99995C20.8002 9.76726 22.2329 11.2 24.0002 11.2Z"
+                                        fill="white"></path>
+                                    <defs>
+                                        <linearGradient id="paint0_linear_103_1789" x1="16" y1="0" x2="16" y2="32"
+                                            gradientUnits="userSpaceOnUse">
+                                            <stop stop-color="#00E676"></stop>
+                                            <stop offset="1" stop-color="#00C853"></stop>
+                                        </linearGradient>
+                                    </defs>
+                                </g>
+                            </svg>
+                            <p><strong>Add Photos</strong></p>
+                        </div>
+                        <div class="create-post-btn" id="attach-file-btn">
+                            <svg viewBox="-4 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="#000000">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier">
+                                    <path
+                                        d="M5.112.011c-2.802 0-5.073 2.273-5.073 5.074v53.841c0 2.803 2.272 5.074 5.073 5.074h45.775c2.801 0 5.074-2.271 5.074-5.074v-38.605l-18.904-20.31h-31.945z"
+                                        fill-rule="evenodd" clip-rule="evenodd" fill="#eb3d60"></path>
+                                    <path
+                                        d="M10.133 37.439h21.564v2.059h-21.564zm0 4.801h21.564v2.057h-21.564zm0 4.801h21.564v2.057h-21.564zm0 4.8h12.233v2.058h-12.233z"
+                                        fill="#ffffff"></path>
+                                    <g fill-rule="evenodd" clip-rule="evenodd">
                                         <path
-                                            d="M46.599 46.599a4.498 4.498 0 0 1-6.363 0l-7.941-7.941C29.028 40.749 25.167 42 21 42 9.402 42 0 32.598 0 21S9.402 0 21 0s21 9.402 21 21c0 4.167-1.251 8.028-3.342 11.295l7.941 7.941a4.498 4.498 0 0 1 0 6.363zM21 6C12.717 6 6 12.714 6 21s6.717 15 15 15c8.286 0 15-6.714 15-15S29.286 6 21 6z">
-                                        </path>
-                                    </svg>
-                                    <input class="inputBox" id="inputBox" type="text" placeholder="Search">
+                                            d="M55.96 20.377v1h-12.799s-6.312-1.26-6.129-6.707c0 0 .208 5.707 6.004 5.707h12.924z"
+                                            fill="#e42f41"></path>
+                                        <path
+                                            d="M37.058.025v14.561c0 1.656 1.104 5.791 6.104 5.791h12.799l-18.903-20.352z"
+                                            opacity=".5" fill="#ffffff"></path>
+                                    </g>
+                                </g>
+                            </svg>
+                            <p><strong>Attach Files</strong></p>
+                        </div>
+                        <div class="create-post-btn" id="add-link-btn">
+                            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+                                xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve"
+                                fill="#000000">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier">
+                                    <polygon style="fill:#BFDCFF;" points="0,66.783 0,512 256,512 278.261,44.522 ">
+                                    </polygon>
+                                    <polygon style="fill:#8BC0FF;" points="512,66.783 256,44.522 256,512 512,512 ">
+                                    </polygon>
+                                    <polygon style="fill:#446080;"
+                                        points="256,0 0,0 0,66.783 256,66.783 278.261,33.391 "></polygon>
+                                    <polygon style="fill:#324860;"
+                                        points="422.957,66.783 445.217,33.391 422.957,0 256,0 256,66.783 "></polygon>
+                                    <rect x="422.957" style="fill:#FF562B;" width="89.043" height="66.783"></rect>
+                                    <path style="fill:#8BC0FF;"
+                                        d="M256,150.261V116.87c-95.128,0-172.522,77.392-172.522,172.522S160.871,461.913,256,461.913v-33.391 c-13.952,0-28.591-13.272-40.16-36.411c-11.624-23.247-18.759-53.333-20.578-86.024H256v-33.391h-60.738 c1.82-32.692,8.954-62.777,20.578-86.024C227.409,163.533,242.048,150.261,256,150.261z M185.974,407.043 c0.609,1.218,1.229,2.413,1.854,3.593c-37.718-21.29-64.561-59.666-69.954-104.549h43.938 C163.728,344.005,172.135,379.365,185.974,407.043z M117.875,272.696c5.393-44.883,32.236-83.259,69.954-104.549 c-0.626,1.18-1.245,2.375-1.854,3.593c-13.838,27.678-22.246,63.038-24.16,100.956H117.875z">
+                                    </path>
+                                    <path style="fill:#3897FF;"
+                                        d="M256,116.87h-16.696v345.043H256c95.128,0,172.522-77.392,172.522-172.522S351.128,116.87,256,116.87 z M394.131,272.696h-43.945c-1.913-37.918-10.321-73.278-24.16-100.956c-0.611-1.221-1.232-2.42-1.86-3.603 C361.889,189.427,388.739,227.807,394.131,272.696z M272.696,422.46V306.087h44.042c-1.82,32.692-8.954,62.777-20.578,86.024 C289.181,406.069,281.084,416.43,272.696,422.46z M272.696,272.696V156.322c8.388,6.029,16.485,16.391,23.464,30.349 c11.624,23.247,18.759,53.333,20.578,86.024H272.696z M324.166,410.646c0.628-1.183,1.249-2.382,1.86-3.603 c13.839-27.678,22.246-63.038,24.16-100.956h43.945C388.739,350.976,361.889,389.357,324.166,410.646z">
+                                    </path>
+                                </g>
+                            </svg>
+                            <p><strong>Add URL/Links</strong></p>
+                        </div>
+                    </div>
+                </div>
+                    <!-- Create Service Form -->
+                    <div class="activities-create-card create-card-container-parent">
+                        <!-- this is where create post will spawn -->
+                    </div>
+
+                    
+                    <div class="activities-container-parent">
+                        <!-- This is where the created service will be posted -->
+                    </div>
+
+                    <div class="end-indicator">
+                        Nothing more to show.
+                    </div>
+
+                </section>
+                <section class="contacts-section white-bordered scroll-fade">
+                    <div class="download-cv-section red-bordered">
+                        <h2>Download Resume</h2>
+                        <div class="folder-container">
+                            <div class="folder">
+                                <img src="Assets/Images/folder-rear.png" alt="">
+                                <a href="Assets/Images/cv.pdf" download class="folder-inner">
+                                    <img src="Assets/Images/CV Image.jpg" alt="Download CV">
+                                </a>
+                                <div class="cover">
+                                    <img src="Assets/Images/folder-front.png" alt="">
+                                    <p class="folder-text">Download Resume</p>
                                 </div>
                             </div>
-                            <a href="#">
-                                <li>Option 1</li>
-                            </a>
-                            <a href="#">
-                                <li>Option 1</li>
-                            </a>
-                            <a href="#">
-                                <li>Option 1</li>
-                            </a>
-                            <hr>
-                            </hr>
-                            <a href="#">
-                                <li>Option 1</li>
-                            </a>
-                            <a href="#">
-                                <li>Option 1</li>
-                            </a>
-                            <a href="#">
-                                <li>Option 1</li>
-                            </a>
-                        </ul>
+                        </div>
                     </div>
-                </div>
+                    <div class="contact-info-section red-bordered">
+                        <div class="recent-activities-panel blue-bordered">
+                            <h2>Contact</h2>
+                            <ul class="recent-activities-list">
+                                <a href="#">
+                                    <li>toledocarlojohn@gmail.com</li>
+                                </a>
+                                <a href="#">
+                                    <li>github.io/carlojohntoledo</li>
+                                </a>
+                                <a href="#">
+                                    <li>instagram@koalo</li>
+                                </a>
+                                <a href="#">
+                                    <li>ytchannel@koalomusic.ph</li>
+                                </a>
+                                <a href="#">
+                                    <li>tiktok/koalo</li>
+                                </a>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="email-me-section red-bordered">email me</div>
+                </section>
             </div>
-
-        </nav>
-        <div class="main-content blue-bordered">
-            <section class="shortcuts-section white-bordered scroll-fade">
-                <div class="search-section red-bordered">
-                    <div class="search-container">
-                        <svg class="search_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"
-                            alt="search icon">
-                            <path
-                                d="M46.599 46.599a4.498 4.498 0 0 1-6.363 0l-7.941-7.941C29.028 40.749 25.167 42 21 42 9.402 42 0 32.598 0 21S9.402 0 21 0s21 9.402 21 21c0 4.167-1.251 8.028-3.342 11.295l7.941 7.941a4.498 4.498 0 0 1 0 6.363zM21 6C12.717 6 6 12.714 6 21s6.717 15 15 15c8.286 0 15-6.714 15-15S29.286 6 21 6z">
-                            </path>
-                        </svg>
-                        <input class="inputBox" id="inputBox" type="text" placeholder="Search">
-                    </div>
-                </div>
-                <div class="pinned-section red-bordered">
-                    <div class="pinned-activities-panel blue-bordered">
-                        <h2>Pinned Activities</h2>
-                        <ul class="pinned-activities-list">
-                            <a href="#">
-                                <li>Pinned Activity Title 1</li>
-                            </a>
-                            <a href="#">
-                                <li>Pinned Activity Title 2</li>
-                            </a>
-                            <a href="#">
-                                <li>Pinned Activity Title 3</li>
-                            </a>
-                            <a href="#">
-                                <li>Pinned Activity Title 4</li>
-                            </a>
-                        </ul>
-                    </div>
-                    <div class="pinned-projects-panel blue-bordered">
-                        <h2>Pinned Projects</h2>
-                        <ul class="pinned-projects-list">
-                            <a href="#">
-                                <li>Pinned Projects Title 1</li>
-                            </a>
-                            <a href="#">
-                                <li>Pinned Projects Title 2</li>
-                            </a>
-                            <a href="#">
-                                <li>Pinned Projects Title 3</li>
-                            </a>
-                            <a href="#">
-                                <li>Pinned Projects Title 4</li>
-                            </a>
-                        </ul>
-                    </div>
-                    <div class="pinned-skills-panel blue-bordered">
-                        <h2>Pinned Skills</h2>
-                        <ul class="pinned-skills-list">
-                            <a href="#">
-                                <li>Pinned Skills Title 1</li>
-                            </a>
-                            <a href="#">
-                                <li>Pinned Skills Title 2</li>
-                            </a>
-                            <a href="#">
-                                <li>Pinned Skills Title 3</li>
-                            </a>
-                            <a href="#">
-                                <li>Pinned Skills Title 4</li>
-                            </a>
-                        </ul>
-                    </div>
-                </div>
-                <div class="recent-section red-bordered">
-                    <div class="recent-activities-panel blue-bordered">
-                        <h2>Recent Activities</h2>
-                        <ul class="recent-activities-list">
-                            <a href="#">
-                                <li>Recent Activities Title 1</li>
-                            </a>
-                            <a href="#">
-                                <li>Recent Activities Title 2</li>
-                            </a>
-                            <a href="#">
-                                <li>Recent Activities Title 3</li>
-                            </a>
-                            <a href="#">
-                                <li>Recent Activities Title 4</li>
-                            </a>
-                        </ul>
-                    </div>
-                    <div class="recent-projects-panel blue-bordered">
-                        <h2>Recent Projects</h2>
-                        <ul class="recent-projects-list">
-                            <a href="#">
-                                <li>Recent Projects Title 1</li>
-                            </a>
-                            <a href="#">
-                                <li>Recent Projects Title 2</li>
-                            </a>
-                            <a href="#">
-                                <li>Recent Projects Title 3</li>
-                            </a>
-                            <a href="#">
-                                <li>Recent Projects Title 4</li>
-                            </a>
-                        </ul>
-                    </div>
-                    <div class="recent-search-panel blue-bordered">
-                        <h2>Recent Search</h2>
-                        <ul class="recent-search-list">
-                            <a href="#">
-                                <li>Recent Search Title 1</li>
-                            </a>
-                            <a href="#">
-                                <li>Recent Search Title 2</li>
-                            </a>
-                            <a href="#">
-                                <li>Recent Search Title 3</li>
-                            </a>
-                            <a href="#">
-                                <li>Recent Search Title 4</li>
-                            </a>
-                        </ul>
-                    </div>
-                </div>
-            </section>
-            <section class="main-section white-bordered scroll-fade">
-                <div class="activity-container">
-                    <div class="activity-header-panel yellow-bordered">
-                        <div class="activity-profile-pic"><img src="Assets/Images/Profile Pictures/profilepic1.jpg"
-                                alt="ProfilePicture"></div>
-                        <div class="activity-info-panel">
-                            <div class="activity-user-name">USER NAME</div>
-                            <div class="activity-post-date">Just now.</div>
-                        </div>
-                        <div class="activity-extras-panel">Extras here</div>
-                    </div>
-                    <div class="activity-description-panel green-bordered">Lorem ipsum dolor sit amet consectetur
-                        adipisicing elit. Perspiciatis debitis sunt illo natus. Suscipit omnis praesentium ea assumenda
-                        ipsum illo repellat fugiat? Amet recusandae eum eos reiciendis, illo pariatur esse.</div>
-                    <div class="activity-attachment-panel white-bordered">
-                        <div class="frame"></div>
-                        <div class="frame"></div>
-                        <div class="frame"></div>
-                        <div class="frame"></div>
-                    </div>
-                    <div class="activity-reaction-panel red-bordered">
-                        <div class="reaction-counts-panel">reaction counts</div>
-                        <div class="reaction-panel">
-                            <div class="reaction-button">Like</div>
-                            <div class="reaction-button">Heart</div>
-                            <div class="reaction-button">Cheers</div>
-                            <div class="reaction-button">Sad</div>
-                            <div class="reaction-button">Dislike</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="activity-container">
-                    <div class="activity-header-panel yellow-bordered">
-                        <div class="activity-profile-pic"><img src="Assets/Images/Profile Pictures/profilepic1.jpg"
-                                alt="ProfilePicture"></div>
-                        <div class="activity-info-panel">
-                            <div class="activity-user-name">USER NAME</div>
-                            <div class="activity-post-date">Just now.</div>
-                        </div>
-                        <div class="activity-extras-panel">Extras here</div>
-                    </div>
-                    <div class="activity-description-panel green-bordered">Lorem ipsum dolor sit amet consectetur
-                        adipisicing elit. Perspiciatis debitis sunt illo natus. Suscipit omnis praesentium ea assumenda
-                        ipsum illo repellat fugiat? Amet recusandae eum eos reiciendis, illo pariatur esse.</div>
-                    <div class="activity-attachment-panel white-bordered">
-                        <div class="frame"></div>
-                        <div class="frame"></div>
-                        <div class="frame"></div>
-                        <div class="frame"></div>
-                    </div>
-                    <div class="activity-reaction-panel red-bordered">
-                        <div class="reaction-counts-panel">reaction counts</div>
-                        <div class="reaction-panel">
-                            <div class="reaction-button">Like</div>
-                            <div class="reaction-button">Heart</div>
-                            <div class="reaction-button">Cheers</div>
-                            <div class="reaction-button">Sad</div>
-                            <div class="reaction-button">Dislike</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="activity-container">
-                    <div class="activity-header-panel yellow-bordered">
-                        <div class="activity-profile-pic"><img src="Assets/Images/Profile Pictures/profilepic1.jpg"
-                                alt="ProfilePicture"></div>
-                        <div class="activity-info-panel">
-                            <div class="activity-user-name">USER NAME</div>
-                            <div class="activity-post-date">Just now.</div>
-                        </div>
-                        <div class="activity-extras-panel">Extras here</div>
-                    </div>
-                    <div class="activity-description-panel green-bordered">Lorem ipsum dolor sit amet consectetur
-                        adipisicing elit. Perspiciatis debitis sunt illo natus. Suscipit omnis praesentium ea assumenda
-                        ipsum illo repellat fugiat? Amet recusandae eum eos reiciendis, illo pariatur esse.</div>
-                    <div class="activity-attachment-panel white-bordered">
-                        <div class="frame"></div>
-                        <div class="frame"></div>
-                        <div class="frame"></div>
-                        <div class="frame"></div>
-                    </div>
-                    <div class="activity-reaction-panel red-bordered">
-                        <div class="reaction-counts-panel">reaction counts</div>
-                        <div class="reaction-panel">
-                            <div class="reaction-button">Like</div>
-                            <div class="reaction-button">Heart</div>
-                            <div class="reaction-button">Cheers</div>
-                            <div class="reaction-button">Sad</div>
-                            <div class="reaction-button">Dislike</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <section class="contacts-section white-bordered scroll-fade">
-                <div class="download-cv-section red-bordered">
-                    <h2>Download Resume</h2>
-                    <div class="folder-container">
-                        <div class="folder">
-                            <img src="Assets/Images/folder-rear.png" alt="">
-                            <a href="Assets/Images/cv.pdf" download class="folder-inner">
-                                <img src="Assets/Images/CV Image.jpg" alt="Download CV">
-                            </a>
-                            <div class="cover">
-                                <img src="Assets/Images/folder-front.png" alt="">
-                                <p class="folder-text">Download Resume</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="contact-info-section red-bordered">
-                    <div class="recent-activities-panel blue-bordered">
-                        <h2>Contact</h2>
-                        <ul class="recent-activities-list">
-                            <a href="#">
-                                <li>toledocarlojohn@gmail.com</li>
-                            </a>
-                            <a href="#">
-                                <li>github.io/carlojohntoledo</li>
-                            </a>
-                            <a href="#">
-                                <li>instagram@koalo</li>
-                            </a>
-                            <a href="#">
-                                <li>ytchannel@koalomusic.ph</li>
-                            </a>
-                            <a href="#">
-                                <li>tiktok/koalo</li>
-                            </a>
-                        </ul>
-                    </div>
-                </div>
-                <div class="email-me-section red-bordered">email me</div>
-            </section>
         </div>
-    </div>
 
-    <!-- Firebase App (required) -->
-    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+        <!-- Firebase App (required) -->
+        <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
 
-    <!-- Firestore -->
-    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+        <!-- Firestore -->
+        <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
 
-    <!-- Auth (optional, if you plan to use it later) -->
-    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+        <!-- Auth (optional, if you plan to use it later) -->
+        <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
 
-    <script src="JS/global scripts/index.js"></script>
+        <script src="JS/global scripts/index.js"></script>
 
-    <script src="JS/navigation bar scripts/navbar-menu-script.js"></script>
+        <script src="JS/global scripts/util.js"></script>
 
-    <script src="JS/shortcuts section scripts/shortcuts.js"></script>
+        <script src="JS/navigation bar scripts/navbar-menu-script.js"></script>
 
-</body>
+        <!-- <script src="JS/global scripts/theme-toggle.js"></script> -->
+
+        <script src="JS/global scripts/getImageUrl.js"></script>
+
+        <script src="JS/global scripts/startCarousel.js"></script>
+
+        <script src="JS/global scripts/createPostToggle.js"></script>
+
+        <script src="JS/projects page scripts/projectUploadToCloudinary.js"></script>
+
+        <script src="JS/shortcuts section scripts/shortcuts.js"></script>
+
+        <script src="JS/projects page scripts/projectLoadFromFirestore.js"></script>
+
+        <script src="JS/projects page scripts/projectEdit.js"></script>
+        
+        <script src="JS/projects page scripts/projectSubmit.js"></script>
+
+    </body>
 
 </html>

@@ -1,16 +1,16 @@
-/* ----- ACTIVITY CONTENT STYLESHEET ----- */
+/* ----- activities CONTENT STYLESHEET ----- */
 
-.activity-container {
+.activities-container {
     display: grid;
     grid-template-columns: 50% 50%;
     grid-template-rows: 10% auto minmax(auto, 70%) minmax(auto, 15%);
     gap: 0px 0px;
     grid-auto-flow: row;
     grid-template-areas:
-        "activity-header-panel activity-header-panel"
-        "activity-description-panel activity-description-panel"
-        "activity-attachment-panel activity-attachment-panel"
-        "activity-reaction-panel activity-reaction-panel";
+        "activities-header-panel activities-header-panel"
+        "activities-description-panel activities-description-panel"
+        "activities-attachment-panel activities-attachment-panel"
+        "activities-reaction-panel activities-reaction-panel";
     width: 95%;
     height: max-content;
     margin: auto;
@@ -21,21 +21,21 @@
     padding-top: 1rem;
 }
 
-.activity-header-panel {
+.activities-header-panel {
     display: grid;
     grid-template-columns: minmax(auto, 10%) minmax(auto, auto) 20%;
     grid-template-rows: 100%;
     gap: 0px 0px;
     grid-auto-flow: row;
     grid-template-areas:
-        "activity-profile-pic activity-info-panel activity-extras-panel";
-    grid-area: activity-header-panel;
+        "activities-profile-pic activities-info-panel activities-extras-panel";
+    grid-area: activities-header-panel;
     padding: 1rem;
     padding-top: 0;
 }
 
-.activity-profile-pic {
-    grid-area: activity-profile-pic;
+.activities-profile-pic {
+    grid-area: activities-profile-pic;
     display: grid;
     border: 0.1rem solid;
     border-radius: 50%;
@@ -46,52 +46,52 @@
     text-align: center;
     aspect-ratio: 1 / 1;
 }
-.activity-profile-pic img {
+.activities-profile-pic img {
     object-fit: cover;
     width: 100%;
     height: 100%;
 }
 
-.activity-info-panel {
+.activities-info-panel {
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 60% 40%;
     gap: 0px 0px;
     grid-auto-flow: row;
     grid-template-areas:
-        "activity-user-name"
-        "activity-post-date";
-    grid-area: activity-info-panel;
+        "activities-user-name"
+        "activities-post-date";
+    grid-area: activities-info-panel;
 }
 
-.activity-user-name {
-    grid-area: activity-user-name;
+.activities-user-name {
+    grid-area: activities-user-name;
     margin-left: 0.5rem;
     margin-top: auto;
     margin-bottom: auto;
     font-size: var(--font-md);
 }
 
-.activity-post-date {
-    grid-area: activity-post-date;
+.activities-post-date {
+    grid-area: activities-post-date;
     margin-left: 0.5rem;
     font-size: var(--font-xs);
 }
 
-.activity-extras-panel {
-    grid-area: activity-extras-panel;
+.activities-extras-panel {
+    grid-area: activities-extras-panel;
 }
 
-.activity-description-panel {
-    grid-area: activity-description-panel;
+.activities-description-panel {
+    grid-area: activities-description-panel;
     padding: 1rem;
     font-size: var(--font-sm);
 }
 
-.activity-attachment-panel {
+.activities-attachment-panel {
     display: grid;
     gap: 0.3rem;
-    grid-area: activity-attachment-panel;
+    grid-area: activities-attachment-panel;
     width: 100%;
     height: auto;
     grid-template-columns: 1fr;
@@ -99,11 +99,11 @@
 }
 
 /* 2 frames = 2 columns */
-.activity-attachment-panel:has(.frame:nth-child(2):nth-last-child(1)) {
+.activities-attachment-panel:has(.frame:nth-child(2):nth-last-child(1)) {
     grid-template-columns: repeat(2, 1fr);
 }
 
-.activity-attachment-panel .frame {
+.activities-attachment-panel .frame {
     background-color: var(--primary-color);
     width: 100%;
     height: 100%;
@@ -113,18 +113,18 @@
 }
 
 /* 3 frames = 3 columns */
-.activity-attachment-panel:has(.frame:nth-child(3):nth-last-child(1)) {
+.activities-attachment-panel:has(.frame:nth-child(3):nth-last-child(1)) {
     grid-template-columns: repeat(3, 1fr);
 }
 
 /* 4 or more frames = 2 columns and auto rows */
-.activity-attachment-panel:has(.frame:nth-child(4):nth-last-child(1)),
-.activity-attachment-panel:has(.frame:nth-child(5)) {
+.activities-attachment-panel:has(.frame:nth-child(4):nth-last-child(1)),
+.activities-attachment-panel:has(.frame:nth-child(5)) {
     grid-template-columns: repeat(2, 1fr);
 }
 
 
-.activity-reaction-panel {
+.activities-reaction-panel {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 40% 1fr;
@@ -133,7 +133,7 @@
     grid-template-areas:
         "reaction-counts-panel reaction-counts-panel"
         "reaction-panel reaction-panel";
-    grid-area: activity-reaction-panel;
+    grid-area: activities-reaction-panel;
     padding: 1rem;
     padding-bottom: 0;
 }
@@ -170,7 +170,7 @@
 
 
 @media screen and (max-width: 768px) {
-    .activity-container {
+    .activities-container {
         width: 100%;  
         border-radius: 0;  
         padding-bottom: 1rem;
