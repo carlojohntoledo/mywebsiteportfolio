@@ -77,7 +77,7 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
 
                 for (const file of files) {
                     const compressedFile = await compressImage(file);
-                    const result = await uploadToCloudinary(compressedFile, page); 
+                    const result = await uploadToCloudinary(compressedFile, page);
                     if (result) {
                         uploadedImages.push({
                             imageUrl: result.imageUrl,
@@ -111,15 +111,80 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
                 }
 
                 // ======================
-                // 3. Firestore Save
+                // 3. Save to Firestore (create or update)
                 // ======================
-                if (mode === "create") {
-                    const docRef = await db.collection(page).add(data);
-                    console.log(`✅ Created ${page} ID:`, docRef.id);
-                } else {
-                    await db.collection(page).doc(postId).update(data);
-                    console.log(`✅ Updated ${page} ID:`, postId);
+                try {
+                    if (typeof showLoader === "function") showLoader();
+                    console.log("🔄 Starting save process...");
+
+                    let oldImages = [];
+                    if (mode === "edit" && postId) {
+                        const docSnap = await db.collection(page).doc(postId).get();
+                        if (docSnap.exists) {
+                            oldImages = docSnap.data().images || [];
+                        }
+                    }
+
+                    // --- Compare image sets ---
+                    const newImageIds = uploadedImages.map(img => img.publicId);
+                    const oldImageIds = oldImages.map(img => img.publicId);
+
+                    const removedImages = oldImages.filter(img => !newImageIds.includes(img.publicId));
+                    const addedImages = uploadedImages.filter(img => !oldImageIds.includes(img.publicId));
+
+                    console.log("🖼️ Added images:", addedImages);
+                    console.log("🗑️ Removed images:", removedImages);
+
+                    // Delete removed images from Cloudinary
+                    for (const img of removedImages) {
+                        if (img.publicId) {
+                            console.log(`🗑️ Deleting from Cloudinary → ${img.publicId}`);
+                            await deleteFromCloudinary(img.publicId);
+                        }
+                    }
+
+                    // --- Prepare data object ---
+                    const data = {
+                        title: title.value.trim(),
+                        description: description.value.trim(),
+                        status: status.value.trim(),
+                        date: date.value.trim(),
+                        tags: tagsArray,
+                        images: uploadedImages,
+                        pinned: false,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+
+                    if (page === "projects") {
+                        data.pdfLink = pdfLinkValue;
+                        data.projectLink = projectLinkValue;
+                    }
+
+                    if (mode === "edit" && postId) {
+                        await db.collection(page).doc(postId).update(data);
+                        console.log(`✅ Updated ${page} → ${postId}`);
+                    } else {
+                        const docRef = await db.collection(page).add({
+                            ...data,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        console.log(`✅ Created ${page} → ${docRef.id}`);
+                    }
+
+                    // Reload posts
+                    await loadPostsFromFirestore(page);
+
+                    // Show success notification
+                    alert("✅ Post saved successfully!");
+
+                } catch (err) {
+                    console.error(`❌ Error saving ${page}:`, err);
+                    alert("Error: " + err.message);
+                } finally {
+                    if (typeof hideLoader === "function") hideLoader();
+                    console.log("✅ Save process complete.");
                 }
+
 
                 // ======================
                 // 4. Reload + Clear/Close
