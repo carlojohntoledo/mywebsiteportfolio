@@ -343,9 +343,11 @@
     }
 
 
-    .create-services-container {
+    .create-post-container {
         width: 100%;
         border-radius: 0;
+        position: fixed;
+        height: 100%;
     }
 
     .create-services-form-container form {
@@ -361,3 +363,4 @@
     }
 
 }
+
