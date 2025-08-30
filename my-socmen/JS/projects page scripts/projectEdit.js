@@ -12,7 +12,7 @@ async function openPostForm(page = "projects", mode = "create", postData = {}, p
     container.style.display = "grid";
 
     const form = container.querySelector(`#create-${page}-form`);
-    const titleEl = container.querySelector(".card-title"); 
+    const titleEl = container.querySelector(".card-title");
     const postBtn = container.querySelector(`#${page}-post-btn`);
     const cancelBtn = container.querySelector("#cancel-btn");
     const fileInput = form.querySelector(`#file`);
@@ -20,10 +20,11 @@ async function openPostForm(page = "projects", mode = "create", postData = {}, p
 
     // Local state for images
     let currentImages = (postData.images || []).map(img => ({
-        url: img.url || img,
+        url: img.url || img.imageUrl || img, // <-- support both cases
         publicId: img.publicId || null,
         isNew: false
     }));
+
 
     // Cancel button
     cancelBtn.addEventListener("click", () => {
@@ -158,4 +159,24 @@ async function openPostForm(page = "projects", mode = "create", postData = {}, p
             hideLoader();
         }
     });
+}
+
+function addImagePreview(imgObj) {
+    const preview = document.createElement("div");
+    preview.classList.add("file-preview");
+
+    preview.innerHTML = `
+        <div class="image-preview">
+            <img src="${imgObj.url || ""}" alt="Preview">
+        </div>
+        <button type="button" class="remove-preview">&times;</button>
+    `;
+
+    const removeBtn = preview.querySelector(".remove-preview");
+    removeBtn.addEventListener("click", () => {
+        preview.remove();
+        currentImages = currentImages.filter(im => im.url !== imgObj.url);
+    });
+
+    previewContainer.prepend(preview);
 }
