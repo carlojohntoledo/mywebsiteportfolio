@@ -109,7 +109,7 @@ async function loadPostsFromFirestore(type = "projects") {
                         </div>
                     </div>
                 `;
-                break;
+                    break;
 
                 case "services":
                     cardInnerHTML = `
@@ -174,7 +174,7 @@ async function loadPostsFromFirestore(type = "projects") {
                         </div>
                     </div>
                 `;
-                break;
+                    break;
 
                 case "projects":
                     cardInnerHTML = `
@@ -246,11 +246,18 @@ async function loadPostsFromFirestore(type = "projects") {
                     console.warn(`⚠️ Unknown type: ${type}`);
             }
 
+            // Insert card HTML first
+            containerDiv.innerHTML = cardInnerHTML;
+
             // Random pastel tags
             const tagsHtml = (data.tags || [])
                 .map(tag => `<span class="tag" style="background-color:${getRandomPastelColor()}">${tag}</span>`)
                 .join("");
-            containerDiv.querySelector(`.${type}-tags-container`).innerHTML = tagsHtml;
+
+            const tagsContainer = containerDiv.querySelector(`.${type}-tags-container`);
+            if (tagsContainer) {
+                tagsContainer.innerHTML = tagsHtml;
+            }
 
             container.appendChild(containerDiv);
 
