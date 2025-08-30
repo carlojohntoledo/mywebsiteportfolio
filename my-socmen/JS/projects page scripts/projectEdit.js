@@ -36,7 +36,6 @@ async function openPostForm(page = "projects", mode = "create", postData = {}, p
     // EDIT MODE → adjust UI and prefill
     // =========================================================
     if (mode === "edit" && postData) {
-        const singular = page.slice(0, -1);
         if (titleEl) titleEl.textContent = `Edit ${singular}`;
         postBtn.textContent = "Save";
 
