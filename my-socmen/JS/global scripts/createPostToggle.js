@@ -63,14 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function getFormTemplate(page) {
     const type = page.charAt(0).toUpperCase() + page.slice(0); // Projects → "Projects"
 
-    const singularMap = {
-        projects: "Project",
-        services: "Service",
-        activities: "Activity"
-    };
-    const singular = singularMap[page] || page; // fallback
-    const plural = singular + "s"; // just in case you need plural again
-    
+
     switch (page) {
         case "activities":
             return `

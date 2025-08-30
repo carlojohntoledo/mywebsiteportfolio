@@ -52,8 +52,20 @@ async function saveProjectToFirestore(projectData) {
     }
 }
 
+
+const page = document.body.dataset.page; // "home", "service", "project"
+const singularMap = {
+    projects: "Project",
+    services: "Service",
+    activities: "Activity"
+};
+const singular = singularMap[page] || page; // fallback
+const plural = singular + "s"; // just in case you need plural again
+
 // 🔧 Global helper
 function getPageContainer() {
-  const page = document.body.dataset.page; // "home", "service", "project"
-  return document.querySelector(`.${page}-create-card`);
+
+    return document.querySelector(`.${page}-create-card`);
+
 }
+

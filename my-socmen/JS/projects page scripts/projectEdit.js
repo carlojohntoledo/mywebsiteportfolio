@@ -1,76 +1,158 @@
 // =============================================================
-// ✅ Open Form (Create or Edit)
+// ✅ Open Create/Edit Post Form (reuses the same HTML template)
 // =============================================================
-function openPostForm(type = "projects", mode = "create", postData = {}, postId = null) {
-    const wrapper = document.createElement("div");
-    wrapper.classList.add("form-wrapper");
-    document.body.appendChild(wrapper);
+async function openPostForm(page = "projects", mode = "create", postData = {}, postId = null) {
+    const container = getPageContainer();
+    if (!container) return;
 
-    // ✅ Inject your existing Create Post HTML form here
-    wrapper.innerHTML = getCreatePostFormHTML(type);
+    showLoader();
 
-    const form = wrapper.querySelector("form");
-    const saveBtn = form.querySelector(".submit-btn");
+    // Inject the existing template (same one used for create)
+    container.innerHTML = getFormTemplate(page);
+    container.style.display = "grid";
 
-    // If editing, populate fields
+    const form = container.querySelector(`#create-${page}-form`);
+    const titleEl = container.querySelector(".card-title"); 
+    const postBtn = container.querySelector(`#${page}-post-btn`);
+    const cancelBtn = container.querySelector("#cancel-btn");
+    const fileInput = form.querySelector(`#${page}-file-input`);
+    const previewContainer = form.querySelector(`#${page}-preview`);
+
+    // Local state for images
+    let currentImages = (postData.images || []).map(img => ({
+        url: img.url || img,
+        publicId: img.publicId || null,
+        isNew: false
+    }));
+
+    // Cancel button
+    cancelBtn.addEventListener("click", () => {
+        container.style.display = "none";
+        container.innerHTML = "";
+    });
+
+    // =========================================================
+    // EDIT MODE → adjust UI and prefill
+    // =========================================================
     if (mode === "edit" && postData) {
-        form.querySelector("#title").value = postData.title || "";
-        form.querySelector("#description").value = postData.description || "";
-        form.querySelector("#date").value = postData.date || "";
-        form.querySelector("#tags").value = (postData.tags || []).join(", ");
-        form.querySelector("#status").value = postData.status || "";
-        form.querySelector("#pdfLink").value = postData.pdfLink || "";
-        form.querySelector("#projectLink").value = postData.projectLink || "";
+        const singular = page.slice(0, -1);
+        if (titleEl) titleEl.textContent = `Edit ${singular}`;
+        postBtn.textContent = "Save";
 
-        // Preview images
-        if (postData.images && postData.images.length > 0) {
-            const previewContainer = wrapper.querySelector(".file-preview-container");
-            previewContainer.innerHTML = "";
-            postData.images.forEach((img, index) => {
-                const filePreview = document.createElement("div");
-                filePreview.classList.add("file-preview");
-                filePreview.innerHTML = `
-                    <div class="image-preview">
-                        <img src="${img.url || img}" alt="Preview ${index+1}">
-                    </div>
-                    <button type="button" class="remove-preview">&times;</button>
-                `;
-                previewContainer.appendChild(filePreview);
-            });
+        // Prefill fields
+        form.querySelector(`.input-${page}-title`).value = postData.title || "";
+        form.querySelector(`.input-${page}-description`).value = postData.description || "";
+
+        if (page === "projects" || page === "activities") {
+            form.querySelector(`.input-${page}-date`).value = postData.date || "";
+        }
+        if (page === "services") {
+            form.querySelector(`.input-${page}-date`).value = postData.experience || "";
         }
 
-        // Change button label
-        saveBtn.textContent = "Save Changes";
+        form.querySelector(`.input-${page}-status`).value = postData.status || "";
+        form.querySelector(`.input-${page}-tags`).value = (postData.tags || []).join(", ");
+
+        if (page === "projects") {
+            form.querySelector(`.input-${page}-pdf-link`).value = postData.pdfLink || "";
+            form.querySelector(`.input-${page}-link`).value = postData.projectLink || "";
+        }
+
+        // Show old images in preview
+        previewContainer.innerHTML = "";
+        currentImages.forEach((img, i) => addImagePreview(img, i));
     }
 
-    // Handle form submit
-    form.addEventListener("submit", async (e) => {
-        e.preventDefault();
+    hideLoader(); // Form + images are ready
+
+    // =========================================================
+    // HANDLE NEW FILE INPUT
+    // =========================================================
+    fileInput.addEventListener("change", async () => {
+        const files = Array.from(fileInput.files || []);
+        if (files.length === 0) return;
+
+        showLoader();
+        for (const file of files) {
+            const compressedFile = await compressImage(file);
+            const result = await uploadToCloudinary(compressedFile, page); // pass page if you want folder separation
+            if (result) {
+                const newImg = { url: result.imageUrl, publicId: result.publicId, isNew: true };
+                currentImages.unshift(newImg); // new first
+                addImagePreview(newImg, 0);
+            }
+        }
+        hideLoader();
+        fileInput.value = ""; // reset input
+    });
+
+    // =========================================================
+    // ADD IMAGE PREVIEW HELPER
+    // =========================================================
+    function addImagePreview(imgObj, index) {
+        const preview = document.createElement("div");
+        preview.classList.add("file-preview");
+
+        preview.innerHTML = `
+            <div class="image-preview">
+                <img src="${imgObj.url}" alt="Preview">
+            </div>
+            <button type="button" class="remove-preview">&times;</button>
+        `;
+
+        const removeBtn = preview.querySelector(".remove-preview");
+        removeBtn.addEventListener("click", () => {
+            preview.remove();
+            currentImages = currentImages.filter(im => im.url !== imgObj.url);
+        });
+
+        // Insert at top (new images first)
+        if (previewContainer.firstChild) {
+            previewContainer.insertBefore(preview, previewContainer.firstChild);
+        } else {
+            previewContainer.appendChild(preview);
+        }
+    }
+
+    // =========================================================
+    // SUBMIT HANDLER
+    // =========================================================
+    postBtn.addEventListener("click", async () => {
         showLoader();
 
         const formData = {
-            title: form.querySelector("#title").value,
-            description: form.querySelector("#description").value,
-            date: form.querySelector("#date").value,
-            tags: form.querySelector("#tags").value.split(",").map(t => t.trim()).filter(t => t),
-            status: form.querySelector("#status").value,
-            pdfLink: form.querySelector("#pdfLink").value,
-            projectLink: form.querySelector("#projectLink").value,
+            title: form.querySelector(`.input-${page}-title`).value,
+            description: form.querySelector(`.input-${page}-description`).value,
+            tags: form.querySelector(`.input-${page}-tags`).value.split(",").map(t => t.trim()).filter(Boolean),
+            status: form.querySelector(`.input-${page}-status`).value,
             createdAt: mode === "create" ? firebase.firestore.FieldValue.serverTimestamp() : postData.createdAt,
-            pinned: postData.pinned || false
+            pinned: postData.pinned || false,
+            images: currentImages.map(img => ({ url: img.url, publicId: img.publicId }))
         };
+
+        if (page === "projects" || page === "activities") {
+            formData.date = form.querySelector(`.input-${page}-date`).value;
+        }
+        if (page === "services") {
+            formData.experience = form.querySelector(`.input-${page}-date`).value;
+        }
+        if (page === "projects") {
+            formData.pdfLink = form.querySelector(`.input-${page}-pdf-link`).value;
+            formData.projectLink = form.querySelector(`.input-${page}-link`).value;
+        }
 
         try {
             if (mode === "create") {
-                await db.collection(type).add(formData);
+                await db.collection(page).add(formData);
             } else {
-                await db.collection(type).doc(postId).update(formData);
+                await db.collection(page).doc(postId).update(formData);
             }
 
-            await loadPostsFromFirestore(type);
-            wrapper.remove();
+            await loadPostsFromFirestore(page);
+            container.style.display = "none";
+            container.innerHTML = "";
         } catch (err) {
-            console.error("Error saving:", err);
+            console.error("❌ Error saving post:", err);
             alert("Error saving post.");
         } finally {
             hideLoader();
