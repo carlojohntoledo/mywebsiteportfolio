@@ -15,7 +15,7 @@ async function openPostForm(page = "projects", mode = "create", postData = {}, p
     const titleEl = container.querySelector(".card-title"); 
     const postBtn = container.querySelector(`#${page}-post-btn`);
     const cancelBtn = container.querySelector("#cancel-btn");
-    const fileInput = form.querySelector(`#${page}-file-input`);
+    const fileInput = form.querySelector(`#file`);
     const previewContainer = form.querySelector(`#${page}-preview`);
 
     // Local state for images
