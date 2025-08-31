@@ -78,7 +78,7 @@ function openPostForm(page, mode = "edit", data = {}, uid) {
 }
 
 // ==========================
-// Bind preview handlers (safe, no duplication)
+// Bind preview handlers (no duplication)
 // ==========================
 function bindPreviewHandlers(page) {
   const container = getPageContainer();
@@ -89,18 +89,17 @@ function bindPreviewHandlers(page) {
 
   if (!previewContainer || !fileInput) return;
 
-  // --- Remove only logic (attach ONCE to container via delegation) ---
-  previewContainer.addEventListener("click", function (e) {
+  // --- Remove only logic (delegated, attaches ONCE) ---
+  previewContainer.onclick = function (e) {
     if (e.target.classList.contains("remove-preview")) {
       e.preventDefault();
       const wrapper = e.target.closest(".file-preview");
       if (wrapper) wrapper.remove();
     }
-  });
+  };
 
-  // --- Add new previews when selecting files ---
-  fileInput.addEventListener("change", function () {
-    // Clear previews of *newly selected* files (do NOT touch existing previews)
+  // --- Reset file input change handler before adding new one ---
+  fileInput.onchange = function () {
     Array.from(fileInput.files).forEach(file => {
       const reader = new FileReader();
       reader.onload = (ev) => {
@@ -115,5 +114,5 @@ function bindPreviewHandlers(page) {
       };
       reader.readAsDataURL(file);
     });
-  }, { once: true }); // ✅ ensures we don’t double-bind
+  };
 }
