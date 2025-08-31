@@ -27,23 +27,26 @@ function openPostForm(page, mode = "edit", data = {}, uid) {
         previewContainer.innerHTML = "";
 
         data.images.forEach((img, index) => {
-            const url = img.url || img.secure_url || img; // handle both object & string
-            previewContainer.innerHTML += `
-          <div class="file-preview">
-            <div class="image-preview">
-              <img src="${url}" alt="Preview ${index + 1}">
-            </div>
-            <button class="remove-preview">&times;</button>
-          </div>
-        `;
-        });
+            let url = "";
+            if (typeof img === "string") url = img;
+            else if (img.url) url = img.url;
+            else if (img.secure_url) url = img.secure_url;
 
-        previewContainer.querySelectorAll(".remove-preview").forEach(btn => {
-            btn.addEventListener("click", e => {
-                e.target.closest(".file-preview").remove();
-            });
+            console.log("➡️ using url:", url);
+
+            if (url) {
+                previewContainer.insertAdjacentHTML("beforeend", `
+              <div class="file-preview">
+                <div class="image-preview">
+                  <img src="${url}" alt="Preview ${index + 1}" style="max-width:100px;max-height:100px;">
+                </div>
+                <button class="remove-preview">&times;</button>
+              </div>
+            `);
+            }
         });
     }
+
 
 
     // Cancel button
