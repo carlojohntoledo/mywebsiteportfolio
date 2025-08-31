@@ -1,69 +1,134 @@
-function openPostForm(page, mode = "edit", data = {}, uid) {
-    const container = getPageContainer();
-    if (!container) return;
+// ======================
+// SUBMIT POST HANDLER
+// ======================
+function initSubmitHandlers(page, mode = "create", postId = null, postData = null, currentImages = []) {
+    const postBtnId = `${page}-post-btn`;
+    const postBtn = document.getElementById(postBtnId);
+    if (!postBtn) return;
 
-    // Load template
-    container.innerHTML = getFormTemplate(page);
-    container.style.display = "grid";
+    // ✅ Remove existing listeners to avoid duplicates
+    const newBtn = postBtn.cloneNode(true);
+    postBtn.parentNode.replaceChild(newBtn, postBtn);
 
-    // Adjust title + button
-    if (mode === "edit") {
-        container.querySelector(".card-title").textContent = `Edit ${singular}`;
-        container.querySelector(`#${page}-post-btn`).textContent = "Save";
-    }
+    console.log(`🔔 Initializing submit handler for ${page} with button ID: ${postBtnId}, mode: ${mode}`);
 
-    // Prefill normal inputs
-    if (data.title) container.querySelector(`.input-${page}-title`).value = data.title;
-    if (data.description) container.querySelector(`.input-${page}-description`).value = data.description;
-    if (data.date) container.querySelector(`.input-${page}-date`).value = data.date;
-    if (data.status) container.querySelector(`.input-${page}-status`).value = data.status;
-    if (data.tags) container.querySelector(`.input-${page}-tags`).value = data.tags;
-    if (data.pdfLink) container.querySelector(`.input-${page}-pdf-link`).value = data.pdfLink;
-    if (data.link) container.querySelector(`.input-${page}-link`).value = data.link;
+    newBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
 
-    // Prefill images (use same preview system)
-    if (mode === "edit" && data.images) {
-        const previewContainer = container.querySelector(`#${page}-preview`);
-        previewContainer.innerHTML = "";
+        // ======================
+        // Grab form fields
+        // ======================
+        const title = document.querySelector(`.input-${page}-title`);
+        const description = document.querySelector(`.input-${page}-description`);
+        const date = document.querySelector(`.input-${page}-date`);
+        const status = document.querySelector(`.input-${page}-status`);
+        const tagsInput = document.querySelector(`.input-${page}-tags`);
+        const fileInput = document.getElementById("file");
+        const errorElement = document.querySelector(".error");
+        const postCard = document.querySelector(".create-card-container-parent");
 
-        data.images.forEach((img, index) => {
-            // 🔑 Handle both string & object
-            let url = "";
-            if (typeof img === "string") url = img;
-            else if (img.imageUrl) url = img.imageUrl;
-            else if (img.url) url = img.url;
-            else if (img.secure_url) url = img.secure_url;
+        const pdfLink = document.querySelector(`.input-${page}-pdf-link`);
+        const projectLink = document.querySelector(`.input-${page}-link`);
 
-            console.log("➡️ using url:", url);
+        if (!title.value.trim() || !description.value.trim() || !date.value.trim() || !status.value.trim()) {
+            if (errorElement) errorElement.style.display = "flex";
+            return;
+        }
+        if (errorElement) errorElement.style.display = "none";
+        if (postCard) postCard.style.display = "none";
 
-            if (url) {
-                previewContainer.insertAdjacentHTML("beforeend", `
-              <div class="file-preview">
-                <div class="image-preview">
-                  <img src="${url}" alt="Preview ${index + 1}">
-                </div>
-                <button class="remove-preview">&times;</button>
-              </div>
-            `);
+        const tagsArray = tagsInput.value.split(",").map(tag => tag.trim()).filter(Boolean);
+
+        let pdfLinkValue = "";
+        let projectLinkValue = "";
+        if (page === "projects") {
+            if (pdfLink?.value.trim()) {
+                pdfLinkValue = /^https?:\/\//i.test(pdfLink.value.trim()) ? pdfLink.value.trim() : "https://" + pdfLink.value.trim();
             }
-        });
+            if (projectLink?.value.trim()) {
+                projectLinkValue = /^https?:\/\//i.test(projectLink.value.trim()) ? projectLink.value.trim() : "https://" + projectLink.value.trim();
+            }
+        }
 
-        // Bind remove buttons
-        previewContainer.querySelectorAll(".remove-preview").forEach(btn => {
-            btn.addEventListener("click", e => {
-                e.target.closest(".file-preview").remove();
-            });
-        });
-    }
+        console.log("📤 Submitting", page, "mode:", mode);
 
+        try {
+            if (typeof showLoader === "function") showLoader();
 
+            // ======================
+            // Upload NEW Images
+            // ======================
+            const files = Array.from(fileInput?.files || []);
+            const uploadedImages = [];
+            for (const file of files) {
+                const compressedFile = await compressImage(file);
+                const result = await uploadToCloudinary(compressedFile, page);
+                if (result) {
+                    uploadedImages.push({
+                        imageUrl: result.imageUrl,
+                        publicId: result.publicId
+                    });
+                }
+            }
 
-    // Cancel button
-    container.querySelector("#cancel-btn").addEventListener("click", () => {
-        container.style.display = "none";
-        container.innerHTML = "";
+            // ✅ Merge: keep old + new
+            let finalImages = [...currentImages, ...uploadedImages];
+
+            // ======================
+            // Firestore Data
+            // ======================
+            const data = {
+                title: title.value.trim(),
+                description: description.value.trim(),
+                status: status.value.trim(),
+                date: date.value.trim(),
+                tags: tagsArray,
+                images: finalImages,
+                pinned: postData?.pinned || false,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            if (page === "projects") {
+                data.pdfLink = pdfLinkValue;
+                data.projectLink = projectLinkValue;
+            }
+
+            // ======================
+            // Save (Create or Edit)
+            // ======================
+            if (mode === "edit" && postId) {
+                await db.collection(page).doc(postId).update(data);
+                console.log(`✅ Updated ${page} → ${postId}`);
+            } else {
+                await db.collection(page).add({
+                    ...data,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                console.log(`✅ Created new ${page}`);
+            }
+
+            await loadPostsFromFirestore(page);
+            alert("✅ Post saved successfully!");
+
+            // Reset if creating
+            if (mode === "create") {
+                title.value = "";
+                description.value = "";
+                date.value = "";
+                status.value = "";
+                tagsInput.value = "";
+                if (fileInput) fileInput.value = "";
+                if (pdfLink) pdfLink.value = "";
+                if (projectLink) projectLink.value = "";
+                const previewContainer = document.querySelector(".file-preview-container");
+                if (previewContainer) previewContainer.innerHTML = "";
+            }
+        } catch (err) {
+            console.error(`❌ Error submitting ${page}:`, err);
+            alert("Error: " + err.message);
+        } finally {
+            if (typeof hideLoader === "function") hideLoader();
+            console.log("✅ Save process complete.");
+        }
     });
-
-    // Submit handler
-    initSubmitHandlers(page, mode, uid);
 }
