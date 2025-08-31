@@ -1,21 +1,19 @@
 // ======================
-// SUBMIT POST HANDLER
+// SUBMIT POST HANDLER (FIXED)
 // ======================
 function initSubmitHandlers(page, mode = "create", postId = null, postData = null, currentImages = []) {
-    // Example: page = "projects" | "activities" | "services"
     const postBtnId = `${page}-post-btn`;
-    console.log(`🔔 Initializing submit handler for ${page} with button ID: ${postBtnId}, mode: ${mode}`);
+    console.log(`🔔 Initializing submit handler for ${page}, mode: ${mode}, postId: ${postId}`);
 
-    // Remove any previous listener to avoid duplicates
+    // Remove previous listener to avoid duplicates
     document.removeEventListener("click", handlePostClick);
 
-    // ✅ define handler inside so it can close over `page`, `mode`, `postId`
     async function handlePostClick(e) {
         if (e.target && e.target.id === postBtnId) {
             e.preventDefault();
-            console.log(`📌 ${page.toUpperCase()} ${mode.toUpperCase()} button clicked`);
+            console.log(`📌 ${page.toUpperCase()} ${mode.toUpperCase()} triggered`);
 
-            // Common fields
+            // Fields
             const title = document.querySelector(`.input-${page}-title`);
             const description = document.querySelector(`.input-${page}-description`);
             const date = document.querySelector(`.input-${page}-date`);
@@ -23,9 +21,8 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
             const tagsInput = document.querySelector(`.input-${page}-tags`);
             const fileInput = document.getElementById("file");
             const errorElement = document.querySelector(".error");
-            const postCard = document.querySelector(".create-card-container-parent");
 
-            // Optional (only exists on "projects")
+            // Project-only
             const pdfLink = document.querySelector(`.input-${page}-pdf-link`);
             const projectLink = document.querySelector(`.input-${page}-link`);
 
@@ -35,46 +32,35 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
                 return;
             }
             if (errorElement) errorElement.style.display = "none";
-            if (postCard) postCard.style.display = "none";
 
-            const parentContainer = document.querySelector(`.${page}-container-parent`);
-            if (parentContainer) parentContainer.style.display = "grid";
+            // Tags
+            const tagsArray = tagsInput.value.split(",").map(t => t.trim()).filter(Boolean);
 
-            // ✅ Tags to array
-            const tagsArray = tagsInput.value
-                .split(",")
-                .map(tag => tag.trim())
-                .filter(Boolean);
-
-            // ✅ Page-specific links (only for projects)
+            // Links
             let pdfLinkValue = "";
             let projectLinkValue = "";
             if (page === "projects") {
-                if (pdfLink && pdfLink.value.trim()) {
-                    pdfLinkValue = pdfLink.value.trim();
-                    if (!/^https?:\/\//i.test(pdfLinkValue)) {
-                        pdfLinkValue = "https://" + pdfLinkValue;
-                    }
+                if (pdfLink?.value.trim()) {
+                    pdfLinkValue = /^https?:\/\//i.test(pdfLink.value.trim())
+                        ? pdfLink.value.trim()
+                        : "https://" + pdfLink.value.trim();
                 }
-                if (projectLink && projectLink.value.trim()) {
-                    projectLinkValue = projectLink.value.trim();
-                    if (!/^https?:\/\//i.test(projectLinkValue)) {
-                        projectLinkValue = "https://" + projectLinkValue;
-                    }
+                if (projectLink?.value.trim()) {
+                    projectLinkValue = /^https?:\/\//i.test(projectLink.value.trim())
+                        ? projectLink.value.trim()
+                        : "https://" + projectLink.value.trim();
                 }
             }
 
-            console.log("📤 Submitting", page, "mode:", mode);
-
             try {
                 if (typeof showLoader === "function") showLoader();
+                console.log("🔄 Processing save...");
 
                 // ======================
-                // 1. Upload NEW Images
+                // 1. Upload new files
                 // ======================
                 const files = Array.from(fileInput?.files || []);
                 const uploadedImages = [];
-
                 for (const file of files) {
                     const compressedFile = await compressImage(file);
                     const result = await uploadToCloudinary(compressedFile, page);
@@ -86,11 +72,28 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
                     }
                 }
 
-                // ✅ Merge images (keep existing + add new ones)
-                const finalImages = [...currentImages, ...uploadedImages];
+                // ======================
+                // 2. Handle image diffs (edit only)
+                // ======================
+                let finalImages = [...currentImages, ...uploadedImages];
+
+                if (mode === "edit" && postId) {
+                    const docSnap = await db.collection(page).doc(postId).get();
+                    let oldImages = docSnap.exists ? docSnap.data().images || [] : [];
+
+                    // Find removed images (were in oldImages but not in finalImages)
+                    const removedImages = oldImages.filter(
+                        old => !finalImages.some(newImg => newImg.publicId === old.publicId)
+                    );
+
+                    console.log("🗑️ Removing from Cloudinary:", removedImages);
+                    for (const img of removedImages) {
+                        if (img.publicId) await deleteFromCloudinary(img.publicId);
+                    }
+                }
 
                 // ======================
-                // 2. Prepare Firestore Data
+                // 3. Build Firestore data
                 // ======================
                 const data = {
                     title: title.value.trim(),
@@ -100,10 +103,14 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
                     tags: tagsArray,
                     images: finalImages,
                     pinned: postData?.pinned || false,
-                    createdAt: mode === "create"
-                        ? firebase.firestore.FieldValue.serverTimestamp()
-                        : postData?.createdAt || firebase.firestore.FieldValue.serverTimestamp()
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
+
+                if (mode === "create") {
+                    data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                } else {
+                    data.createdAt = postData?.createdAt || firebase.firestore.FieldValue.serverTimestamp();
+                }
 
                 if (page === "projects") {
                     data.pdfLink = pdfLinkValue;
@@ -111,90 +118,23 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
                 }
 
                 // ======================
-                // 3. Save to Firestore (create or update)
+                // 4. Save to Firestore
                 // ======================
-                try {
-                    if (typeof showLoader === "function") showLoader();
-                    console.log("🔄 Starting save process...");
-
-                    let oldImages = [];
-                    if (mode === "edit" && postId) {
-                        const docSnap = await db.collection(page).doc(postId).get();
-                        if (docSnap.exists) {
-                            oldImages = docSnap.data().images || [];
-                        }
-                    }
-
-                    // --- Compare image sets ---
-                    const newImageIds = uploadedImages.map(img => img.publicId);
-                    const oldImageIds = oldImages.map(img => img.publicId);
-
-                    const removedImages = oldImages.filter(img => !newImageIds.includes(img.publicId));
-                    const addedImages = uploadedImages.filter(img => !oldImageIds.includes(img.publicId));
-
-                    console.log("🖼️ Added images:", addedImages);
-                    console.log("🗑️ Removed images:", removedImages);
-
-                    // Delete removed images from Cloudinary
-                    for (const img of removedImages) {
-                        if (img.publicId) {
-                            console.log(`🗑️ Deleting from Cloudinary → ${img.publicId}`);
-                            await deleteFromCloudinary(img.publicId);
-                        }
-                    }
-
-                    // --- Prepare data object ---
-                    const data = {
-                        title: title.value.trim(),
-                        description: description.value.trim(),
-                        status: status.value.trim(),
-                        date: date.value.trim(),
-                        tags: tagsArray,
-                        images: uploadedImages,
-                        pinned: false,
-                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    };
-
-                    if (page === "projects") {
-                        data.pdfLink = pdfLinkValue;
-                        data.projectLink = projectLinkValue;
-                    }
-
-                    if (mode === "edit" && postId) {
-                        await db.collection(page).doc(postId).update(data);
-                        console.log(`✅ Updated ${page} → ${postId}`);
-                    } else {
-                        const docRef = await db.collection(page).add({
-                            ...data,
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                        console.log(`✅ Created ${page} → ${docRef.id}`);
-                    }
-
-                    // Reload posts
-                    await loadPostsFromFirestore(page);
-
-                    // Show success notification
-                    alert("✅ Post saved successfully!");
-
-                } catch (err) {
-                    console.error(`❌ Error saving ${page}:`, err);
-                    alert("Error: " + err.message);
-                } finally {
-                    if (typeof hideLoader === "function") hideLoader();
-                    console.log("✅ Save process complete.");
+                if (mode === "edit" && postId) {
+                    await db.collection(page).doc(postId).update(data);
+                    console.log(`✅ Edited ${page} → ${postId}`);
+                } else {
+                    const docRef = await db.collection(page).add(data);
+                    console.log(`✅ Created ${page} → ${docRef.id}`);
                 }
 
-
                 // ======================
-                // 4. Reload + Clear/Close
+                // 5. Refresh + notify
                 // ======================
                 await loadPostsFromFirestore(page);
+                alert("✅ Post saved successfully!");
 
-                console.log("✅ Post saved successfully!");
-                alert("Your changes have been saved successfully.");
-
-                // Reset form if creating
+                // Reset form only on create
                 if (mode === "create") {
                     title.value = "";
                     description.value = "";
@@ -207,16 +147,15 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
                     const previewContainer = document.querySelector(".file-preview-container");
                     if (previewContainer) previewContainer.innerHTML = "";
                 }
-
             } catch (err) {
-                console.error(`❌ Error submitting ${page}:`, err);
+                console.error(`❌ Error saving ${page}:`, err);
                 alert("Error: " + err.message);
             } finally {
                 if (typeof hideLoader === "function") hideLoader();
+                console.log("✅ Save complete.");
             }
         }
     }
 
-    // ✅ Attach global listener (delegation)
     document.addEventListener("click", handlePostClick);
 }
