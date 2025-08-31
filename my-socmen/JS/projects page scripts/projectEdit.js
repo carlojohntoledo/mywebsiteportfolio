@@ -26,24 +26,25 @@ function openPostForm(page, mode = "edit", data = {}, uid) {
         const previewContainer = container.querySelector(`#${page}-preview`);
         previewContainer.innerHTML = "";
 
-        data.images.forEach((imgUrl, index) => {
+        data.images.forEach((img, index) => {
+            const url = img.url || img.secure_url || img; // handle both object & string
             previewContainer.innerHTML += `
-              <div class="file-preview">
-                <div class="image-preview">
-                  <img src="${imgUrl}" alt="Preview ${index+1}">
-                </div>
-                <button class="remove-preview">&times;</button>
-              </div>
-            `;
+          <div class="file-preview">
+            <div class="image-preview">
+              <img src="${url}" alt="Preview ${index + 1}">
+            </div>
+            <button class="remove-preview">&times;</button>
+          </div>
+        `;
         });
 
-        // Bind remove buttons
         previewContainer.querySelectorAll(".remove-preview").forEach(btn => {
             btn.addEventListener("click", e => {
                 e.target.closest(".file-preview").remove();
             });
         });
     }
+
 
     // Cancel button
     container.querySelector("#cancel-btn").addEventListener("click", () => {
