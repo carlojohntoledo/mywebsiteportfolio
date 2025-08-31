@@ -1,161 +1,161 @@
-// ======================
-// SUBMIT POST HANDLER (FIXED)
-// ======================
-function initSubmitHandlers(page, mode = "create", postId = null, postData = null, currentImages = []) {
-    const postBtnId = `${page}-post-btn`;
-    console.log(`🔔 Initializing submit handler for ${page}, mode: ${mode}, postId: ${postId}`);
+// =============================================================
+// ✅ Open Create/Edit Post Form (reuses the same HTML template)
+// =============================================================
+async function openPostForm(page = "projects", mode = "create", postData = {}, postId = null) {
+    const container = getPageContainer();
+    if (!container) return;
 
-    // Remove previous listener to avoid duplicates
-    document.removeEventListener("click", handlePostClick);
+    showLoader();
 
-    async function handlePostClick(e) {
-        if (e.target && e.target.id === postBtnId) {
-            e.preventDefault();
-            console.log(`📌 ${page.toUpperCase()} ${mode.toUpperCase()} triggered`);
+    // Inject the existing template (same one used for create)
+    container.innerHTML = getFormTemplate(page);
+    container.style.display = "grid";
 
-            // Fields
-            const title = document.querySelector(`.input-${page}-title`);
-            const description = document.querySelector(`.input-${page}-description`);
-            const date = document.querySelector(`.input-${page}-date`);
-            const status = document.querySelector(`.input-${page}-status`);
-            const tagsInput = document.querySelector(`.input-${page}-tags`);
-            const fileInput = document.getElementById("file");
-            const errorElement = document.querySelector(".error");
+    const form = container.querySelector(`#create-${page}-form`);
+    const titleEl = container.querySelector(".card-title"); 
+    const postBtn = container.querySelector(`#${page}-post-btn`);
+    const cancelBtn = container.querySelector("#cancel-btn");
+    const fileInput = form.querySelector(`#${page}-file-input`);
+    const previewContainer = form.querySelector(`#${page}-preview`);
 
-            // Project-only
-            const pdfLink = document.querySelector(`.input-${page}-pdf-link`);
-            const projectLink = document.querySelector(`.input-${page}-link`);
+    // Local state for images
+    let currentImages = (postData.images || []).map(img => ({
+        url: img.url || img,
+        publicId: img.publicId || null,
+        isNew: false
+    }));
 
-            // ❌ Required validation
-            if (!title.value.trim() || !description.value.trim() || !date.value.trim() || !status.value.trim()) {
-                if (errorElement) errorElement.style.display = "flex";
-                return;
+    // Cancel button
+    cancelBtn.addEventListener("click", () => {
+        container.style.display = "none";
+        container.innerHTML = "";
+    });
+
+    // =========================================================
+    // EDIT MODE → adjust UI and prefill
+    // =========================================================
+    if (mode === "edit" && postData) {
+        const singular = page.slice(0, -1);
+        if (titleEl) titleEl.textContent = `Edit ${singular.charAt(0).toUpperCase() + singular.slice(1)}`;
+        postBtn.textContent = "Save";
+
+        // Prefill fields
+        form.querySelector(`.input-${page}-title`).value = postData.title || "";
+        form.querySelector(`.input-${page}-description`).value = postData.description || "";
+
+        if (page === "projects" || page === "activities") {
+            form.querySelector(`.input-${page}-date`).value = postData.date || "";
+        }
+        if (page === "services") {
+            form.querySelector(`.input-${page}-date`).value = postData.experience || "";
+        }
+
+        form.querySelector(`.input-${page}-status`).value = postData.status || "";
+        form.querySelector(`.input-${page}-tags`).value = (postData.tags || []).join(", ");
+
+        if (page === "projects") {
+            form.querySelector(`.input-${page}-pdf-link`).value = postData.pdfLink || "";
+            form.querySelector(`.input-${page}-link`).value = postData.projectLink || "";
+        }
+
+        // Show old images in preview
+        previewContainer.innerHTML = "";
+        currentImages.forEach((img, i) => addImagePreview(img, i));
+    }
+
+    hideLoader(); // Form + images are ready
+
+    // =========================================================
+    // HANDLE NEW FILE INPUT
+    // =========================================================
+    fileInput.addEventListener("change", async () => {
+        const files = Array.from(fileInput.files || []);
+        if (files.length === 0) return;
+
+        showLoader();
+        for (const file of files) {
+            const compressedFile = await compressImage(file);
+            const result = await uploadToCloudinary(compressedFile, page); // pass page if you want folder separation
+            if (result) {
+                const newImg = { url: result.imageUrl, publicId: result.publicId, isNew: true };
+                currentImages.unshift(newImg); // new first
+                addImagePreview(newImg, 0);
             }
-            if (errorElement) errorElement.style.display = "none";
+        }
+        hideLoader();
+        fileInput.value = ""; // reset input
+    });
 
-            // Tags
-            const tagsArray = tagsInput.value.split(",").map(t => t.trim()).filter(Boolean);
+    // =========================================================
+    // ADD IMAGE PREVIEW HELPER
+    // =========================================================
+    function addImagePreview(imgObj, index) {
+        const preview = document.createElement("div");
+        preview.classList.add("file-preview");
 
-            // Links
-            let pdfLinkValue = "";
-            let projectLinkValue = "";
-            if (page === "projects") {
-                if (pdfLink?.value.trim()) {
-                    pdfLinkValue = /^https?:\/\//i.test(pdfLink.value.trim())
-                        ? pdfLink.value.trim()
-                        : "https://" + pdfLink.value.trim();
-                }
-                if (projectLink?.value.trim()) {
-                    projectLinkValue = /^https?:\/\//i.test(projectLink.value.trim())
-                        ? projectLink.value.trim()
-                        : "https://" + projectLink.value.trim();
-                }
-            }
+        preview.innerHTML = `
+            <div class="image-preview">
+                <img src="${imgObj.url}" alt="Preview">
+            </div>
+            <button type="button" class="remove-preview">&times;</button>
+        `;
 
-            try {
-                if (typeof showLoader === "function") showLoader();
-                console.log("🔄 Processing save...");
+        const removeBtn = preview.querySelector(".remove-preview");
+        removeBtn.addEventListener("click", () => {
+            preview.remove();
+            currentImages = currentImages.filter(im => im.url !== imgObj.url);
+        });
 
-                // ======================
-                // 1. Upload new files
-                // ======================
-                const files = Array.from(fileInput?.files || []);
-                const uploadedImages = [];
-                for (const file of files) {
-                    const compressedFile = await compressImage(file);
-                    const result = await uploadToCloudinary(compressedFile, page);
-                    if (result) {
-                        uploadedImages.push({
-                            imageUrl: result.imageUrl,
-                            publicId: result.publicId
-                        });
-                    }
-                }
-
-                // ======================
-                // 2. Handle image diffs (edit only)
-                // ======================
-                let finalImages = [...currentImages, ...uploadedImages];
-
-                if (mode === "edit" && postId) {
-                    const docSnap = await db.collection(page).doc(postId).get();
-                    let oldImages = docSnap.exists ? docSnap.data().images || [] : [];
-
-                    // Find removed images (were in oldImages but not in finalImages)
-                    const removedImages = oldImages.filter(
-                        old => !finalImages.some(newImg => newImg.publicId === old.publicId)
-                    );
-
-                    console.log("🗑️ Removing from Cloudinary:", removedImages);
-                    for (const img of removedImages) {
-                        if (img.publicId) await deleteFromCloudinary(img.publicId);
-                    }
-                }
-
-                // ======================
-                // 3. Build Firestore data
-                // ======================
-                const data = {
-                    title: title.value.trim(),
-                    description: description.value.trim(),
-                    status: status.value.trim(),
-                    date: date.value.trim(),
-                    tags: tagsArray,
-                    images: finalImages,
-                    pinned: postData?.pinned || false,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                };
-
-                if (mode === "create") {
-                    data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-                } else {
-                    data.createdAt = postData?.createdAt || firebase.firestore.FieldValue.serverTimestamp();
-                }
-
-                if (page === "projects") {
-                    data.pdfLink = pdfLinkValue;
-                    data.projectLink = projectLinkValue;
-                }
-
-                // ======================
-                // 4. Save to Firestore
-                // ======================
-                if (mode === "edit" && postId) {
-                    await db.collection(page).doc(postId).update(data);
-                    console.log(`✅ Edited ${page} → ${postId}`);
-                } else {
-                    const docRef = await db.collection(page).add(data);
-                    console.log(`✅ Created ${page} → ${docRef.id}`);
-                }
-
-                // ======================
-                // 5. Refresh + notify
-                // ======================
-                await loadPostsFromFirestore(page);
-                alert("✅ Post saved successfully!");
-
-                // Reset form only on create
-                if (mode === "create") {
-                    title.value = "";
-                    description.value = "";
-                    date.value = "";
-                    status.value = "";
-                    tagsInput.value = "";
-                    if (fileInput) fileInput.value = "";
-                    if (pdfLink) pdfLink.value = "";
-                    if (projectLink) projectLink.value = "";
-                    const previewContainer = document.querySelector(".file-preview-container");
-                    if (previewContainer) previewContainer.innerHTML = "";
-                }
-            } catch (err) {
-                console.error(`❌ Error saving ${page}:`, err);
-                alert("Error: " + err.message);
-            } finally {
-                if (typeof hideLoader === "function") hideLoader();
-                console.log("✅ Save complete.");
-            }
+        // Insert at top (new images first)
+        if (previewContainer.firstChild) {
+            previewContainer.insertBefore(preview, previewContainer.firstChild);
+        } else {
+            previewContainer.appendChild(preview);
         }
     }
 
-    document.addEventListener("click", handlePostClick);
+    // =========================================================
+    // SUBMIT HANDLER
+    // =========================================================
+    postBtn.addEventListener("click", async () => {
+        showLoader();
+
+        const formData = {
+            title: form.querySelector(`.input-${page}-title`).value,
+            description: form.querySelector(`.input-${page}-description`).value,
+            tags: form.querySelector(`.input-${page}-tags`).value.split(",").map(t => t.trim()).filter(Boolean),
+            status: form.querySelector(`.input-${page}-status`).value,
+            createdAt: mode === "create" ? firebase.firestore.FieldValue.serverTimestamp() : postData.createdAt,
+            pinned: postData.pinned || false,
+            images: currentImages.map(img => ({ url: img.url, publicId: img.publicId }))
+        };
+
+        if (page === "projects" || page === "activities") {
+            formData.date = form.querySelector(`.input-${page}-date`).value;
+        }
+        if (page === "services") {
+            formData.experience = form.querySelector(`.input-${page}-date`).value;
+        }
+        if (page === "projects") {
+            formData.pdfLink = form.querySelector(`.input-${page}-pdf-link`).value;
+            formData.projectLink = form.querySelector(`.input-${page}-link`).value;
+        }
+
+        try {
+            if (mode === "create") {
+                await db.collection(page).add(formData);
+            } else {
+                await db.collection(page).doc(postId).update(formData);
+            }
+
+            await loadPostsFromFirestore(page);
+            container.style.display = "none";
+            container.innerHTML = "";
+        } catch (err) {
+            console.error("❌ Error saving post:", err);
+            alert("Error saving post.");
+        } finally {
+            hideLoader();
+        }
+    });
 }
