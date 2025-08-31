@@ -21,6 +21,9 @@ function openPostForm(page, mode = "edit", data = {}, uid) {
     if (data.pdfLink) container.querySelector(`.input-${page}-pdf-link`).value = data.pdfLink;
     if (data.link) container.querySelector(`.input-${page}-link`).value = data.link;
 
+    console.log("🔍 previewContainer =", previewContainer);
+    console.log("🖼 data.images =", data.images);
+
     // Prefill images (use same preview system)
     if (mode === "edit" && data.images) {
         const previewContainer = container.querySelector(`#${page}-preview`);
