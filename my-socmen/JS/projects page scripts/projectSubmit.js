@@ -13,7 +13,6 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
     async function handlePostClick(e) {
         if (e.target && e.target.id === postBtnId) {
             e.preventDefault();
-            console.log(`📌 ${page.toUpperCase()} ${mode.toUpperCase()} button clicked`);
 
             // Common fields
             const title = document.querySelector(`.input-${page}-title`);
