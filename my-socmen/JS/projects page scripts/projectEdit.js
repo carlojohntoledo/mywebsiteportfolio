@@ -40,7 +40,7 @@ function openPostForm(page, mode = "edit", data = {}, uid) {
                 previewContainer.insertAdjacentHTML("beforeend", `
               <div class="file-preview">
                 <div class="image-preview">
-                  <img src="${url}" alt="Preview ${index + 1}" style="max-width:100px;max-height:100px;">
+                  <img src="${url}" alt="Preview ${index + 1}">
                 </div>
                 <button class="remove-preview">&times;</button>
               </div>

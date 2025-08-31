@@ -129,9 +129,6 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
                     const oldImageIds = oldImages.map(img => img.publicId);
 
                     const removedImages = oldImages.filter(img => !newImageIds.includes(img.publicId));
-                    const addedImages = uploadedImages.filter(img => !oldImageIds.includes(img.publicId));
-
-                    console.log("🖼️ Added images:", addedImages);
                     console.log("🗑️ Removed images:", removedImages);
 
                     // Delete removed images from Cloudinary
@@ -142,29 +139,29 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
                         }
                     }
 
-                    // --- Prepare data object ---
-                    const data = {
+                    // --- Final data object ---
+                    const finalData = {
                         title: title.value.trim(),
                         description: description.value.trim(),
                         status: status.value.trim(),
                         date: date.value.trim(),
                         tags: tagsArray,
-                        images: uploadedImages,
-                        pinned: false,
+                        images: [...currentImages, ...uploadedImages], // ✅ keep old + new
+                        pinned: postData?.pinned || false,
                         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                     };
 
                     if (page === "projects") {
-                        data.pdfLink = pdfLinkValue;
-                        data.projectLink = projectLinkValue;
+                        finalData.pdfLink = pdfLinkValue;
+                        finalData.projectLink = projectLinkValue;
                     }
 
                     if (mode === "edit" && postId) {
-                        await db.collection(page).doc(postId).update(data);
+                        await db.collection(page).doc(postId).update(finalData);
                         console.log(`✅ Updated ${page} → ${postId}`);
-                    } else {
+                    } else if (mode === "create") {
                         const docRef = await db.collection(page).add({
-                            ...data,
+                            ...finalData,
                             createdAt: firebase.firestore.FieldValue.serverTimestamp()
                         });
                         console.log(`✅ Created ${page} → ${docRef.id}`);
@@ -173,9 +170,7 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
                     // Reload posts
                     await loadPostsFromFirestore(page);
 
-                    // Show success notification
                     alert("✅ Post saved successfully!");
-
                 } catch (err) {
                     console.error(`❌ Error saving ${page}:`, err);
                     alert("Error: " + err.message);
@@ -183,7 +178,6 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
                     if (typeof hideLoader === "function") hideLoader();
                     console.log("✅ Save process complete.");
                 }
-
 
                 // ======================
                 // 4. Reload + Clear/Close
