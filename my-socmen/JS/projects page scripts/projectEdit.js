@@ -77,55 +77,43 @@ function openPostForm(page, mode = "edit", data = {}, uid) {
     initSubmitHandlers(page, mode, uid, data, data.images || []);
 }
 
-
-// Global or per-form tracker for removed image URLs
-let removedPreviewUrls = new Set();
-
-// ======================
-// Bind preview + removal (called inside openPostForm)
-// ======================
+// ==========================
+// Bind preview handlers (safe, no duplication)
+// ==========================
 function bindPreviewHandlers(page) {
-  const fileInput = document.getElementById("file");
-  const previewContainer = document.querySelector(`#${page}-preview`);
+  const container = getPageContainer();
+  if (!container) return;
 
-  if (!fileInput || !previewContainer) return;
+  const previewContainer = container.querySelector(`#${page}-preview`);
+  const fileInput = container.querySelector("#file");
 
-  // Handle file selection (new images)
-  fileInput.addEventListener("change", (e) => {
-    const files = Array.from(e.target.files);
-    if (files.length === 0) return;
+  if (!previewContainer || !fileInput) return;
 
-    // Append new previews (don't reset old ones!)
-    files.forEach((file) => {
+  // --- Remove only logic (attach ONCE to container via delegation) ---
+  previewContainer.addEventListener("click", function (e) {
+    if (e.target.classList.contains("remove-preview")) {
+      e.preventDefault();
+      const wrapper = e.target.closest(".file-preview");
+      if (wrapper) wrapper.remove();
+    }
+  });
+
+  // --- Add new previews when selecting files ---
+  fileInput.addEventListener("change", function () {
+    // Clear previews of *newly selected* files (do NOT touch existing previews)
+    Array.from(fileInput.files).forEach(file => {
       const reader = new FileReader();
       reader.onload = (ev) => {
         previewContainer.insertAdjacentHTML("beforeend", `
           <div class="file-preview">
             <div class="image-preview">
-              <img src="${ev.target.result}" alt="New Preview">
+              <img src="${ev.target.result}" alt="Preview">
             </div>
             <button class="remove-preview">&times;</button>
           </div>
         `);
-
-        // Bind removal for this new preview
-        const newPreview = previewContainer.lastElementChild;
-        newPreview.querySelector(".remove-preview").addEventListener("click", () => {
-          newPreview.remove();
-        });
       };
       reader.readAsDataURL(file);
     });
-  });
-
-  // Bind removal for existing previews (from openPostForm prefill)
-  previewContainer.querySelectorAll(".file-preview").forEach(preview => {
-    const imgEl = preview.querySelector("img");
-    const url = imgEl?.getAttribute("src");
-
-    preview.querySelector(".remove-preview").addEventListener("click", () => {
-      preview.remove();
-      if (url) removedPreviewUrls.add(url); // mark this image as removed
-    });
-  });
+  }, { once: true }); // ✅ ensures we don’t double-bind
 }
