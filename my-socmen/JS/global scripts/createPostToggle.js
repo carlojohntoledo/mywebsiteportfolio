@@ -393,8 +393,10 @@ function getFormTemplate(page) {
     }
 }
 
+const fileSelections = {};
+
 function previewImages(event, containerSelector = ".file-preview-container") {
-    const files = event.target.files;
+    const input = event.target;
     const previewContainer = document.querySelector(containerSelector);
 
     if (!previewContainer) {
@@ -402,9 +404,22 @@ function previewImages(event, containerSelector = ".file-preview-container") {
         return;
     }
 
-    previewContainer.innerHTML = ""; // clear old previews
+    // Initialize storage for this input
+    if (!fileSelections[input.id]) {
+        fileSelections[input.id] = [];
+    }
 
-    Array.from(files).forEach((file, index) => {
+    // Add newly selected files to existing ones
+    const newFiles = Array.from(input.files);
+    fileSelections[input.id].push(...newFiles);
+
+    // Remove duplicates (if same file selected twice)
+    fileSelections[input.id] = Array.from(new Map(fileSelections[input.id].map(f => [f.name, f])).values());
+
+    // Clear and rebuild preview
+    previewContainer.innerHTML = "";
+
+    fileSelections[input.id].forEach((file, index) => {
         if (!file.type.startsWith("image/")) return;
 
         const reader = new FileReader();
@@ -419,20 +434,25 @@ function previewImages(event, containerSelector = ".file-preview-container") {
             img.src = e.target.result;
             img.alt = `Preview ${index + 1}`;
 
-            // ❌ Remove preview button
+            // ❌ Remove button
             const removeBtn = document.createElement("button");
             removeBtn.classList.add("remove-preview");
             removeBtn.innerHTML = "&times;";
 
             removeBtn.addEventListener("click", function () {
+                // Remove from DOM
                 filePreview.remove();
 
-                // Update FileList in <input type="file">
+                // Remove from storage
+                fileSelections[input.id].splice(index, 1);
+
+                // Update <input type="file"> FileList
                 const dt = new DataTransfer();
-                Array.from(files)
-                    .filter((_, i) => i !== index)
-                    .forEach((f) => dt.items.add(f));
-                event.target.files = dt.files;
+                fileSelections[input.id].forEach(f => dt.items.add(f));
+                input.files = dt.files;
+
+                // Re-render previews (to fix index order)
+                previewImages({ target: input }, containerSelector);
             });
 
             imgWrapper.appendChild(img);
@@ -443,3 +463,4 @@ function previewImages(event, containerSelector = ".file-preview-container") {
         reader.readAsDataURL(file);
     });
 }
+
