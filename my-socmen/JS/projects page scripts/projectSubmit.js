@@ -22,7 +22,6 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
 
   // --- Global guard to avoid double-handling if other listeners exist ---
   if (!window.__postSubmitState) window.__postSubmitState = {};
-  // We'll track per page to be extra-safe
   window.__postSubmitState[postBtnId] = window.__postSubmitState[postBtnId] || { submitting: false };
 
   newBtn.addEventListener("click", async function (e) {
@@ -36,9 +35,8 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
     window.__postSubmitState[postBtnId].submitting = true;
 
     try {
-      // Show loader immediately and yield to let UI paint it
+      // ✅ Show loader immediately and yield to let UI paint it
       if (typeof showLoader === "function") showLoader();
-      // yield so the loader can render before heavy work/awaits
       await new Promise(res => setTimeout(res, 10));
 
       // Collect form and fields
@@ -71,8 +69,7 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
         .map(t => t.trim())
         .filter(Boolean);
 
-      // === Determine existing images (incoming "old" images) ===
-      // Priority: currentImagesParam (passed in) -> postData.images -> form.dataset.existingUrls
+      // === Determine existing images ===
       let existingImages = Array.isArray(currentImagesParam) && currentImagesParam.length
         ? currentImagesParam.slice()
         : Array.isArray(postData?.images) && postData.images.length
@@ -86,7 +83,7 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
         } catch (_) { /* ignore parse errors */ }
       }
 
-      // === Figure out which images user still left visible in preview ===
+      // === Which images are still visible in preview ===
       const previewContainer = document.querySelector(`#${page}-preview`) || form?.querySelector(".file-preview-container");
       let visibleSrcs = [];
       if (previewContainer) {
@@ -95,24 +92,21 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
           .filter(Boolean);
       }
 
-      // Removed images are old images that are no longer visible
       const removedImages = existingImages.filter(img => {
         const u = urlOf(img);
         return u && !visibleSrcs.includes(u);
       });
 
-      // Keep images that are still visible
       const keptExisting = existingImages.filter(img => {
         const u = urlOf(img);
         return u && visibleSrcs.includes(u);
       });
 
-      // === Upload new files (if any) ===
+      // === Upload new files ===
       const files = fileInput?.files ? Array.from(fileInput.files) : [];
       const uploadedImages = [];
       if (files.length > 0) {
         for (const f of files) {
-          // compressImage and uploadToCloudinary are assumed available and return { imageUrl, publicId }
           const compressed = await compressImage(f);
           const res = await uploadToCloudinary(compressed, page);
           if (res) {
@@ -124,10 +118,10 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
         }
       }
 
-      // === Final images: kept old ones + newly uploaded ones ===
+      // === Final images ===
       const finalImages = [...keptExisting, ...uploadedImages];
 
-      // === Delete removed images from Cloudinary (only those user removed) ===
+      // === Delete removed images ===
       if (removedImages.length > 0) {
         for (const img of removedImages) {
           const pid = img?.publicId || img?.public_id;
@@ -163,7 +157,7 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
         payload.projectLink = projectLink || postData?.projectLink || "";
       }
 
-      // === Save to Firestore (single operation) ===
+      // === Save to Firestore ===
       if (mode === "edit" && postId) {
         await db.collection(page).doc(postId).update(payload);
         console.log(`✅ Updated ${page} → ${postId}`);
@@ -175,20 +169,16 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
         console.log(`✅ Created ${page} (new doc)`);
       }
 
-      // Reload posts once and close form
       await loadPostsFromFirestore(page);
 
-      // Optional: close the form container (if you have a function or container selector)
       const container = getPageContainer();
       if (container) { container.style.display = "none"; container.innerHTML = ""; }
 
       alert("✅ Post saved successfully!");
     } catch (err) {
-      // show user error
       console.error("❌ Submit error:", err);
       alert(err.message || "Error saving post.");
     } finally {
-      // Always reset submitting flag and hide loader
       window.__postSubmitState[postBtnId].submitting = false;
       if (typeof hideLoader === "function") hideLoader();
     }
