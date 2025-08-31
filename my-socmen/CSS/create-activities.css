@@ -9,7 +9,7 @@
     display: grid;
     grid-template-columns: 100%;
     position: fixed;
-    z-index: 999;
+    z-index: 998;
     background-color: rgba(0, 0, 0, 0.8);
     display: none;
 }
@@ -24,7 +24,7 @@
     display: grid;
     padding-bottom: 1rem;
     position: relative;
-    z-index: 998;
+    z-index: 997;
     /* border: 1px solid green; */
 }
 
