@@ -417,7 +417,7 @@ function previewImages(event, containerSelector = ".file-preview-container") {
     fileSelections[input.id] = Array.from(new Map(fileSelections[input.id].map(f => [f.name, f])).values());
 
     // Clear and rebuild preview
-    previewContainer.innerHTML = "";
+    // previewContainer.innerHTML = "";
 
     fileSelections[input.id].forEach((file, index) => {
         if (!file.type.startsWith("image/")) return;
