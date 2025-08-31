@@ -298,9 +298,10 @@ async function loadPostsFromFirestore(type = "projects") {
             });
 
             containerDiv.querySelector(`#${editId}`).addEventListener("change", () => {
-                openPostForm(type, "edit", data, uid);   // ✅ use the new unified form
+                openPostForm(type, "edit", data, uid);   // ✅ use new edit form
                 containerDiv.querySelector(`#${editId}`).checked = false;
             });
+
 
         });
 
