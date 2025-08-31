@@ -6,7 +6,7 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
     let postBtn = document.getElementById(postBtnId);
     if (!postBtn) return;
 
-    // ✅ Clone button to remove ALL old listeners
+    // 🔄 Remove old listeners by cloning button
     const newBtn = postBtn.cloneNode(true);
     postBtn.parentNode.replaceChild(newBtn, postBtn);
     postBtn = newBtn;
@@ -30,6 +30,8 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
             return;
         }
 
+        showLoader(); // ✅ Always show loader before saving
+
         // ==================
         // 2. Handle images
         // ==================
@@ -43,8 +45,25 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
             if (result) uploadedImages.push(result);
         }
 
-        // ✅ Merge images (old + new)
-        let finalImages = [...currentImages, ...uploadedImages];
+        // ✅ Start with old images
+        let finalImages = [...currentImages];
+
+        // ✅ Add new uploads
+        if (uploadedImages.length > 0) {
+            finalImages = [...finalImages, ...uploadedImages];
+        }
+
+        // ✅ Check which previews user removed manually
+        const previewContainer = document.getElementById(`${page}-preview`);
+        if (previewContainer) {
+            const stillVisibleUrls = Array.from(previewContainer.querySelectorAll("img"))
+                .map(img => img.getAttribute("src"));
+
+            finalImages = finalImages.filter(imgObj => {
+                const url = imgObj.imageUrl || imgObj.url || imgObj.secure_url || imgObj;
+                return stillVisibleUrls.includes(url);
+            });
+        }
 
         // ==================
         // 3. Prepare data
@@ -77,10 +96,11 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
 
             await loadPostsFromFirestore(page);
             alert("✅ Post saved successfully!");
-
         } catch (err) {
             console.error("❌ Error:", err);
             alert("Error: " + err.message);
+        } finally {
+            hideLoader(); // ✅ Always hide loader at the end
         }
     });
 }
