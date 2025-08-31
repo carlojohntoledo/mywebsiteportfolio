@@ -1,106 +1,196 @@
 // ======================
-// SUBMIT POST HANDLER
+// SUBMIT POST HANDLER (stable, single-run, edit/create safe)
 // ======================
-function initSubmitHandlers(page, mode = "create", postId = null, postData = null, currentImages = []) {
-    const postBtnId = `${page}-post-btn`;
-    let postBtn = document.getElementById(postBtnId);
-    if (!postBtn) return;
+function initSubmitHandlers(page, mode = "create", postId = null, postData = null, currentImagesParam = []) {
+  const postBtnId = `${page}-post-btn`;
+  const postBtn = document.getElementById(postBtnId);
+  if (!postBtn) {
+    console.warn(`⚠️ Post button ${postBtnId} not found. Skipping initSubmitHandlers.`);
+    return;
+  }
 
-    // 🔄 Remove old listeners by cloning button
-    const newBtn = postBtn.cloneNode(true);
-    postBtn.parentNode.replaceChild(newBtn, postBtn);
-    postBtn = newBtn;
+  // --- Helper: extract URL from image object/string ---
+  const urlOf = (img) => {
+    if (!img) return "";
+    if (typeof img === "string") return img;
+    return img.imageUrl || img.url || img.secure_url || img.path || "";
+  };
 
-    console.log(`🔔 Initialized handler for ${page} → mode: ${mode}`);
+  // --- Remove previous listeners by replacing the button node (clean slate) ---
+  const newBtn = postBtn.cloneNode(true);
+  postBtn.parentNode.replaceChild(newBtn, postBtn);
 
-    postBtn.addEventListener("click", async (e) => {
-        e.preventDefault();
+  // --- Global guard to avoid double-handling if other listeners exist ---
+  if (!window.__postSubmitState) window.__postSubmitState = {};
+  // We'll track per page to be extra-safe
+  window.__postSubmitState[postBtnId] = window.__postSubmitState[postBtnId] || { submitting: false };
 
-        // ==================
-        // 1. Collect fields
-        // ==================
-        const title = document.querySelector(`.input-${page}-title`).value.trim();
-        const description = document.querySelector(`.input-${page}-description`).value.trim();
-        const date = document.querySelector(`.input-${page}-date`).value.trim();
-        const status = document.querySelector(`.input-${page}-status`).value.trim();
-        const tags = document.querySelector(`.input-${page}-tags`).value.split(",").map(t => t.trim()).filter(Boolean);
+  newBtn.addEventListener("click", async function (e) {
+    e.preventDefault();
 
-        if (!title || !description || !date || !status) {
-            alert("⚠️ Please fill in all required fields.");
-            return;
-        }
+    // Prevent double-run
+    if (window.__postSubmitState[postBtnId].submitting) {
+      console.log("⚠️ Submission already in progress — ignoring duplicate click.");
+      return;
+    }
+    window.__postSubmitState[postBtnId].submitting = true;
 
-        showLoader(); // ✅ Always show loader before saving
+    try {
+      // Show loader immediately and yield to let UI paint it
+      if (typeof showLoader === "function") showLoader();
+      // yield so the loader can render before heavy work/awaits
+      await new Promise(res => setTimeout(res, 10));
 
-        // ==================
-        // 2. Handle images
-        // ==================
-        const fileInput = document.getElementById("file");
-        const files = Array.from(fileInput?.files || []);
-        const uploadedImages = [];
+      // Collect form and fields
+      const form = document.querySelector(`#create-${page}-form`);
+      const titleEl = document.querySelector(`.input-${page}-title`);
+      const descEl = document.querySelector(`.input-${page}-description`);
+      const dateEl = document.querySelector(`.input-${page}-date`);
+      const statusEl = document.querySelector(`.input-${page}-status`);
+      const tagsEl = document.querySelector(`.input-${page}-tags`);
+      const fileInput = document.getElementById("file");
+      const pdfLinkEl = document.querySelector(`.input-${page}-pdf-link`);
+      const linkEl = document.querySelector(`.input-${page}-link`);
+      const errorElement = document.querySelector(".error");
 
-        for (const file of files) {
-            const compressed = await compressImage(file);
-            const result = await uploadToCloudinary(compressed, page);
-            if (result) uploadedImages.push(result);
-        }
+      // Validation
+      const title = titleEl?.value?.trim() || "";
+      const description = descEl?.value?.trim() || "";
+      const date = dateEl?.value?.trim() || "";
+      const status = statusEl?.value?.trim() || "";
 
-        // ✅ Start with old images
-        let finalImages = [...currentImages];
+      if (!title || !description || !date || !status) {
+        if (errorElement) errorElement.style.display = "flex";
+        throw new Error("Please fill-in required details.");
+      } else if (errorElement) {
+        errorElement.style.display = "none";
+      }
 
-        // ✅ Add new uploads
-        if (uploadedImages.length > 0) {
-            finalImages = [...finalImages, ...uploadedImages];
-        }
+      const tagsArray = (tagsEl?.value || "")
+        .split(",")
+        .map(t => t.trim())
+        .filter(Boolean);
 
-        // ✅ Check which previews user removed manually
-        const previewContainer = document.getElementById(`${page}-preview`);
-        if (previewContainer) {
-            const stillVisibleUrls = Array.from(previewContainer.querySelectorAll("img"))
-                .map(img => img.getAttribute("src"));
+      // === Determine existing images (incoming "old" images) ===
+      // Priority: currentImagesParam (passed in) -> postData.images -> form.dataset.existingUrls
+      let existingImages = Array.isArray(currentImagesParam) && currentImagesParam.length
+        ? currentImagesParam.slice()
+        : Array.isArray(postData?.images) && postData.images.length
+          ? postData.images.slice()
+          : [];
 
-            finalImages = finalImages.filter(imgObj => {
-                const url = imgObj.imageUrl || imgObj.url || imgObj.secure_url || imgObj;
-                return stillVisibleUrls.includes(url);
-            });
-        }
-
-        // ==================
-        // 3. Prepare data
-        // ==================
-        const data = {
-            title,
-            description,
-            date,
-            status,
-            tags,
-            images: finalImages,
-            pinned: postData?.pinned || false,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        };
-
-        // ==================
-        // 4. Firestore save
-        // ==================
+      if (existingImages.length === 0 && form?.dataset?.existingUrls) {
         try {
-            if (mode === "edit" && postId) {
-                await db.collection(page).doc(postId).update(data);
-                console.log(`✅ Updated ${page} → ${postId}`);
-            } else {
-                await db.collection(page).add({
-                    ...data,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                console.log(`✅ Created new ${page}`);
-            }
+          const parsed = JSON.parse(form.dataset.existingUrls);
+          if (Array.isArray(parsed)) existingImages = parsed.slice();
+        } catch (_) { /* ignore parse errors */ }
+      }
 
-            await loadPostsFromFirestore(page);
-            alert("✅ Post saved successfully!");
-        } catch (err) {
-            console.error("❌ Error:", err);
-            alert("Error: " + err.message);
-        } finally {
-            hideLoader(); // ✅ Always hide loader at the end
+      // === Figure out which images user still left visible in preview ===
+      const previewContainer = document.querySelector(`#${page}-preview`) || form?.querySelector(".file-preview-container");
+      let visibleSrcs = [];
+      if (previewContainer) {
+        visibleSrcs = Array.from(previewContainer.querySelectorAll("img"))
+          .map(img => img.getAttribute("src"))
+          .filter(Boolean);
+      }
+
+      // Removed images are old images that are no longer visible
+      const removedImages = existingImages.filter(img => {
+        const u = urlOf(img);
+        return u && !visibleSrcs.includes(u);
+      });
+
+      // Keep images that are still visible
+      const keptExisting = existingImages.filter(img => {
+        const u = urlOf(img);
+        return u && visibleSrcs.includes(u);
+      });
+
+      // === Upload new files (if any) ===
+      const files = fileInput?.files ? Array.from(fileInput.files) : [];
+      const uploadedImages = [];
+      if (files.length > 0) {
+        for (const f of files) {
+          // compressImage and uploadToCloudinary are assumed available and return { imageUrl, publicId }
+          const compressed = await compressImage(f);
+          const res = await uploadToCloudinary(compressed, page);
+          if (res) {
+            uploadedImages.push({
+              imageUrl: res.imageUrl,
+              publicId: res.publicId
+            });
+          }
         }
-    });
+      }
+
+      // === Final images: kept old ones + newly uploaded ones ===
+      const finalImages = [...keptExisting, ...uploadedImages];
+
+      // === Delete removed images from Cloudinary (only those user removed) ===
+      if (removedImages.length > 0) {
+        for (const img of removedImages) {
+          const pid = img?.publicId || img?.public_id;
+          if (pid) {
+            try {
+              console.log(`🗑️ Deleting from Cloudinary → ${pid}`);
+              await deleteFromCloudinary(pid);
+            } catch (err) {
+              console.warn("⚠️ Failed to delete Cloudinary image", pid, err);
+            }
+          }
+        }
+      }
+
+      // === Prepare Firestore payload ===
+      const payload = {
+        title,
+        description,
+        status,
+        date,
+        tags: tagsArray,
+        images: finalImages,
+        pinned: postData?.pinned || false,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      if (page === "projects") {
+        let pdfLink = (pdfLinkEl?.value || "").trim();
+        let projectLink = (linkEl?.value || "").trim();
+        if (pdfLink && !/^https?:\/\//i.test(pdfLink)) pdfLink = "https://" + pdfLink;
+        if (projectLink && !/^https?:\/\//i.test(projectLink)) projectLink = "https://" + projectLink;
+        payload.pdfLink = pdfLink || postData?.pdfLink || "";
+        payload.projectLink = projectLink || postData?.projectLink || "";
+      }
+
+      // === Save to Firestore (single operation) ===
+      if (mode === "edit" && postId) {
+        await db.collection(page).doc(postId).update(payload);
+        console.log(`✅ Updated ${page} → ${postId}`);
+      } else {
+        await db.collection(page).add({
+          ...payload,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        console.log(`✅ Created ${page} (new doc)`);
+      }
+
+      // Reload posts once and close form
+      await loadPostsFromFirestore(page);
+
+      // Optional: close the form container (if you have a function or container selector)
+      const container = getPageContainer();
+      if (container) { container.style.display = "none"; container.innerHTML = ""; }
+
+      alert("✅ Post saved successfully!");
+    } catch (err) {
+      // show user error
+      console.error("❌ Submit error:", err);
+      alert(err.message || "Error saving post.");
+    } finally {
+      // Always reset submitting flag and hide loader
+      window.__postSubmitState[postBtnId].submitting = false;
+      if (typeof hideLoader === "function") hideLoader();
+    }
+  });
 }

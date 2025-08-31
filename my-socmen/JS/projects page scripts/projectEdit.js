@@ -6,6 +6,8 @@ function openPostForm(page, mode = "edit", data = {}, uid) {
     container.innerHTML = getFormTemplate(page);
     container.style.display = "grid";
 
+    const singular = page.slice(0, -1);
+
     // Adjust title + button
     if (mode === "edit") {
         container.querySelector(".card-title").textContent = `Edit ${singular}`;
@@ -21,13 +23,14 @@ function openPostForm(page, mode = "edit", data = {}, uid) {
     if (data.pdfLink) container.querySelector(`.input-${page}-pdf-link`).value = data.pdfLink;
     if (data.link) container.querySelector(`.input-${page}-link`).value = data.link;
 
-    // Prefill images (use same preview system)
+    // ==============================
+    // Prefill images for edit mode
+    // ==============================
     if (mode === "edit" && data.images) {
         const previewContainer = container.querySelector(`#${page}-preview`);
         previewContainer.innerHTML = "";
 
         data.images.forEach((img, index) => {
-            // 🔑 Handle both string & object
             let url = "";
             if (typeof img === "string") url = img;
             else if (img.imageUrl) url = img.imageUrl;
@@ -38,13 +41,13 @@ function openPostForm(page, mode = "edit", data = {}, uid) {
 
             if (url) {
                 previewContainer.insertAdjacentHTML("beforeend", `
-              <div class="file-preview">
-                <div class="image-preview">
-                  <img src="${url}" alt="Preview ${index + 1}">
-                </div>
-                <button class="remove-preview">&times;</button>
-              </div>
-            `);
+                  <div class="file-preview">
+                    <div class="image-preview">
+                      <img src="${url}" alt="Preview ${index + 1}">
+                    </div>
+                    <button class="remove-preview">&times;</button>
+                  </div>
+                `);
             }
         });
 
@@ -56,14 +59,17 @@ function openPostForm(page, mode = "edit", data = {}, uid) {
         });
     }
 
-
-
     // Cancel button
     container.querySelector("#cancel-btn").addEventListener("click", () => {
         container.style.display = "none";
         container.innerHTML = "";
     });
 
-    // Submit handler
-    initSubmitHandlers(page, mode, uid);
+    // ==============================
+    // Pass correct args to handler
+    // - uid → Firestore doc id
+    // - data → full post data
+    // - data.images → preserve current images
+    // ==============================
+    initSubmitHandlers(page, mode, uid, data, data.images || []);
 }
