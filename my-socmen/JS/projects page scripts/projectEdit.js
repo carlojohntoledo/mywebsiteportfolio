@@ -26,27 +26,36 @@ function openPostForm(page, mode = "edit", data = {}, uid) {
         const previewContainer = container.querySelector(`#${page}-preview`);
         previewContainer.innerHTML = "";
 
-        console.log("🔍 previewContainer =", previewContainer);
-        console.log("🖼 data.images =", data.images);
-
         data.images.forEach((img, index) => {
-            const url = img.url || img.secure_url || img; // handle both object & string
-            previewContainer.innerHTML += `
-          <div class="file-preview">
-            <div class="image-preview">
-              <img src="${url}" alt="Preview ${index + 1}">
-            </div>
-            <button class="remove-preview">&times;</button>
-          </div>
-        `;
+            // 🔑 Handle both string & object
+            let url = "";
+            if (typeof img === "string") url = img;
+            else if (img.imageUrl) url = img.imageUrl;
+            else if (img.url) url = img.url;
+            else if (img.secure_url) url = img.secure_url;
+
+            console.log("➡️ using url:", url);
+
+            if (url) {
+                previewContainer.insertAdjacentHTML("beforeend", `
+              <div class="file-preview">
+                <div class="image-preview">
+                  <img src="${url}" alt="Preview ${index + 1}" style="max-width:100px;max-height:100px;">
+                </div>
+                <button class="remove-preview">&times;</button>
+              </div>
+            `);
+            }
         });
 
+        // Bind remove buttons
         previewContainer.querySelectorAll(".remove-preview").forEach(btn => {
             btn.addEventListener("click", e => {
                 e.target.closest(".file-preview").remove();
             });
         });
     }
+
 
 
     // Cancel button
