@@ -21,35 +21,32 @@ function openPostForm(page, mode = "edit", data = {}, uid) {
     if (data.pdfLink) container.querySelector(`.input-${page}-pdf-link`).value = data.pdfLink;
     if (data.link) container.querySelector(`.input-${page}-link`).value = data.link;
 
-    console.log("🔍 previewContainer =", previewContainer);
-    console.log("🖼 data.images =", data.images);
-
     // Prefill images (use same preview system)
     if (mode === "edit" && data.images) {
         const previewContainer = container.querySelector(`#${page}-preview`);
         previewContainer.innerHTML = "";
 
+        console.log("🔍 previewContainer =", previewContainer);
+        console.log("🖼 data.images =", data.images);
+
         data.images.forEach((img, index) => {
-            let url = "";
-            if (typeof img === "string") url = img;
-            else if (img.url) url = img.url;
-            else if (img.secure_url) url = img.secure_url;
+            const url = img.url || img.secure_url || img; // handle both object & string
+            previewContainer.innerHTML += `
+          <div class="file-preview">
+            <div class="image-preview">
+              <img src="${url}" alt="Preview ${index + 1}">
+            </div>
+            <button class="remove-preview">&times;</button>
+          </div>
+        `;
+        });
 
-            console.log("➡️ using url:", url);
-
-            if (url) {
-                previewContainer.insertAdjacentHTML("beforeend", `
-              <div class="file-preview">
-                <div class="image-preview">
-                  <img src="${url}" alt="Preview ${index + 1}" style="max-width:100px;max-height:100px;">
-                </div>
-                <button class="remove-preview">&times;</button>
-              </div>
-            `);
-            }
+        previewContainer.querySelectorAll(".remove-preview").forEach(btn => {
+            btn.addEventListener("click", e => {
+                e.target.closest(".file-preview").remove();
+            });
         });
     }
-
 
 
     // Cancel button
