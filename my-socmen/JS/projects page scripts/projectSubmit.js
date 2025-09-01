@@ -57,12 +57,30 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
       const date = dateEl?.value?.trim() || "";
       const status = statusEl?.value?.trim() || "";
 
-      if (!title || !description || !date || !status) {
-        if (errorElement) errorElement.style.display = "flex";
-        throw new Error("Please fill-in required details.");
+      // --- Validation ---
+      let validationError = null;
+      if (page === "activities") {
+        if (!description) {
+          validationError = "Description is required";
+        }
+      } else {
+        if (!title || !description || !date || !status) {
+          validationError = "Please fill in all required fields";
+        }
+      }
+
+      if (validationError) {
+        if (errorElement) {
+          errorElement.textContent = validationError; // optional
+          errorElement.style.display = "flex";
+        }
+        window.__postSubmitState[postBtnId].submitting = false;
+        if (typeof hideLoader === "function") hideLoader();
+        return;
       } else if (errorElement) {
         errorElement.style.display = "none";
       }
+
 
       const tagsArray = (tagsEl?.value || "")
         .split(",")
@@ -143,10 +161,15 @@ function initSubmitHandlers(page, mode = "create", postId = null, postData = nul
         status,
         date,
         tags: tagsArray,
-        images: finalImages,
         pinned: postData?.pinned || false,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       };
+
+      // Only include images if they exist
+      if (finalImages.length > 0) {
+        payload.images = finalImages;
+      }
+
 
       if (page === "projects") {
         let pdfLink = (pdfLinkEl?.value || "").trim();
