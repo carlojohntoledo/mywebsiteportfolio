@@ -101,7 +101,7 @@ function formatTimeAgo(timestamp) {
 
 
 // =============================================================
-// Helper: Render images in grid for activities
+// Helper: Render images in grid for activities (with hidden extras)
 // =============================================================
 function renderActivityImages(images) {
     if (!images || images.length === 0) return "";
@@ -137,7 +137,7 @@ function renderActivityImages(images) {
                   ${urls.map(u => `<img src="${u}" alt="">`).join("")}
                 </div>`;
     } else {
-        // 5+ → show 4 + overlay
+        // 5+ → show first 4, overlay on 4th, hide the rest
         const extra = count - 4;
         html = `<div class="grid-5">
                   <img src="${urls[0]}" alt="">
@@ -147,8 +147,10 @@ function renderActivityImages(images) {
                     <img src="${urls[3]}" alt="">
                     <div class="overlay">+${extra}</div>
                   </div>
+                  ${urls.slice(4).map(u => `<img src="${u}" alt="" style="display:none;">`).join("")}
                 </div>`;
     }
 
     return `<div class="activity-images">${html}</div>`;
 }
+

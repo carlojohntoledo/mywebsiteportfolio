@@ -45,6 +45,19 @@ async function loadPostsFromFirestore(type = "projects") {
 
             let cardInnerHTML = "";
 
+            // In loadPostsFromFirestore for activities
+            const card = document.createElement("div");
+            card.classList.add("activities-card");
+            card.setAttribute("data-id", doc.id);
+
+            // store all image urls as JSON string
+            if (data.images && data.images.length > 0) {
+                card.dataset.images = JSON.stringify(data.images.map(img =>
+                    typeof img === "string" ? img : (img.imageUrl || img.url || img.secure_url)
+                ));
+            }
+
+
             switch (type) {
                 case "activities":
                     cardInnerHTML = `
@@ -315,75 +328,75 @@ async function loadPostsFromFirestore(type = "projects") {
 
 // ================= LIGHTBOX SCRIPT =================
 (function initLightbox() {
-  const lightbox = document.getElementById("lightbox");
-  const lightboxImg = lightbox.querySelector(".lightbox-img");
-  const closeBtn = lightbox.querySelector(".lightbox-close");
-  const prevBtn = lightbox.querySelector(".lightbox-prev");
-  const nextBtn = lightbox.querySelector(".lightbox-next");
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = lightbox.querySelector(".lightbox-img");
+    const closeBtn = lightbox.querySelector(".lightbox-close");
+    const prevBtn = lightbox.querySelector(".lightbox-prev");
+    const nextBtn = lightbox.querySelector(".lightbox-next");
 
-  let images = [];   // all images in the current post
-  let currentIndex = 0;
+    let images = [];   // all images in the current post
+    let currentIndex = 0;
 
-  // Open lightbox
-  function openLightbox(imgList, index) {
-    images = imgList;
-    currentIndex = index;
-    lightboxImg.src = images[currentIndex];
-    lightbox.classList.remove("hidden");
-  }
+    // Open lightbox
+    function openLightbox(imgList, index) {
+        images = imgList;
+        currentIndex = index;
+        lightboxImg.src = images[currentIndex];
+        lightbox.classList.remove("hidden");
+    }
 
-  // Close lightbox
-  function closeLightbox() {
-    lightbox.classList.add("hidden");
-    images = [];
-    currentIndex = 0;
-  }
+    // Close lightbox
+    function closeLightbox() {
+        lightbox.classList.add("hidden");
+        images = [];
+        currentIndex = 0;
+    }
 
-  // Navigate
-  function showPrev() {
-    if (!images.length) return;
-    currentIndex = (currentIndex - 1 + images.length) % images.length;
-    lightboxImg.src = images[currentIndex];
-  }
+    // Navigate
+    function showPrev() {
+        if (!images.length) return;
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        lightboxImg.src = images[currentIndex];
+    }
 
-  function showNext() {
-    if (!images.length) return;
-    currentIndex = (currentIndex + 1) % images.length;
-    lightboxImg.src = images[currentIndex];
-  }
+    function showNext() {
+        if (!images.length) return;
+        currentIndex = (currentIndex + 1) % images.length;
+        lightboxImg.src = images[currentIndex];
+    }
 
-  // Event listeners
-  closeBtn.addEventListener("click", closeLightbox);
-  prevBtn.addEventListener("click", showPrev);
-  nextBtn.addEventListener("click", showNext);
+    // Event listeners
+    closeBtn.addEventListener("click", closeLightbox);
+    prevBtn.addEventListener("click", showPrev);
+    nextBtn.addEventListener("click", showNext);
 
-  // Close on background click
-  lightbox.addEventListener("click", (e) => {
-    if (e.target === lightbox) closeLightbox();
-  });
+    // Close on background click
+    lightbox.addEventListener("click", (e) => {
+        if (e.target === lightbox) closeLightbox();
+    });
 
-  // Keyboard navigation
-  document.addEventListener("keydown", (e) => {
-    if (lightbox.classList.contains("hidden")) return;
-    if (e.key === "Escape") closeLightbox();
-    if (e.key === "ArrowLeft") showPrev();
-    if (e.key === "ArrowRight") showNext();
-  });
+    // Keyboard navigation
+    document.addEventListener("keydown", (e) => {
+        if (lightbox.classList.contains("hidden")) return;
+        if (e.key === "Escape") closeLightbox();
+        if (e.key === "ArrowLeft") showPrev();
+        if (e.key === "ArrowRight") showNext();
+    });
 
-  // Attach click handlers to activity images dynamically
-  document.body.addEventListener("click", function(e) {
-    const img = e.target.closest(".activity-post img"); 
-    if (!img) return;
+    // Attach click handlers to activity images dynamically
+    document.body.addEventListener("click", function (e) {
+        const img = e.target.closest(".activities-image-container img");
+        if (!img) return;
 
-    const container = img.closest(".activity-post");
-    if (!container) return;
+        const container = img.closest(".activities-image-container");
+        if (!container) return;
 
-    const imgEls = container.querySelectorAll("img");
-    const imgList = Array.from(imgEls).map(el => el.src);
-    const index = imgList.indexOf(img.src);
+        const imgEls = container.querySelectorAll("img");
+        const imgList = Array.from(imgEls).map(el => el.src);
+        const index = imgList.indexOf(img.src);
 
-    openLightbox(imgList, index);
-  });
+        openLightbox(imgList, index);
+    });
 })();
 
 
@@ -416,34 +429,34 @@ document.addEventListener("DOMContentLoaded", async () => {
 // POST SORTER (projects by date, activities by createdAt/updatedAt)
 // ======================
 function postSorter(page, posts) {
-  if (!Array.isArray(posts)) return [];
+    if (!Array.isArray(posts)) return [];
 
-  return posts.sort((a, b) => {
-    // --- Handle pinned first ---
-    if (a.pinned && !b.pinned) return -1;
-    if (!a.pinned && b.pinned) return 1;
+    return posts.sort((a, b) => {
+        // --- Handle pinned first ---
+        if (a.pinned && !b.pinned) return -1;
+        if (!a.pinned && b.pinned) return 1;
 
-    if (page === "projects") {
-      // --- Sort by user-input date (string) ---
-      const dateA = a.date ? new Date(a.date) : new Date(0);
-      const dateB = b.date ? new Date(b.date) : new Date(0);
-      return dateB - dateA;
-    }
+        if (page === "projects") {
+            // --- Sort by user-input date (string) ---
+            const dateA = a.date ? new Date(a.date) : new Date(0);
+            const dateB = b.date ? new Date(b.date) : new Date(0);
+            return dateB - dateA;
+        }
 
-    if (page === "activities") {
-      // --- Sort by createdAt/updatedAt (Firestore timestamp) ---
-      const timeA = (a.updatedAt || a.createdAt)?.toDate
-        ? (a.updatedAt || a.createdAt).toDate().getTime()
-        : 0;
-      const timeB = (b.updatedAt || b.createdAt)?.toDate
-        ? (b.updatedAt || b.createdAt).toDate().getTime()
-        : 0;
-      return timeB - timeA;
-    }
+        if (page === "activities") {
+            // --- Sort by createdAt/updatedAt (Firestore timestamp) ---
+            const timeA = (a.updatedAt || a.createdAt)?.toDate
+                ? (a.updatedAt || a.createdAt).toDate().getTime()
+                : 0;
+            const timeB = (b.updatedAt || b.createdAt)?.toDate
+                ? (b.updatedAt || b.createdAt).toDate().getTime()
+                : 0;
+            return timeB - timeA;
+        }
 
-    // default fallback
-    return 0;
-  });
+        // default fallback
+        return 0;
+    });
 }
 
 
