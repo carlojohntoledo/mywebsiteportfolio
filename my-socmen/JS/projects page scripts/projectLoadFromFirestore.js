@@ -383,24 +383,30 @@ async function loadPostsFromFirestore(type = "projects") {
         if (e.key === "ArrowRight") showNext();
     });
 
-    
+
 
     // Attach click handlers to activity images dynamically
     document.body.addEventListener("click", function (e) {
-        
-
-        const img = e.target.closest(".activities-image-container img, .services-image-container img, .projects-image-container img");
+        const img = e.target.closest(".activity-images img, .projects-image-container img, .services-image-container img");
         if (!img) return;
 
-        const container = img.closest(".activities-image-container, .services-image-container, .projects-image-container");
-        if (!container) return;
+        // Case 1: Activity grid
+        const activityContainer = img.closest(".activity-images");
+        if (activityContainer) {
+            const imgEls = activityContainer.querySelectorAll("img");
+            const imgList = Array.from(imgEls).map(el => el.src);
+            const index = imgList.indexOf(img.src);
+            openLightbox(imgList, index);
+            return;
+        }
 
-        const imgEls = container.querySelectorAll("img");
-        const imgList = Array.from(imgEls).map(el => el.src);
-        const index = imgList.indexOf(img.src);
-
-        openLightbox(imgList, index);
+        // Case 2: Project/Service carousel
+        if (carouselData.has(img)) {
+            const data = carouselData.get(img);
+            openLightbox(data.urls, data.index); // ✅ full list + current index
+        }
     });
+
 })();
 
 

@@ -1,6 +1,8 @@
+// =============================================================
+// Carousel (projects/services) with tracking for lightbox
+// =============================================================
+const carouselData = new WeakMap(); // map: <imgElement> → { urls, currentIndex }
 
-
-// --- Helper: start carousel rotation for project images ---
 function startCarousel(imgElement, images) {
     const urls = (images || []).map(getImageUrl).filter(Boolean);
     if (urls.length === 0) {
@@ -10,6 +12,13 @@ function startCarousel(imgElement, images) {
 
     let currentIndex = 0;
     imgElement.src = urls[currentIndex];
+
+    // 🔹 store data for lightbox
+    carouselData.set(imgElement, {
+        urls,
+        get index() { return currentIndex; },
+        set index(v) { currentIndex = v; }
+    });
 
     setInterval(() => {
         imgElement.style.opacity = 0;
