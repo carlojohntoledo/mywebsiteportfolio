@@ -69,8 +69,8 @@ async function loadPostsFromFirestore(type = "projects") {
                                 <div class="${type}-details-container">
                                     <div class="${type}-name-container">
                                         <img class="sm-profilepic" src="Assets/Images/Profile Pictures/default-profile-picture.jpg" alt="profile picture">
-                                        <p>Carlo John Toledo</p>
-                                        <p class="${type}-date">
+                                        <h1>Carlo John Toledo</h1>
+                                        <p class="${type}-date" style="color: var(--text-color-sub)">
                                             ${formatTimeAgo(data.createdAt)} 
                                             ${data.updatedAt && data.updatedAt.seconds !== data.createdAt?.seconds ? "(edited)" : ""}
                                         </p>
