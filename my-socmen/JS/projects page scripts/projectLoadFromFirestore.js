@@ -33,7 +33,7 @@ async function loadPostsFromFirestore(type = "projects") {
             const pinId = `pin-${uid}`;
             const editId = `edit-${uid}`;
             const removeId = `remove-${uid}`;
-            const pinLabelText = data.pinned ? `Unpin ${capitalize(type)}` : `Pin ${capitalize(type)}`;
+            const pinLabelText = data.pinned ? `Unpin ${singular}` : `Pin ${singular}`;
 
             // --- Build post card ---
             const containerDiv = document.createElement("div");
@@ -50,48 +50,15 @@ async function loadPostsFromFirestore(type = "projects") {
                     cardInnerHTML = `
                     <div class="${type}-card">
                         <div class="${type}-content" style="position: relative;">
-                            <!-- Extra Menu -->
-                            <div class="post-extra-popup">
-                                <input type="checkbox" id="${toggleId}" class="checkbox">
-                                <label for="${toggleId}" class="post-extra-btn"><strong>. . .</strong></label>
-                                <div class="post-extra-list-container">
-                                    <ul class="post-extra-list">
-                                        <li><input type="checkbox" id="${pinId}" hidden><label for="${pinId}"><span>${pinLabelText}</span></label></li>
-                                        <li><input type="checkbox" id="${editId}" hidden><label for="${editId}"><span>Edit ${capitalize(type)}</span></label></li>
-                                        <li><input type="checkbox" id="${removeId}" hidden><label for="${removeId}"><span>Remove ${capitalize(type)}</span></label></li>
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <!-- Image + Indicators -->
-                            <div class="${type}-image-container">
-                                <div class="post-indicators">
-                                    <h1 class="srv">${capitalize(type)}</h1>
-                                    <h1 class="srv ${type}-status">${data.status || ''}</h1>
-                                    <h1 class="srv" id="pinned-post-indicator" style="${data.pinned ? 'display:block' : 'display:none'};">Pinned</h1>
-                                </div>
-                                <div class="${type}-logo-container"><h1 class="${type}-logo-panel">KOALO</h1></div>
-                                <img src="${firstImage}" alt="${type} image" class="${type}-image" id="${type}-image-${uid}">
-                            </div>
-
                             <!-- Title + Profile -->
                             <div class="${type}-title-container">
-                                <h1 class="${type}-title">${data.title || ''}</h1>
+                                
                                 <div class="${type}-details-container">
                                     <div class="${type}-name-container">
-                                        <img class="xs-profilepic" src="Assets/Images/Profile Pictures/default-profile-picture.jpg" alt="profile picture">
+                                        <img class="sm-profilepic" src="Assets/Images/Profile Pictures/default-profile-picture.jpg" alt="profile picture">
                                         <p>Carlo John Toledo</p>
+                                        <p class="${type}-date">${data.createdAt || ''}</p>
                                     </div>
-                                    <div class="${type}-status-container">
-                                        <p class="${type}-date">${data.date || ''}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Tags -->
-                            <div class="${type}-links-container scroll-fade">
-                                <div class="${type}-tags-container ${type}-tags">
-                                    ${(data.tags || []).map(tag => `<span class="tag">${tag}</span>`).join("")}
                                 </div>
                             </div>
 
@@ -101,11 +68,34 @@ async function loadPostsFromFirestore(type = "projects") {
                                 <button class="toggle-desc">See More</button>
                             </div>
 
-                            <!-- Addons -->
-                            <div class="addons-container">
-                                ${data.pdfLink ? `<a href="${data.pdfLink}" class="${type}-pdf-download" target="_blank">Download PDF</a>` : ""}
-                                ${data.projectLink ? `<a href="${data.projectLink}" class="${type}-link" target="_blank">Live Demo</a>` : ""}
+                            <!-- Extra Menu -->
+                            <div class="post-extra-popup">
+                                <input type="checkbox" id="${toggleId}" class="checkbox">
+                                <label for="${toggleId}" class="post-extra-btn"><strong>. . .</strong></label>
+                                <div class="post-extra-list-container">
+                                    <ul class="post-extra-list">
+                                        <li><input type="checkbox" id="${pinId}" hidden><label for="${pinId}"><span>${pinLabelText}</span></label></li>
+                                        <li><input type="checkbox" id="${editId}" hidden><label for="${editId}"><span>Edit ${singular}</span></label></li>
+                                        <li><input type="checkbox" id="${removeId}" hidden><label for="${removeId}"><span>Remove ${singular}</span></label></li>
+                                    </ul>
+                                </div>
                             </div>
+
+                            <!-- Image + Indicators -->
+                            <div class="${type}-image-container">
+                                <div class="post-indicators">
+                                    <h1 class="srv">${capitalize(type)}</h1>
+                                    <h1 class="srv" id="pinned-post-indicator" style="${data.pinned ? 'display:block' : 'display:none'};">Pinned</h1>
+                                </div>
+                                <img src="${firstImage}" alt="${type} image" class="${type}-image" id="${type}-image-${uid}">
+                            </div>
+                            <!-- Tags -->
+                            <div class="${type}-links-container scroll-fade">
+                                <div class="${type}-tags-container ${type}-tags">
+                                    ${(data.tags || []).map(tag => `<span class="tag">${tag}</span>`).join("")}
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 `;
@@ -122,8 +112,8 @@ async function loadPostsFromFirestore(type = "projects") {
                                 <div class="post-extra-list-container">
                                     <ul class="post-extra-list">
                                         <li><input type="checkbox" id="${pinId}" hidden><label for="${pinId}"><span>${pinLabelText}</span></label></li>
-                                        <li><input type="checkbox" id="${editId}" hidden><label for="${editId}"><span>Edit ${capitalize(type)}</span></label></li>
-                                        <li><input type="checkbox" id="${removeId}" hidden><label for="${removeId}"><span>Remove ${capitalize(type)}</span></label></li>
+                                        <li><input type="checkbox" id="${editId}" hidden><label for="${editId}"><span>Edit ${singular}</span></label></li>
+                                        <li><input type="checkbox" id="${removeId}" hidden><label for="${removeId}"><span>Remove ${singular}</span></label></li>
                                     </ul>
                                 </div>
                             </div>
@@ -187,8 +177,8 @@ async function loadPostsFromFirestore(type = "projects") {
                                 <div class="post-extra-list-container">
                                     <ul class="post-extra-list">
                                         <li><input type="checkbox" id="${pinId}" hidden><label for="${pinId}"><span>${pinLabelText}</span></label></li>
-                                        <li><input type="checkbox" id="${editId}" hidden><label for="${editId}"><span>Edit ${capitalize(type)}</span></label></li>
-                                        <li><input type="checkbox" id="${removeId}" hidden><label for="${removeId}"><span>Remove ${capitalize(type)}</span></label></li>
+                                        <li><input type="checkbox" id="${editId}" hidden><label for="${editId}"><span>Edit ${singular}</span></label></li>
+                                        <li><input type="checkbox" id="${removeId}" hidden><label for="${removeId}"><span>Remove ${singular}</span></label></li>
                                     </ul>
                                 </div>
                             </div>

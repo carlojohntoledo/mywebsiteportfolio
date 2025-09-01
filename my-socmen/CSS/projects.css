@@ -426,7 +426,7 @@
     text-align: left;
     user-select: none;
     width: 100%;
-    border-bottom: 0.1rem solid var(--primary-color);
+    /* border-bottom: 0.1rem solid var(--primary-color); */
 }
 
 .toggle-desc:hover {
