@@ -383,12 +383,16 @@ async function loadPostsFromFirestore(type = "projects") {
         if (e.key === "ArrowRight") showNext();
     });
 
+    
+
     // Attach click handlers to activity images dynamically
     document.body.addEventListener("click", function (e) {
-        const img = e.target.closest(".activities-image-container img");
+        
+
+        const img = e.target.closest(".activities-image-container img, .services-image-container img, .projects-image-container img");
         if (!img) return;
 
-        const container = img.closest(".activities-image-container");
+        const container = img.closest(".activities-image-container, .services-image-container, .projects-image-container");
         if (!container) return;
 
         const imgEls = container.querySelectorAll("img");

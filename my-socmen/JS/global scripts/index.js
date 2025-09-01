@@ -53,7 +53,7 @@ async function saveProjectToFirestore(projectData) {
 }
 
 
-const page = document.body.dataset.page; // "home", "service", "project"
+const page = document.body.dataset.page;
 const singularMap = {
     projects: "Project",
     services: "Service",
