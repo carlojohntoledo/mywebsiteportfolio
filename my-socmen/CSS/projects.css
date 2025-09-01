@@ -1,7 +1,7 @@
 .projects-section {
     display: grid;
     grid-template-columns: 100%;
-    align-items: start;
+    align-content: start;
     justify-content: start;
     /* border: 1px solid; */
     padding-top: 0.5rem;
@@ -165,7 +165,7 @@
     height: 100%;
     align-items: center;
     margin: auto;
-    aspect-ratio: 4/2;
+    aspect-ratio: 4/3;
     background-color: var(--background-color);
     overflow: hidden;
 }
