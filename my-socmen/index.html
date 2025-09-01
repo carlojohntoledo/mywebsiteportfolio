@@ -1,229 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-        <title>My SocMed</title>
-        <!-- <link rel="stylesheet" href="CSS/debug-borders.css"> -->
-        <link rel="stylesheet" href="CSS/menu-nav.css">
-        <link rel="stylesheet" href="CSS/extras-navbar.css">
-        <link rel="stylesheet" href="CSS/style.css">
-        <link rel="stylesheet" href="CSS/shortcut-section.css">
-        <link rel="stylesheet" href="CSS/contacts-section.css">
-        <link rel="stylesheet" href="CSS/thumbnail.css">
-        <link rel="stylesheet" href="CSS/activities.css">
-        <link rel="stylesheet" href="CSS/logo.css">
-        <link rel="stylesheet" href="CSS/download-cv.css">
-        <link rel="stylesheet" href="CSS/create-activities.css">
-        <link rel="stylesheet" href="CSS/edit-project.css">
-        
-        <link rel="stylesheet" href="CSS/projects.css">
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>My SocMed</title>
+    <!-- <link rel="stylesheet" href="CSS/debug-borders.css"> -->
+    <link rel="stylesheet" href="CSS/menu-nav.css">
+    <link rel="stylesheet" href="CSS/extras-navbar.css">
+    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="CSS/shortcut-section.css">
+    <link rel="stylesheet" href="CSS/contacts-section.css">
+    <link rel="stylesheet" href="CSS/thumbnail.css">
+    <link rel="stylesheet" href="CSS/activities.css">
+    <link rel="stylesheet" href="CSS/logo.css">
+    <link rel="stylesheet" href="CSS/download-cv.css">
+    <link rel="stylesheet" href="CSS/create-activities.css">
+    <link rel="stylesheet" href="CSS/edit-project.css">
+    <link rel="stylesheet" href="CSS/lightbox.css">
 
-    <body data-page="activities">
-        <div class="loader-container" style="display: none;">
-            <div class="loader">
-                <div class="progress"></div>
-                <div class="progress"></div>
-                <div class="progress"></div>
-            </div>
+    <link rel="stylesheet" href="CSS/projects.css">
+</head>
+
+<body data-page="activities">
+    <div class="loader-container" style="display: none;">
+        <div class="loader">
+            <div class="progress"></div>
+            <div class="progress"></div>
+            <div class="progress"></div>
         </div>
+    </div>
 
-        <div class="content-parent">
-            <nav class="menu-nav yellow-bordered">
-                <div class="logo-panel blue-bordered">
-                    <button class="logo" data-text="Awesome">
-                        <span class="actual-text">&nbsp;KOALO&nbsp;</span>
-                        <span aria-hidden="true" class="hover-text">&nbsp;KOALO&nbsp;</span>
-                    </button>
+    <div class="content-parent">
+        <nav class="menu-nav yellow-bordered">
+            <div class="logo-panel blue-bordered">
+                <button class="logo" data-text="Awesome">
+                    <span class="actual-text">&nbsp;KOALO&nbsp;</span>
+                    <span aria-hidden="true" class="hover-text">&nbsp;KOALO&nbsp;</span>
+                </button>
+            </div>
+            <div class="menu-btn-panel blue-bordered">
+                <div class="radio-inputs">
+                    <label class="menu-radio" data-href="index.html">
+                        <input name="radio" type="radio" checked />
+                        <span class="name">Activity</span>
+                    </label>
+                    <label class="menu-radio" data-href="profile.html">
+                        <input name="radio" type="radio" />
+                        <span class="name">Profile</span>
+                    </label>
+                    <label class="menu-radio" data-href="services.html">
+                        <input name="radio" type="radio" />
+                        <span class="name">Services</span>
+                    </label>
+                    <label class="menu-radio" data-href="projects.html">
+                        <input name="radio" type="radio" />
+                        <span class="name">Projects</span>
+                    </label>
                 </div>
-                <div class="menu-btn-panel blue-bordered">
-                    <div class="radio-inputs">
-                        <label class="menu-radio" data-href="index.html">
-                            <input name="radio" type="radio" checked/>
-                            <span class="name">Activity</span>
-                        </label>
-                        <label class="menu-radio" data-href="profile.html">
-                            <input name="radio" type="radio" />
-                            <span class="name">Profile</span>
-                        </label>
-                        <label class="menu-radio" data-href="services.html">
-                            <input name="radio" type="radio"/>
-                            <span class="name">Services</span>
-                        </label>
-                        <label class="menu-radio" data-href="projects.html">
-                            <input name="radio" type="radio" />
-                            <span class="name">Projects</span>
-                        </label>
-                    </div>
-                </div>
-                <div class="extras-panel blue-bordered">
+            </div>
+            <div class="extras-panel blue-bordered">
 
-                    <div class="extras-dropdown-button-container">
-                        <input hidden="" class="check-icon" id="check-icon" name="check-icon" type="checkbox">
-                        <label class="icon-menu" for="check-icon">
-                            <div class="bar bar--1"></div>
-                            <div class="bar bar--2"></div>
-                            <div class="bar bar--3"></div>
-                        </label>
-                        <!-- Popup -->
-                        <div class="extras-popup">
-                            <h2>MENU</h2>
-                            <ul>
-                                <div class="search-section red-bordered" style="background-color: transparent;">
-                                    <div class="search-container">
-                                        <svg class="search_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"
-                                            alt="search icon">
-                                            <path
-                                                d="M46.599 46.599a4.498 4.498 0 0 1-6.363 0l-7.941-7.941C29.028 40.749 25.167 42 21 42 9.402 42 0 32.598 0 21S9.402 0 21 0s21 9.402 21 21c0 4.167-1.251 8.028-3.342 11.295l7.941 7.941a4.498 4.498 0 0 1 0 6.363zM21 6C12.717 6 6 12.714 6 21s6.717 15 15 15c8.286 0 15-6.714 15-15S29.286 6 21 6z">
-                                            </path>
-                                        </svg>
-                                        <input class="inputBox" id="inputBox" type="text" placeholder="Search">
-                                    </div>
+                <div class="extras-dropdown-button-container">
+                    <input hidden="" class="check-icon" id="check-icon" name="check-icon" type="checkbox">
+                    <label class="icon-menu" for="check-icon">
+                        <div class="bar bar--1"></div>
+                        <div class="bar bar--2"></div>
+                        <div class="bar bar--3"></div>
+                    </label>
+                    <!-- Popup -->
+                    <div class="extras-popup">
+                        <h2>MENU</h2>
+                        <ul>
+                            <div class="search-section red-bordered" style="background-color: transparent;">
+                                <div class="search-container">
+                                    <svg class="search_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"
+                                        alt="search icon">
+                                        <path
+                                            d="M46.599 46.599a4.498 4.498 0 0 1-6.363 0l-7.941-7.941C29.028 40.749 25.167 42 21 42 9.402 42 0 32.598 0 21S9.402 0 21 0s21 9.402 21 21c0 4.167-1.251 8.028-3.342 11.295l7.941 7.941a4.498 4.498 0 0 1 0 6.363zM21 6C12.717 6 6 12.714 6 21s6.717 15 15 15c8.286 0 15-6.714 15-15S29.286 6 21 6z">
+                                        </path>
+                                    </svg>
+                                    <input class="inputBox" id="inputBox" type="text" placeholder="Search">
                                 </div>
-                                <a href="#">
-                                    <li>Option 1</li>
-                                </a>
-                                <a href="#">
-                                    <li>Option 1</li>
-                                </a>
-                                <a href="#">
-                                    <li>Option 1</li>
-                                </a>
-                                <hr>
-                                </hr>
-                                <a href="#">
-                                    <li>Option 1</li>
-                                </a>
-                                <a href="#">
-                                    <li>Option 1</li>
-                                </a>
-                                <a href="#">
-                                    <li>Option 1</li>
-                                </a>
-                            </ul>
-                        </div>
+                            </div>
+                            <a href="#">
+                                <li>Option 1</li>
+                            </a>
+                            <a href="#">
+                                <li>Option 1</li>
+                            </a>
+                            <a href="#">
+                                <li>Option 1</li>
+                            </a>
+                            <hr>
+                            </hr>
+                            <a href="#">
+                                <li>Option 1</li>
+                            </a>
+                            <a href="#">
+                                <li>Option 1</li>
+                            </a>
+                            <a href="#">
+                                <li>Option 1</li>
+                            </a>
+                        </ul>
                     </div>
                 </div>
+            </div>
 
-            </nav>
-            <div class="main-content blue-bordered">
-                <section class="shortcuts-section white-bordered scroll-fade">
-                    <div class="search-section red-bordered">
-                        <div class="search-container">
-                            <svg class="search_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"
-                                alt="search icon">
-                                <path
-                                    d="M46.599 46.599a4.498 4.498 0 0 1-6.363 0l-7.941-7.941C29.028 40.749 25.167 42 21 42 9.402 42 0 32.598 0 21S9.402 0 21 0s21 9.402 21 21c0 4.167-1.251 8.028-3.342 11.295l7.941 7.941a4.498 4.498 0 0 1 0 6.363zM21 6C12.717 6 6 12.714 6 21s6.717 15 15 15c8.286 0 15-6.714 15-15S29.286 6 21 6z">
-                                </path>
-                            </svg>
-                            <input class="inputBox" id="inputBox" type="text" placeholder="Search">
-                        </div>
+        </nav>
+        <div class="main-content blue-bordered">
+            <section class="shortcuts-section white-bordered scroll-fade">
+                <div class="search-section red-bordered">
+                    <div class="search-container">
+                        <svg class="search_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"
+                            alt="search icon">
+                            <path
+                                d="M46.599 46.599a4.498 4.498 0 0 1-6.363 0l-7.941-7.941C29.028 40.749 25.167 42 21 42 9.402 42 0 32.598 0 21S9.402 0 21 0s21 9.402 21 21c0 4.167-1.251 8.028-3.342 11.295l7.941 7.941a4.498 4.498 0 0 1 0 6.363zM21 6C12.717 6 6 12.714 6 21s6.717 15 15 15c8.286 0 15-6.714 15-15S29.286 6 21 6z">
+                            </path>
+                        </svg>
+                        <input class="inputBox" id="inputBox" type="text" placeholder="Search">
                     </div>
-                    <div class="pinned-section red-bordered">
-                        <div class="pinned-activities-panel blue-bordered">
-                            <h2>Pinned Activities</h2>
-                            <ul class="pinned-activities-list">
-                                <a href="#">
-                                    <li>Pinned Activity Title 1</li>
-                                </a>
-                                <a href="#">
-                                    <li>Pinned Activity Title 2</li>
-                                </a>
-                                <a href="#">
-                                    <li>Pinned Activity Title 3</li>
-                                </a>
-                                <a href="#">
-                                    <li>Pinned Activity Title 4</li>
-                                </a>
-                            </ul>
-                        </div>
-                        <div class="pinned-projects-panel blue-bordered">
-                            <h2>Pinned Projects</h2>
-                            <ul class="pinned-projects-list">
-                                <a href="#">
-                                    <li>Pinned Projects Title 1</li>
-                                </a>
-                                <a href="#">
-                                    <li>Pinned Projects Title 2</li>
-                                </a>
-                                <a href="#">
-                                    <li>Pinned Projects Title 3</li>
-                                </a>
-                                <a href="#">
-                                    <li>Pinned Projects Title 4</li>
-                                </a>
-                            </ul>
-                        </div>
-                        <div class="pinned-skills-panel blue-bordered">
-                            <h2>Pinned Skills</h2>
-                            <ul class="pinned-skills-list">
-                                <a href="#">
-                                    <li>Pinned Skills Title 1</li>
-                                </a>
-                                <a href="#">
-                                    <li>Pinned Skills Title 2</li>
-                                </a>
-                                <a href="#">
-                                    <li>Pinned Skills Title 3</li>
-                                </a>
-                                <a href="#">
-                                    <li>Pinned Skills Title 4</li>
-                                </a>
-                            </ul>
-                        </div>
+                </div>
+                <div class="pinned-section red-bordered">
+                    <div class="pinned-activities-panel blue-bordered">
+                        <h2>Pinned Activities</h2>
+                        <ul class="pinned-activities-list">
+                            <a href="#">
+                                <li>Pinned Activity Title 1</li>
+                            </a>
+                            <a href="#">
+                                <li>Pinned Activity Title 2</li>
+                            </a>
+                            <a href="#">
+                                <li>Pinned Activity Title 3</li>
+                            </a>
+                            <a href="#">
+                                <li>Pinned Activity Title 4</li>
+                            </a>
+                        </ul>
                     </div>
-                    <div class="recent-section red-bordered">
-                        <div class="recent-activities-panel blue-bordered">
-                            <h2>Recent Activities</h2>
-                            <ul class="recent-activities-list">
-                                <a href="#">
-                                    <li>Recent Activities Title 1</li>
-                                </a>
-                                <a href="#">
-                                    <li>Recent Activities Title 2</li>
-                                </a>
-                                <a href="#">
-                                    <li>Recent Activities Title 3</li>
-                                </a>
-                                <a href="#">
-                                    <li>Recent Activities Title 4</li>
-                                </a>
-                            </ul>
-                        </div>
-                        <div class="recent-projects-panel blue-bordered">
-                            <h2>Recent Projects</h2>
-                            <ul class="recent-projects-list">
-                                
-                            </ul>
-                        </div>
-                        <div class="recent-search-panel blue-bordered">
-                            <h2>Recent Search</h2>
-                            <ul class="recent-search-list">
-                                <a href="#">
-                                    <li>Recent Search Title 1</li>
-                                </a>
-                                <a href="#">
-                                    <li>Recent Search Title 2</li>
-                                </a>
-                                <a href="#">
-                                    <li>Recent Search Title 3</li>
-                                </a>
-                                <a href="#">
-                                    <li>Recent Search Title 4</li>
-                                </a>
-                            </ul>
-                        </div>
+                    <div class="pinned-projects-panel blue-bordered">
+                        <h2>Pinned Projects</h2>
+                        <ul class="pinned-projects-list">
+                            <a href="#">
+                                <li>Pinned Projects Title 1</li>
+                            </a>
+                            <a href="#">
+                                <li>Pinned Projects Title 2</li>
+                            </a>
+                            <a href="#">
+                                <li>Pinned Projects Title 3</li>
+                            </a>
+                            <a href="#">
+                                <li>Pinned Projects Title 4</li>
+                            </a>
+                        </ul>
                     </div>
-                </section>
-                <section class="activities-section white-bordered scroll-fade">
-                    <div class="create-post-toggle-container-parent" id="create-new-post">
+                    <div class="pinned-skills-panel blue-bordered">
+                        <h2>Pinned Skills</h2>
+                        <ul class="pinned-skills-list">
+                            <a href="#">
+                                <li>Pinned Skills Title 1</li>
+                            </a>
+                            <a href="#">
+                                <li>Pinned Skills Title 2</li>
+                            </a>
+                            <a href="#">
+                                <li>Pinned Skills Title 3</li>
+                            </a>
+                            <a href="#">
+                                <li>Pinned Skills Title 4</li>
+                            </a>
+                        </ul>
+                    </div>
+                </div>
+                <div class="recent-section red-bordered">
+                    <div class="recent-activities-panel blue-bordered">
+                        <h2>Recent Activities</h2>
+                        <ul class="recent-activities-list">
+                            <a href="#">
+                                <li>Recent Activities Title 1</li>
+                            </a>
+                            <a href="#">
+                                <li>Recent Activities Title 2</li>
+                            </a>
+                            <a href="#">
+                                <li>Recent Activities Title 3</li>
+                            </a>
+                            <a href="#">
+                                <li>Recent Activities Title 4</li>
+                            </a>
+                        </ul>
+                    </div>
+                    <div class="recent-projects-panel blue-bordered">
+                        <h2>Recent Projects</h2>
+                        <ul class="recent-projects-list">
+
+                        </ul>
+                    </div>
+                    <div class="recent-search-panel blue-bordered">
+                        <h2>Recent Search</h2>
+                        <ul class="recent-search-list">
+                            <a href="#">
+                                <li>Recent Search Title 1</li>
+                            </a>
+                            <a href="#">
+                                <li>Recent Search Title 2</li>
+                            </a>
+                            <a href="#">
+                                <li>Recent Search Title 3</li>
+                            </a>
+                            <a href="#">
+                                <li>Recent Search Title 4</li>
+                            </a>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <section class="activities-section white-bordered scroll-fade">
+                <div class="create-post-toggle-container-parent" id="create-new-post">
                     <div class="create-post-group-top">
                         <img class="sm-profilepic" src="Assets/Images/Profile Pictures/default-profile-picture.jpg"
                             alt="profile picture">
-                        <textarea class="create-post-textarea" type="text"
-                            placeholder="Create new activity"></textarea>
+                        <textarea class="create-post-textarea" type="text" placeholder="Create new activity"></textarea>
 
                         <svg viewBox="-4 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="#000000">
                             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -325,97 +325,105 @@
                         </div>
                     </div>
                 </div>
-                    <!-- Create Service Form -->
-                    <div class="activities-create-card create-card-container-parent">
-                        <!-- this is where create post will spawn -->
-                    </div>
+                <!-- Create Service Form -->
+                <div class="activities-create-card create-card-container-parent">
+                    <!-- this is where create post will spawn -->
+                </div>
 
-                    
-                    <div class="activities-container-parent">
-                        <!-- This is where the created service will be posted -->
-                    </div>
 
-                    <div class="end-indicator">
-                        Nothing more to show.
-                    </div>
+                <div class="activities-container-parent">
+                    <!-- This is where the created service will be posted -->
+                </div>
 
-                </section>
-                <section class="contacts-section white-bordered scroll-fade">
-                    <div class="download-cv-section red-bordered">
-                        <h2>Download Resume</h2>
-                        <div class="folder-container">
-                            <div class="folder">
-                                <img src="Assets/Images/folder-rear.png" alt="">
-                                <a href="Assets/Images/cv.pdf" download class="folder-inner">
-                                    <img src="Assets/Images/CV Image.jpg" alt="Download CV">
-                                </a>
-                                <div class="cover">
-                                    <img src="Assets/Images/folder-front.png" alt="">
-                                    <p class="folder-text">Download Resume</p>
-                                </div>
+                <div class="end-indicator">
+                    Nothing more to show.
+                </div>
+
+            </section>
+            <section class="contacts-section white-bordered scroll-fade">
+                <div class="download-cv-section red-bordered">
+                    <h2>Download Resume</h2>
+                    <div class="folder-container">
+                        <div class="folder">
+                            <img src="Assets/Images/folder-rear.png" alt="">
+                            <a href="Assets/Images/cv.pdf" download class="folder-inner">
+                                <img src="Assets/Images/CV Image.jpg" alt="Download CV">
+                            </a>
+                            <div class="cover">
+                                <img src="Assets/Images/folder-front.png" alt="">
+                                <p class="folder-text">Download Resume</p>
                             </div>
                         </div>
                     </div>
-                    <div class="contact-info-section red-bordered">
-                        <div class="recent-activities-panel blue-bordered">
-                            <h2>Contact</h2>
-                            <ul class="recent-activities-list">
-                                <a href="#">
-                                    <li>toledocarlojohn@gmail.com</li>
-                                </a>
-                                <a href="#">
-                                    <li>github.io/carlojohntoledo</li>
-                                </a>
-                                <a href="#">
-                                    <li>instagram@koalo</li>
-                                </a>
-                                <a href="#">
-                                    <li>ytchannel@koalomusic.ph</li>
-                                </a>
-                                <a href="#">
-                                    <li>tiktok/koalo</li>
-                                </a>
-                            </ul>
-                        </div>
+                </div>
+                <div class="contact-info-section red-bordered">
+                    <div class="recent-activities-panel blue-bordered">
+                        <h2>Contact</h2>
+                        <ul class="recent-activities-list">
+                            <a href="#">
+                                <li>toledocarlojohn@gmail.com</li>
+                            </a>
+                            <a href="#">
+                                <li>github.io/carlojohntoledo</li>
+                            </a>
+                            <a href="#">
+                                <li>instagram@koalo</li>
+                            </a>
+                            <a href="#">
+                                <li>ytchannel@koalomusic.ph</li>
+                            </a>
+                            <a href="#">
+                                <li>tiktok/koalo</li>
+                            </a>
+                        </ul>
                     </div>
-                    <div class="email-me-section red-bordered">email me</div>
-                </section>
-            </div>
+                </div>
+                <div class="email-me-section red-bordered">email me</div>
+            </section>
         </div>
+    </div>
+    <!-- ================= LIGHTBOX VIEWER ================= -->
+    <div id="lightbox" class="lightbox hidden">
+        <span class="lightbox-close">&times;</span>
+        <img class="lightbox-img" src="" alt="Fullscreen image">
+        <button class="lightbox-prev">&#10094;</button>
+        <button class="lightbox-next">&#10095;</button>
+    </div>
 
-        <!-- Firebase App (required) -->
-        <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
 
-        <!-- Firestore -->
-        <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+    <!-- Firebase App (required) -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
 
-        <!-- Auth (optional, if you plan to use it later) -->
-        <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+    <!-- Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
 
-        <script src="JS/global scripts/index.js"></script>
+    <!-- Auth (optional, if you plan to use it later) -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
 
-        <script src="JS/global scripts/util.js"></script>
+    <script src="JS/global scripts/index.js"></script>
 
-        <script src="JS/navigation bar scripts/navbar-menu-script.js"></script>
+    <script src="JS/global scripts/util.js"></script>
 
-        <!-- <script src="JS/global scripts/theme-toggle.js"></script> -->
+    <script src="JS/navigation bar scripts/navbar-menu-script.js"></script>
 
-        <script src="JS/global scripts/getImageUrl.js"></script>
+    <!-- <script src="JS/global scripts/theme-toggle.js"></script> -->
 
-        <script src="JS/global scripts/startCarousel.js"></script>
+    <script src="JS/global scripts/getImageUrl.js"></script>
 
-        <script src="JS/global scripts/createPostToggle.js"></script>
+    <script src="JS/global scripts/startCarousel.js"></script>
 
-        <script src="JS/projects page scripts/projectUploadToCloudinary.js"></script>
+    <script src="JS/global scripts/createPostToggle.js"></script>
 
-        <script src="JS/shortcuts section scripts/shortcuts.js"></script>
+    <script src="JS/projects page scripts/projectUploadToCloudinary.js"></script>
 
-        <script src="JS/projects page scripts/projectLoadFromFirestore.js"></script>
+    <script src="JS/shortcuts section scripts/shortcuts.js"></script>
 
-        <script src="JS/projects page scripts/projectEdit.js"></script>
-        
-        <script src="JS/projects page scripts/projectSubmit.js"></script>
+    <script src="JS/projects page scripts/projectLoadFromFirestore.js"></script>
 
-    </body>
+    <script src="JS/projects page scripts/projectEdit.js"></script>
+
+    <script src="JS/projects page scripts/projectSubmit.js"></script>
+
+</body>
 
 </html>

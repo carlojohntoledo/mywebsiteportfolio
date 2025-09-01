@@ -313,6 +313,80 @@ async function loadPostsFromFirestore(type = "projects") {
     }
 }
 
+// ================= LIGHTBOX SCRIPT =================
+(function initLightbox() {
+  const lightbox = document.getElementById("lightbox");
+  const lightboxImg = lightbox.querySelector(".lightbox-img");
+  const closeBtn = lightbox.querySelector(".lightbox-close");
+  const prevBtn = lightbox.querySelector(".lightbox-prev");
+  const nextBtn = lightbox.querySelector(".lightbox-next");
+
+  let images = [];   // all images in the current post
+  let currentIndex = 0;
+
+  // Open lightbox
+  function openLightbox(imgList, index) {
+    images = imgList;
+    currentIndex = index;
+    lightboxImg.src = images[currentIndex];
+    lightbox.classList.remove("hidden");
+  }
+
+  // Close lightbox
+  function closeLightbox() {
+    lightbox.classList.add("hidden");
+    images = [];
+    currentIndex = 0;
+  }
+
+  // Navigate
+  function showPrev() {
+    if (!images.length) return;
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
+    lightboxImg.src = images[currentIndex];
+  }
+
+  function showNext() {
+    if (!images.length) return;
+    currentIndex = (currentIndex + 1) % images.length;
+    lightboxImg.src = images[currentIndex];
+  }
+
+  // Event listeners
+  closeBtn.addEventListener("click", closeLightbox);
+  prevBtn.addEventListener("click", showPrev);
+  nextBtn.addEventListener("click", showNext);
+
+  // Close on background click
+  lightbox.addEventListener("click", (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+
+  // Keyboard navigation
+  document.addEventListener("keydown", (e) => {
+    if (lightbox.classList.contains("hidden")) return;
+    if (e.key === "Escape") closeLightbox();
+    if (e.key === "ArrowLeft") showPrev();
+    if (e.key === "ArrowRight") showNext();
+  });
+
+  // Attach click handlers to activity images dynamically
+  document.body.addEventListener("click", function(e) {
+    const img = e.target.closest(".activity-post img"); 
+    if (!img) return;
+
+    const container = img.closest(".activity-post");
+    if (!container) return;
+
+    const imgEls = container.querySelectorAll("img");
+    const imgList = Array.from(imgEls).map(el => el.src);
+    const index = imgList.indexOf(img.src);
+
+    openLightbox(imgList, index);
+  });
+})();
+
+
 // =============================================================
 // ✅ INITIAL PAGE LOADER → Detects current page and loads posts
 // =============================================================
@@ -338,20 +412,40 @@ document.addEventListener("DOMContentLoaded", async () => {
 // =============================================================
 // ✅ Sort cards per type
 // =============================================================
-function postSorter(type = "projects") {
-    const parent = document.querySelector(`.${type}-container-parent`);
-    if (!parent) return;
-    const cards = Array.from(parent.querySelectorAll(`.${type}-container`));
-    cards.sort((a, b) => {
-        const aPinned = a.getAttribute('data-pinned') === 'true';
-        const bPinned = b.getAttribute('data-pinned') === 'true';
-        if (aPinned !== bPinned) return bPinned - aPinned;
-        const aTime = Date.parse(a.getAttribute('data-date')) || 0;
-        const bTime = Date.parse(b.getAttribute('data-date')) || 0;
-        return bTime - aTime;
-    });
-    cards.forEach(card => parent.appendChild(card));
+// ======================
+// POST SORTER (projects by date, activities by createdAt/updatedAt)
+// ======================
+function postSorter(page, posts) {
+  if (!Array.isArray(posts)) return [];
+
+  return posts.sort((a, b) => {
+    // --- Handle pinned first ---
+    if (a.pinned && !b.pinned) return -1;
+    if (!a.pinned && b.pinned) return 1;
+
+    if (page === "projects") {
+      // --- Sort by user-input date (string) ---
+      const dateA = a.date ? new Date(a.date) : new Date(0);
+      const dateB = b.date ? new Date(b.date) : new Date(0);
+      return dateB - dateA;
+    }
+
+    if (page === "activities") {
+      // --- Sort by createdAt/updatedAt (Firestore timestamp) ---
+      const timeA = (a.updatedAt || a.createdAt)?.toDate
+        ? (a.updatedAt || a.createdAt).toDate().getTime()
+        : 0;
+      const timeB = (b.updatedAt || b.createdAt)?.toDate
+        ? (b.updatedAt || b.createdAt).toDate().getTime()
+        : 0;
+      return timeB - timeA;
+    }
+
+    // default fallback
+    return 0;
+  });
 }
+
 
 // =============================================================
 // ✅ Utility → Capitalize text
