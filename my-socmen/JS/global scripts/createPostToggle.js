@@ -99,50 +99,16 @@ function getFormTemplate(page) {
                 <div class="create-${page}-form-viewport scroll-fade">
                 <form id="create-${page}-form">
 
-                    <!-- TITLE -->
-                    <div class="create-${page}-containers ${page}-label">
-                    <input class="input-${page}-title" type="text" required>
-                    <label>${singular} Title*</label>
-                    </div>
-
                     <!-- DESCRIPTION -->
                     <div class="create-${page}-containers ${page}-label">
                     <textarea class="input-${page}-description" required></textarea>
                     <label>${singular} Description*</label>
                     </div>
 
-                    <!-- DATE + STATUS -->
-                    <div class="flex-container">
-                    <div class="create-${page}-containers ${page}-label">
-                        <input class="input-${page}-date" type="date" required>
-                        <label>${singular} Date*</label>
-                    </div>
-                    <div class="create-${page}-containers ${page}-label">
-                        <select class="input-${page}-status" required>
-                        <option value="Published">Published</option>
-                        <option value="Under Development">Under Development</option>
-                        <option value="Planned">Planned</option>
-                        </select>
-                        <label>${singular} Status*</label>
-                    </div>
-                    </div>
-
                     <!-- TAGS -->
                     <div class="create-${page}-containers ${page}-label">
                     <input class="input-${page}-tags" placeholder="html, css, js..." type="text">
                     <label>${singular} Tags</label>
-                    </div>
-
-                    <!-- LINKS -->
-                    <div class="flex-container">
-                    <div class="create-${page}-containers ${page}-label">
-                        <input class="input-${page}-pdf-link" type="url" placeholder="https://...">
-                        <label>${singular} PDF Link</label>
-                    </div>
-                    <div class="create-${page}-containers ${page}-label">
-                        <input class="input-${page}-link" type="url" placeholder="https://...">
-                        <label>${singular} Link</label>
-                    </div>
                     </div>
 
                     <!-- IMAGE UPLOAD -->

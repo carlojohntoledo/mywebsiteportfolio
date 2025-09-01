@@ -57,7 +57,11 @@ async function loadPostsFromFirestore(type = "projects") {
                                     <div class="${type}-name-container">
                                         <img class="sm-profilepic" src="Assets/Images/Profile Pictures/default-profile-picture.jpg" alt="profile picture">
                                         <p>Carlo John Toledo</p>
-                                        <p class="${type}-date">${data.createdAt || ''}</p>
+                                        <p class="${type}-date">
+                                            ${formatTimeAgo(data.createdAt)} 
+                                            ${data.updatedAt && data.updatedAt.seconds !== data.createdAt?.seconds ? "(edited)" : ""}
+                                        </p>
+
                                     </div>
                                 </div>
                             </div>
@@ -87,7 +91,7 @@ async function loadPostsFromFirestore(type = "projects") {
                                     <h1 class="srv">${capitalize(type)}</h1>
                                     <h1 class="srv" id="pinned-post-indicator" style="${data.pinned ? 'display:block' : 'display:none'};">Pinned</h1>
                                 </div>
-                                <img src="${firstImage}" alt="${type} image" class="${type}-image" id="${type}-image-${uid}">
+                                ${renderActivityImages(data.images)}
                             </div>
                             <!-- Tags -->
                             <div class="${type}-links-container scroll-fade">
@@ -253,7 +257,9 @@ async function loadPostsFromFirestore(type = "projects") {
 
             // Start carousel
             const imgElement = containerDiv.querySelector(`#${type}-image-${uid}`);
-            startCarousel(imgElement, data.images);
+            if (type !== "activities") {
+                startCarousel(imgElement, data.images);
+            }
 
             // --- Extra Menu Actions ---
             containerDiv.querySelector(`#${pinId}`).addEventListener("change", async () => {
