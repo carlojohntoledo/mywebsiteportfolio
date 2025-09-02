@@ -9,7 +9,6 @@ section.skills-section {
 
 .skills-container {
   width: 65vw;
-  height: max-content;
   margin: auto;
   background-color: var(--tertiary-color);
   border-radius: 1rem;
@@ -70,16 +69,18 @@ section.skills-section {
 }
 
 .skills-title-container {
-  margin: 1rem;
+  margin: 0rem 1rem;
   /* border: 1px solid red; */
-  height: max-content;
+  display: flex;
+  justify-content: start;
 }
 
 .skills-title-container h1 {
   font-size: var(--font-xl);
   font-weight: bold;
-  margin: auto;
   color: var(--text-color);
+  /* border: 1px solid red; */
+  width: 80%;
 }
 
 .skills-content-container {
@@ -113,6 +114,7 @@ section.skills-section {
   color: var(--text-color);
   /* box-shadow: 0 2px 5px rgba(0,0,0,0.1); */
   border: 0.01rem solid var(--primary-color);
+  position: relative;
 }
 
 .skill-img {

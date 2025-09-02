@@ -24,14 +24,15 @@ section.certificates-section {
 }
 
 .certificates-title-container {
-    margin: 1rem;
+    margin: 0rem 1rem;
     /*border: 1px solid red;*/
+    display: flex;
+  justify-content: start;
 }
 
 .certificates-title-container h1 {
     font-size: var(--font-xl);
-    margin: auto;
-    position: relative;
+    width: 80%;
     font-weight: bold;
     color: var(--text-color);
 }
