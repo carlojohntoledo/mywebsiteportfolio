@@ -17,12 +17,15 @@
     <link rel="stylesheet" href="CSS/profile-style.css">
     <link rel="stylesheet" href="CSS/Skills.css">
     <link rel="stylesheet" href="CSS/certificates.css">
+    <link rel="stylesheet" href="CSS/edit-profile.css">
 
     <!-- Standard favicon -->
     <link rel="icon" type="image/png" href="Assets/Images/InstaPort Icons/InstaPort Icon.png">
 </head>
 
 <body data-page="profile">
+
+
     <div class="profile-content-parent scroll-fade">
         <nav class="menu-nav yellow-bordered">
             <div class="logo-panel blue-bordered">
@@ -106,8 +109,208 @@
         <div class="profile-main-content blue-bordered scroll-fade">
             <!-- <section class="shortcuts-section white-bordered">
 
+                
+
             </section> -->
             <section class="intro">
+
+                <div class="create-card-container-parent">
+                    <div class="create-post-container">
+                        <div class="create-profile-form-container">
+                            <div class="create-profile-header">
+                                <h1 class="card-title">Edit Profile</h1>
+                                <span class="create-profile-button-container red-btn" id="cancel-btn">Cancel</span>
+                                <span class="create-profile-button-container green-btn"
+                                    id="profile-post-btn">Save</span>
+                            </div>
+
+                            <div class="error" id="form-warning">
+                                <div class="form-warning-cont">
+                                    <div class="error__icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 24 24"
+                                            height="24" fill="none">
+                                            <path fill="#393a37"
+                                                d="m13 13h-2v-6h2zm0 4h-2v-2h2zm-1-15c-1.3132 0-2.61358.25866-3.82683.7612-1.21326.50255-2.31565 1.23915-3.24424 2.16773-1.87536 1.87537-2.92893 4.41891-2.92893 7.07107 0 2.6522 1.05357 5.1957 2.92893 7.0711.92859.9286 2.03098 1.6651 3.24424 2.1677 1.21325.5025 2.51363.7612 3.82683.7612 2.6522 0 5.1957-1.0536 7.0711-2.9289 1.8753-1.8754 2.9289-4.4189 2.9289-7.0711 0-1.3132-.2587-2.61358-.7612-3.82683-.5026-1.21326-1.2391-2.31565-2.1677-3.24424-.9286-.92858-2.031-1.66518-3.2443-2.16773-1.2132-.50254-2.5136-.7612-3.8268-.7612z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <div class="error__title">Please fill-in required (*) details.</div>
+                                    <div class="error__close" id="close-error"><svg xmlns="http://www.w3.org/2000/svg"
+                                            width="20" viewBox="0 0 20 20" height="20">
+                                            <path fill="#393a37"
+                                                d="m15.8333 5.34166-1.175-1.175-4.6583 4.65834-4.65833-4.65834-1.175 1.175 4.65833 4.65834-4.65833 4.6583 1.175 1.175 4.65833-4.6583 4.6583 4.6583 1.175-1.175-4.6583-4.6583z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="create-profile-form-viewport scroll-fade">
+                                <form id="create-profile-form">
+
+                                    <!-- PROFILE PHOTO UPLOAD -->
+                                    <div class="create-profile-image-container">
+                                        <h1>Add Profile Photo</h1>
+                                        <div class="file-upload-form">
+                                            <label for="file" class="file-upload-label">
+                                                <div class="file-upload-design" style="overflow: hidden;">
+                                                    <!-- PREVIEW -->
+                                                    <div id="profile-profilephoto-preview"
+                                                        class="file-preview-container" style="margin-top: 1rem;">
+                                                        <div class="flex-container" style="justify-content: start;">
+                                                            <img style="width: 10rem; border-radius: 100%;"
+                                                                src="Assets/Images/Profile Pictures/default-profile-picture.jpg"
+                                                                alt="Profilephoto">
+                                                        </div>
+                                                    </div>
+                                                    <span class="browse-button">Upload Photo</span>
+                                                    <input id="profile-photo" type="file" multiple accept="image/*"
+                                                        onchange="previewImages(event, '#profile-profilephoto-preview')" />
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <!-- COVER  PHOTO UPLOAD -->
+                                    <div class="create-profile-image-container">
+                                        <h1>Add Cover Photo</h1>
+                                        <div class="file-upload-form">
+                                            <label for="file" class="file-upload-label">
+                                                <div class="file-upload-design" style="overflow: hidden;">
+                                                    <!-- PREVIEW -->
+                                                    <div id="profile-coverphoto-preview" class="file-preview-container"
+                                                        style="margin-top: 1rem;">
+                                                        <div class="flex-container" style="justify-content: start;">
+                                                            <img src="Assets/Images/Cover Photos/default-cover-photo.png"
+                                                                alt="coverphoto">
+                                                        </div>
+                                                    </div>
+                                                    <span class="browse-button">Upload Photo</span>
+                                                    <input id="cover-photo" type="file" multiple accept="image/*"
+                                                        onchange="previewImages(event, '#profile-coverphoto-preview')" />
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Full Name -->
+                                    <div class="flex-container">
+                                        <div class="create-profile-containers profile-label">
+                                            <input class="input-profile-title" type="text" required>
+                                            <label>Profile First Name*</label>
+                                        </div>
+                                        <div class="create-profile-containers profile-label">
+                                            <input class="input-profile-title" type="text">
+                                            <label>Profile Middle Name</label>
+                                        </div>
+                                        <div class="create-profile-containers profile-label">
+                                            <input class="input-profile-title" type="text" required>
+                                            <label>Profile Last Name*</label>
+                                        </div>
+                                    </div>
+
+
+                                    <!-- Roles -->
+                                    <div class="create-profile-containers profile-label">
+                                        <input class="input-profile-roles" placeholder="Web Dev, Game Dev, Sys Ad..."
+                                            type="text">
+                                        <label>Professional Roles</label>
+                                    </div>
+
+                                    <div class="flex-container" style="justify-content: space-evenly; gap: auto">
+                                        <h1 style="width: 80%;">SKILLS</h1>
+                                        <div class="add-new-skill">Add +</div>
+                                    </div>
+
+                                    <!-- SKILLS -->
+                                    <div class="profile-group-form"
+                                        style="border: 1px dashed; padding: 1rem 0.5rem; color: var(--secondary-color);">
+                                        <div class="flex-container">
+                                            <div class="create-profile-containers profile-label">
+                                                <input class="input-profile-title" type="text" required>
+                                                <label>Skill Name*</label>
+                                            </div>
+                                            <div class="create-profile-containers profile-label">
+                                                <input class="input-profile-title" type="text" required>
+                                                <label>Skill Category*</label>
+                                            </div>
+                                        </div>
+                                        <div class="create-profile-image-container" style="margin-top: 1rem;">
+                                            <h1>Add Skill Photo</h1>
+                                            <div class="file-upload-form">
+                                                <label for="file" class="file-upload-label">
+                                                    <div class="file-upload-design" style="overflow: hidden;">
+                                                        <!-- PREVIEW -->
+                                                        <div id="profile-skillphoto-preview"
+                                                            class="file-preview-container" style="margin-top: 1rem;">
+                                                            <div class="flex-container" style="justify-content: start;">
+                                                                <img src="Assets/Images/Cover Photos/default-cover-photo.png"
+                                                                    alt="skill photo">
+                                                            </div>
+                                                        </div>
+                                                        <span class="browse-button">Upload Photo</span>
+                                                        <input id="skill-photo" type="file" multiple accept="image/*"
+                                                            onchange="previewImages(event, '#profile-skillphoto-preview')" />
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="profile-remove-form">Delete Skill</div>
+                                    </div>
+
+                                    <!-- Certificate -->
+                                    <div class="flex-container" style="justify-content: space-evenly; gap: auto">
+                                        <h1 style="width: 80%;">CERTIFICATES</h1>
+                                        <div class="add-new-skill">Add +</div>
+                                    </div>
+                                    
+                                    <div class="profile-group-form"
+                                        style="border: 1px dashed; padding: 1rem 0.5rem; color: var(--secondary-color); display: grid; gap: 1rem;">
+                                        <div class="flex-container">
+                                            <div class="create-profile-containers profile-label">
+                                                <input class="input-certificate-title" type="text">
+                                                <label>Certificate Title</label>
+                                            </div>
+                                            <div class="create-profile-containers profile-label">
+                                                <input class="input-certificate-date" type="date">
+                                                <label>Certificate Date</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="create-profile-containers profile-label">
+                                            <textarea class="input-certificate-description"></textarea>
+                                            <label>Certificate Description</label>
+                                        </div>
+
+                                        <div class="create-profile-image-container">
+                                            <h1>Add Certificate Photo</h1>
+                                            <div class="file-upload-form">
+                                                <label for="file" class="file-upload-label">
+                                                    <div class="file-upload-design" style="overflow: hidden;">
+                                                        <!-- PREVIEW -->
+                                                        <div id="profile-certificatephoto-preview"
+                                                            class="file-preview-container" style="margin-top: 1rem;">
+                                                            <div class="flex-container" style="justify-content: start;">
+                                                                <img src="Assets/Images/Cover Photos/default-cover-photo.png"
+                                                                    alt="certificatephoto">
+                                                            </div>
+                                                        </div>
+                                                        <span class="browse-button">Upload Photo</span>
+                                                        <input id="cover-photo" type="file" multiple accept="image/*"
+                                                            onchange="previewImages(event, '#profile-certificatephoto-preview')" />
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="profile-remove-form">Delete Certificate</div>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="intro-container">
                     <div class="coverphoto-container">
                         <img src="Assets/Images/Cover Photos/default-cover-photo.png" alt="Coverphoto">
@@ -120,7 +323,7 @@
                     <div class="name-text-container">
                         <div class="name-text-container-cont">
                             <h1>Carlo John Toledo</h1>
-                            <p>Information Technology</p>
+                            <p class="profile-roles" style="display: flex;">Information Technology</p>
                         </div>
                     </div>
                     <div class="profile-button-container">
@@ -130,8 +333,19 @@
                             </div>
                         </a>
                         <div class="edit-profile-button">
-                            <div class="profile-button">
-                                <p>Edit Profile</p>
+                            <div class="profile-button"
+                                style="display: flex; justify-content: space-around; gap: 0.25rem; align-items: center; width: fit-content; padding: 0rem 0.5rem;">
+                                <p style="margin: auto;">Edit Profile</p>
+                                <svg viewBox="0 0 64 64" fill="none" style="width: 1rem; margin: auto;"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                    <g id="SVGRepo_iconCarrier">
+                                        <path
+                                            d="M57.52 21.1111C57.5232 22.1978 57.311 23.2743 56.8956 24.2784C56.4803 25.2825 55.87 26.1943 55.1 26.9611L28.56 53.5111C28.2893 53.7779 27.9501 53.9648 27.58 54.0511L11.08 57.7411C10.7514 57.8123 10.4162 57.8492 10.08 57.8511C9.40545 57.8493 8.73969 57.6981 8.13047 57.4085C7.52125 57.1189 6.98368 56.698 6.55638 56.1761C6.12907 55.6542 5.8226 55.0441 5.65898 54.3897C5.49535 53.7353 5.47863 53.0528 5.61 52.3911L8.79002 36.5111C8.86868 36.1243 9.06003 35.7694 9.34001 35.4911L36.48 8.35113C38.0337 6.79994 40.1395 5.92871 42.335 5.92871C44.5305 5.92871 46.6363 6.79994 48.19 8.35113L55.1 15.2511C55.8694 16.0204 56.4792 16.9341 56.8945 17.9398C57.3098 18.9454 57.5223 20.0231 57.52 21.1111Z"
+                                            fill="#ffffff"></path>
+                                    </g>
+                                </svg>
                             </div>
                         </div>
                     </div>
@@ -304,8 +518,14 @@
                 </div>
 
             </section>
+
+
         </div>
+
+
     </div>
+
+
 
     <script src="JS/navigation bar scripts/navbar-menu-script.js"></script>
 
@@ -444,6 +664,7 @@
 
     <script src="JS/profile page scripts/AboutScript.js"></script>
     <script src="JS/profile page scripts/SkillsScript.js"></script>
+    <script src="JS/global scripts/edit-profile.js"></script>
 </body>
 
 </html>
