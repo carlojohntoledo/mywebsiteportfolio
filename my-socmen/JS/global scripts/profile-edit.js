@@ -367,7 +367,7 @@ function showSkillEditForm() {
 
                 if (fileInput && fileInput.files && fileInput.files.length > 0) {
                     // upload to Cloudinary under profile/skills-logo
-                    const uploaded = await uploadToCloudinary(fileInput.files[0], "profile", "profile/skills-logo");
+                    const uploaded = await uploadToCloudinary(fileInput.files[0], "profile", "mysocmed/profile/skills-logo");
                     logoUrl = uploaded.imageUrl || "";
                     logoPublicId = uploaded.publicId || "";
                 }
@@ -511,7 +511,7 @@ function showCertificateEditForm() {
                 let filePublicId = "";
 
                 if (fileInput && fileInput.files && fileInput.files.length > 0) {
-                    const uploaded = await uploadToCloudinary(fileInput.files[0], "profile", "profile/certificates");
+                    const uploaded = await uploadToCloudinary(fileInput.files[0], "profile", "mysocmed/profile/certificates");
                     fileUrl = uploaded.imageUrl || "";
                     filePublicId = uploaded.publicId || "";
                 }
@@ -851,7 +851,7 @@ function showProfileEditForm() {
                             console.warn("⚠️ Could not delete old profile image; continuing with upload", err);
                         }
                     }
-                    const uploaded = await uploadToCloudinary(profileFileInput.files[0], "profile", "profile/profile-pictures");
+                    const uploaded = await uploadToCloudinary(profileFileInput.files[0], "profile", "mysocmed/profile/profile-pictures");
                     profilePhotoUrl = uploaded.imageUrl || profilePhotoUrl;
                     profilePhotoPublicId = uploaded.publicId || "";
                 }
@@ -865,7 +865,7 @@ function showProfileEditForm() {
                             console.warn("⚠️ Could not delete old cover image; continuing with upload", err);
                         }
                     }
-                    const uploaded = await uploadToCloudinary(coverFileInput.files[0], "profile", "profile/cover-photos");
+                    const uploaded = await uploadToCloudinary(coverFileInput.files[0], "profile", "mysocmed/profile/cover-photos");
                     coverPhotoUrl = uploaded.imageUrl || coverPhotoUrl;
                     coverPhotoPublicId = uploaded.publicId || "";
                 }
