@@ -17,7 +17,7 @@ const CLOUDINARY_FOLDER = {
 function openProfileForm(data = {}) {
   const containerParent = document.querySelector(".create-card-container-parent");
   if (!containerParent) return;
-
+    console.log("Opening profile form with data:", data);
   // inject form
   containerParent.innerHTML = getProfileFormTemplate(data);
   containerParent.style.display = "grid";
