@@ -588,7 +588,7 @@ function showProfileEditForm() {
                             <h1>Add Profile Photo</h1>
                             <div class="file-upload-form">
                                 <p class="default-btn" id="profile-default-btn" data-target="profile">default</p>
-                                <label for="file" class="file-upload-label">
+                                <label for="profile-photo" class="file-upload-label">
                                     <div class="file-upload-design" style="overflow: hidden;">
                                         <!-- PREVIEW -->
                                         <div id="profile-profilephoto-preview"
@@ -601,7 +601,6 @@ function showProfileEditForm() {
                                         </div>
                                         <span class="browse-button">Upload Photo</span>
                                         <input id="profile-photo" type="file" multiple accept="image/*" />
-                                        </input>
                                     </div>
                                 </label>
                             </div>
@@ -612,7 +611,7 @@ function showProfileEditForm() {
                             <h1>Add Cover Photo</h1>
                             <div class="file-upload-form">
                                 <p class="default-btn" id="cover-default-btn" data-target="cover">default</p>
-                                <label for="file" class="file-upload-label">
+                                <label for="cover-photo" class="file-upload-label">
                                     <div class="file-upload-design" style="overflow: hidden;">
                                         <!-- PREVIEW -->
                                         <div id="profile-coverphoto-preview" class="file-preview-container"
