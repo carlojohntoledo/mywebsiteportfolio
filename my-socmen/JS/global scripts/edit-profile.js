@@ -1,253 +1,221 @@
 // ============================================================
 // ✅ Profile Edit Form – Inject dynamically & handle logic
 // ============================================================
-
-// --- Firestore + Cloudinary config ---
-const PROFILE_COLLECTION = "profile"; // Firestore collection
-const CLOUDINARY_FOLDER = {
-  profile: "profile-pictures",
-  cover: "cover-photos",
-  skill: "skills-logo",
-  certificate: "certificates",
-};
-
-// ================================
-// Toggle open profile form
-// ================================
-function openProfileForm(data = {}) {
-  const containerParent = document.querySelector(".create-card-container-parent");
-  if (!containerParent) return;
-    console.log("Opening profile form with data:", data);
-  // inject form
-  containerParent.innerHTML = getProfileFormTemplate(data);
-  containerParent.style.display = "grid";
-
-  // bind handlers
-  bindProfileFormHandlers(data);
-}
-
-// ================================
-// Build Form HTML
-// ================================
-function getProfileFormTemplate(data = {}) {
-  return `
-  <div class="create-post-container">
-    <div class="card">
-      <div class="card-title">Edit Profile</div>
-      <div class="card-body">
-        
-        <!-- Profile Photo -->
-        <div class="form-group">
-          <label>Profile Photo</label>
-          <input type="file" id="profile-photo-input" accept="image/*">
-          <div class="preview" id="profile-photo-preview">
-            <img src="${data.profilePhoto || 'Assets/Images/default-profile.png'}" alt="Profile Preview">
-          </div>
-        </div>
-
-        <!-- Cover Photo -->
-        <div class="form-group">
-          <label>Cover Photo</label>
-          <input type="file" id="cover-photo-input" accept="image/*">
-          <div class="preview" id="cover-photo-preview">
-            <img src="${data.coverPhoto || 'Assets/Images/default-cover.png'}" alt="Cover Preview">
-          </div>
-        </div>
-
-        <!-- Skills -->
-        <div class="form-group">
-          <label>Skills</label>
-          <div id="skills-container"></div>
-          <button type="button" id="add-skill-btn">+ Add Skill</button>
-        </div>
-
-        <!-- Certificates -->
-        <div class="form-group">
-          <label>Certificates</label>
-          <div id="certificates-container"></div>
-          <button type="button" id="add-cert-btn">+ Add Certificate</button>
-        </div>
-
-      </div>
-      <div class="card-footer">
-        <button id="save-profile-btn">Save</button>
-        <button id="cancel-profile-btn">Cancel</button>
-      </div>
-    </div>
-  </div>
-  `;
-}
-
-// ================================
-// Add Skill / Cert Groups
-// ================================
-function createSkillGroup(skill = {}) {
-  return `
-    <div class="group skill-group">
-      <input type="text" class="skill-name" placeholder="Skill name" value="${skill.name || ""}">
-      <input type="file" class="skill-logo-input" accept="image/*">
-      <div class="preview"><img src="${skill.logo || 'Assets/Images/default-skill.png'}"></div>
-      <button type="button" class="remove-group">×</button>
-    </div>
-  `;
-}
-
-function createCertGroup(cert = {}) {
-  return `
-    <div class="group cert-group">
-      <input type="text" class="cert-name" placeholder="Certificate name" value="${cert.name || ""}">
-      <input type="file" class="cert-logo-input" accept="image/*">
-      <div class="preview"><img src="${cert.logo || 'Assets/Images/default-cert.png'}"></div>
-      <button type="button" class="remove-group">×</button>
-    </div>
-  `;
-}
-
-// ================================
-// Bind Handlers
-// ================================
-function bindProfileFormHandlers(data) {
-  const parent = document.querySelector(".create-post-container");
-  if (!parent) return;
-
-  // Profile / Cover preview
-  setupSinglePreview("#profile-photo-input", "#profile-photo-preview img");
-  setupSinglePreview("#cover-photo-input", "#cover-photo-preview img");
-
-  // Skills
-  const skillsContainer = parent.querySelector("#skills-container");
-  parent.querySelector("#add-skill-btn").onclick = () => {
-    skillsContainer.insertAdjacentHTML("beforeend", createSkillGroup());
-    bindDynamicPreview(skillsContainer, ".skill-logo-input", "img");
-  };
-
-  // Certificates
-  const certContainer = parent.querySelector("#certificates-container");
-  parent.querySelector("#add-cert-btn").onclick = () => {
-    certContainer.insertAdjacentHTML("beforeend", createCertGroup());
-    bindDynamicPreview(certContainer, ".cert-logo-input", "img");
-  };
-
-  // Delegated remove
-  parent.addEventListener("click", e => {
-    if (e.target.classList.contains("remove-group")) {
-      e.target.closest(".group").remove();
+document.addEventListener("DOMContentLoaded", () => {
+    const createBtn = document.getElementById("profile-button"); // adjust selector if different
+    if (createBtn) {
+        createBtn.addEventListener("click", () => {
+            console.log("✅ Edit Profile button clicked"); // test log
+            showProfileEditForm();
+        });
+    } else {
+        console.warn("⚠️ Edit Profile button not found");
     }
-  });
-
-  // Save
-  parent.querySelector("#save-profile-btn").onclick = () => saveProfile(data.id);
-
-  // Cancel
-  parent.querySelector("#cancel-profile-btn").onclick = () => {
-    parent.remove();
-    document.querySelector(".create-card-container-parent").style.display = "none";
-  };
-}
-
-// ================================
-// Preview helpers
-// ================================
-function setupSinglePreview(inputSel, imgSel) {
-  const input = document.querySelector(inputSel);
-  const img = document.querySelector(imgSel);
-  if (!input || !img) return;
-
-  input.onchange = () => {
-    const file = input.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = e => img.src = e.target.result;
-    reader.readAsDataURL(file);
-  };
-}
-
-function bindDynamicPreview(container, inputSel, imgSel) {
-  const inputs = container.querySelectorAll(inputSel);
-  inputs.forEach(input => {
-    input.onchange = () => {
-      const file = input.files[0];
-      if (!file) return;
-      const img = input.closest(".group").querySelector(imgSel);
-      const reader = new FileReader();
-      reader.onload = e => img.src = e.target.result;
-      reader.readAsDataURL(file);
-    };
-  });
-}
-
-// ================================
-// Save profile
-// ================================
-async function saveProfile(uid) {
-  const parent = document.querySelector(".create-post-container");
-  if (!parent) return;
-
-  const profileInput = parent.querySelector("#profile-photo-input").files[0];
-  const coverInput = parent.querySelector("#cover-photo-input").files[0];
-
-  // Upload profile + cover
-  const profileUrl = profileInput ? (await uploadToCloudinary(profileInput, "profile")).imageUrl : document.querySelector("#profile-photo-preview img").src;
-  const coverUrl = coverInput ? (await uploadToCloudinary(coverInput, "cover")).imageUrl : document.querySelector("#cover-photo-preview img").src;
-
-  // Skills
-  const skills = [];
-  for (let group of parent.querySelectorAll(".skill-group")) {
-    const name = group.querySelector(".skill-name").value;
-    const file = group.querySelector(".skill-logo-input").files[0];
-    const imgEl = group.querySelector("img");
-    let logo = imgEl.src;
-
-    if (file) {
-      const res = await uploadToCloudinary(file, "skill");
-      logo = res.imageUrl;
-    }
-    skills.push({ name, logo });
-  }
-
-  // Certificates
-  const certificates = [];
-  for (let group of parent.querySelectorAll(".cert-group")) {
-    const name = group.querySelector(".cert-name").value;
-    const file = group.querySelector(".cert-logo-input").files[0];
-    const imgEl = group.querySelector("img");
-    let logo = imgEl.src;
-
-    if (file) {
-      const res = await uploadToCloudinary(file, "certificate");
-      logo = res.imageUrl;
-    }
-    certificates.push({ name, logo });
-  }
-
-  // Save to Firestore
-  await db.collection(PROFILE_COLLECTION).doc(uid || "default").set({
-    profilePhoto: profileUrl,
-    coverPhoto: coverUrl,
-    skills,
-    certificates,
-    updatedAt: new Date(),
-  }, { merge: true });
-
-  alert("✅ Profile saved!");
-  parent.remove();
-  document.querySelector(".create-card-container-parent").style.display = "none";
-}
-// ============================================================
-// Open form when "Edit Profile" button is clicked
-// ============================================================
-document.addEventListener("click", async (e) => {
-  if (e.target.id === "edit-profile-button") {
-    // 🔹 Optionally fetch the current profile data from Firestore
-    let data = {};
-    try {
-      const doc = await db.collection(PROFILE_COLLECTION).doc("default").get();
-      if (doc.exists) data = doc.data();
-    } catch (err) {
-      console.error("Error loading profile:", err);
-    }
-
-    // 🔹 Open form with existing profile data
-    openProfileForm(data);
-  }
 });
+
+function showProfileEditForm() {
+    const editFormCotainer = document.querySelector(".create-card-container-parent");
+    if (!editFormCotainer) {
+        console.error("❌ Edit form container not found");
+        return;
+    }
+    editFormCotainer.innerHTML = `
+                    <div class="create-post-container">
+                        <div class="create-profile-form-container">
+                            <div class="create-profile-header">
+                                <h1 class="card-title">Edit Profile</h1>
+                                <span class="create-profile-button-container red-btn" id="cancel-btn">Cancel</span>
+                                <span class="create-profile-button-container green-btn"
+                                    id="profile-post-btn">Save</span>
+                            </div>
+
+                            <div class="error" id="form-warning">
+                                <div class="form-warning-cont">
+                                    <div class="error__icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 24 24"
+                                            height="24" fill="none">
+                                            <path fill="#393a37"
+                                                d="m13 13h-2v-6h2zm0 4h-2v-2h2zm-1-15c-1.3132 0-2.61358.25866-3.82683.7612-1.21326.50255-2.31565 1.23915-3.24424 2.16773-1.87536 1.87537-2.92893 4.41891-2.92893 7.07107 0 2.6522 1.05357 5.1957 2.92893 7.0711.92859.9286 2.03098 1.6651 3.24424 2.1677 1.21325.5025 2.51363.7612 3.82683.7612 2.6522 0 5.1957-1.0536 7.0711-2.9289 1.8753-1.8754 2.9289-4.4189 2.9289-7.0711 0-1.3132-.2587-2.61358-.7612-3.82683-.5026-1.21326-1.2391-2.31565-2.1677-3.24424-.9286-.92858-2.031-1.66518-3.2443-2.16773-1.2132-.50254-2.5136-.7612-3.8268-.7612z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <div class="error__title">Please fill-in required (*) details.</div>
+                                    <div class="error__close" id="close-error"><svg xmlns="http://www.w3.org/2000/svg"
+                                            width="20" viewBox="0 0 20 20" height="20">
+                                            <path fill="#393a37"
+                                                d="m15.8333 5.34166-1.175-1.175-4.6583 4.65834-4.65833-4.65834-1.175 1.175 4.65833 4.65834-4.65833 4.6583 1.175 1.175 4.65833-4.6583 4.6583 4.6583 1.175-1.175-4.6583-4.6583z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="create-profile-form-viewport scroll-fade">
+                                <form id="create-profile-form">
+
+                                    <!-- PROFILE PHOTO UPLOAD -->
+                                    <div class="create-profile-image-container">
+                                        <h1>Add Profile Photo</h1>
+                                        <div class="file-upload-form">
+                                            <label for="file" class="file-upload-label">
+                                                <div class="file-upload-design" style="overflow: hidden;">
+                                                    <!-- PREVIEW -->
+                                                    <div id="profile-profilephoto-preview"
+                                                        class="file-preview-container" style="margin-top: 1rem;">
+                                                        <div class="flex-container" style="justify-content: start;">
+                                                            <img style="width: 10rem; border-radius: 100%;"
+                                                                src="Assets/Images/Profile Pictures/default-profile-picture.jpg"
+                                                                alt="Profilephoto">
+                                                        </div>
+                                                    </div>
+                                                    <span class="browse-button">Upload Photo</span>
+                                                    <input id="profile-photo" type="file" multiple accept="image/*"
+                                                        onchange="previewImages(event, '#profile-profilephoto-preview')" />
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <!-- COVER  PHOTO UPLOAD -->
+                                    <div class="create-profile-image-container">
+                                        <h1>Add Cover Photo</h1>
+                                        <div class="file-upload-form">
+                                            <label for="file" class="file-upload-label">
+                                                <div class="file-upload-design" style="overflow: hidden;">
+                                                    <!-- PREVIEW -->
+                                                    <div id="profile-coverphoto-preview" class="file-preview-container"
+                                                        style="margin-top: 1rem;">
+                                                        <div class="flex-container" style="justify-content: start;">
+                                                            <img src="Assets/Images/Cover Photos/default-cover-photo.png"
+                                                                alt="coverphoto">
+                                                        </div>
+                                                    </div>
+                                                    <span class="browse-button">Upload Photo</span>
+                                                    <input id="cover-photo" type="file" multiple accept="image/*"
+                                                        onchange="previewImages(event, '#profile-coverphoto-preview')" />
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Full Name -->
+                                    <div class="flex-container">
+                                        <div class="create-profile-containers profile-label">
+                                            <input class="input-profile-title" type="text" required>
+                                            <label>Profile First Name*</label>
+                                        </div>
+                                        <div class="create-profile-containers profile-label">
+                                            <input class="input-profile-title" type="text">
+                                            <label>Profile Middle Name</label>
+                                        </div>
+                                        <div class="create-profile-containers profile-label">
+                                            <input class="input-profile-title" type="text" required>
+                                            <label>Profile Last Name*</label>
+                                        </div>
+                                    </div>
+
+
+                                    <!-- Roles -->
+                                    <div class="create-profile-containers profile-label">
+                                        <input class="input-profile-roles" placeholder="Web Dev, Game Dev, Sys Ad..."
+                                            type="text">
+                                        <label>Professional Roles</label>
+                                    </div>
+
+                                    <div class="flex-container" style="justify-content: space-evenly; gap: auto">
+                                        <h1 style="width: 80%;">SKILLS</h1>
+                                        <div class="add-new-skill">Add +</div>
+                                    </div>
+
+                                    <!-- SKILLS -->
+                                    <div class="profile-group-form"
+                                        style="border: 1px dashed; padding: 1rem 0.5rem; color: var(--secondary-color);">
+                                        <div class="flex-container">
+                                            <div class="create-profile-containers profile-label">
+                                                <input class="input-profile-title" type="text" required>
+                                                <label>Skill Name*</label>
+                                            </div>
+                                            <div class="create-profile-containers profile-label">
+                                                <input class="input-profile-title" type="text" required>
+                                                <label>Skill Category*</label>
+                                            </div>
+                                        </div>
+                                        <div class="create-profile-image-container" style="margin-top: 1rem;">
+                                            <h1>Add Skill Photo</h1>
+                                            <div class="file-upload-form">
+                                                <label for="file" class="file-upload-label">
+                                                    <div class="file-upload-design" style="overflow: hidden;">
+                                                        <!-- PREVIEW -->
+                                                        <div id="profile-skillphoto-preview"
+                                                            class="file-preview-container" style="margin-top: 1rem;">
+                                                            <div class="flex-container" style="justify-content: start;">
+                                                                <img src="Assets/Images/Cover Photos/default-cover-photo.png"
+                                                                    alt="skill photo">
+                                                            </div>
+                                                        </div>
+                                                        <span class="browse-button">Upload Photo</span>
+                                                        <input id="skill-photo" type="file" multiple accept="image/*"
+                                                            onchange="previewImages(event, '#profile-skillphoto-preview')" />
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="profile-remove-form">Delete Skill</div>
+                                    </div>
+
+                                    <!-- Certificate -->
+                                    <div class="flex-container" style="justify-content: space-evenly; gap: auto">
+                                        <h1 style="width: 80%;">CERTIFICATES</h1>
+                                        <div class="add-new-skill">Add +</div>
+                                    </div>
+
+                                    <div class="profile-group-form"
+                                        style="border: 1px dashed; padding: 1rem 0.5rem; color: var(--secondary-color); display: grid; gap: 1rem;">
+                                        <div class="flex-container">
+                                            <div class="create-profile-containers profile-label">
+                                                <input class="input-certificate-title" type="text">
+                                                <label>Certificate Title</label>
+                                            </div>
+                                            <div class="create-profile-containers profile-label">
+                                                <input class="input-certificate-date" type="date">
+                                                <label>Certificate Date</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="create-profile-containers profile-label">
+                                            <textarea class="input-certificate-description"></textarea>
+                                            <label>Certificate Description</label>
+                                        </div>
+
+                                        <div class="create-profile-image-container">
+                                            <h1>Add Certificate Photo</h1>
+                                            <div class="file-upload-form">
+                                                <label for="file" class="file-upload-label">
+                                                    <div class="file-upload-design" style="overflow: hidden;">
+                                                        <!-- PREVIEW -->
+                                                        <div id="profile-certificatephoto-preview"
+                                                            class="file-preview-container" style="margin-top: 1rem;">
+                                                            <div class="flex-container" style="justify-content: start;">
+                                                                <img src="Assets/Images/Cover Photos/default-cover-photo.png"
+                                                                    alt="certificatephoto">
+                                                            </div>
+                                                        </div>
+                                                        <span class="browse-button">Upload Photo</span>
+                                                        <input id="cover-photo" type="file" multiple accept="image/*"
+                                                            onchange="previewImages(event, '#profile-certificatephoto-preview')" />
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="profile-remove-form">Delete Certificate</div>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>`;
+
+    editFormCotainer.style.display = "grid"; // Show the form container
+
+
+}

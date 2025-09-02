@@ -333,143 +333,11 @@
     </div>
 
 
-
     <script src="JS/navigation bar scripts/navbar-menu-script.js"></script>
-
-    <script>
-        const skillData = {
-            development: [
-                { name: 'HTML', img: 'img/html.png' },
-                { name: 'CSS', img: 'img/css.png' },
-                { name: 'JavaScript', img: 'img/javascript.png' },
-                { name: 'React', img: 'img/react.png' },
-                { name: 'HTML', img: 'img/html.png' },
-                { name: 'HTML', img: 'img/html.png' },
-                { name: 'HTML', img: 'img/html.png' },
-                { name: 'HTML', img: 'img/html.png' },
-                { name: 'HTML', img: 'img/html.png' },
-                { name: 'HTML', img: 'img/html.png' }
-            ],
-            multimedia: [
-                { name: 'Photoshop', img: 'img/photoshop.png' },
-                { name: 'Premiere Pro', img: 'img/premiere.png' },
-                { name: 'Audacity', img: 'img/audacity.png' }
-            ],
-            sysadmin: [
-                { name: 'Linux', img: 'img/linux.png' }
-            ],
-            other: [
-                { name: 'Project Management', img: 'img/project.png' },
-                { name: 'Writing', img: 'img/writing.png' }
-            ]
-        };
-
-        function renderSkills(category) {
-            const skills = skillData[category];
-            const contentContainer = document.getElementById('skills-content');
-
-            contentContainer.innerHTML = skills.map(skill => `
-                <div class="skill-card">
-                <div class="skill-img">
-                    <img src="${skill.img}" alt="${skill.name}">
-                </div>
-                <div class="skill-name">${skill.name}</div>
-                </div>
-            `).join('');
-        }
-
-        renderSkills('development');
-
-        document.querySelectorAll('input[name="skills-category"]').forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                if (e.target.checked) {
-                    renderSkills(e.target.value);
-                }
-            });
-        });
-
-    </script>
-
-    <script>
-        // Sample certificate data (you can fetch from Firebase or API later)
-        const certificates = [
-            {
-                title: "WEB DESIGN",
-                desc: "certificate-description",
-                certDate: "25/12/2024",
-                imageUrl: "images/cert-web.png"
-            },
-            {
-                title: "UI/UX",
-                desc: "certificate-description",
-                certDate: "25/12/2024",
-                imageUrl: "images/cert-web.png"
-            },
-            {
-                title: "LOGO DESIGN",
-                desc: "certificate-description",
-                certDate: "25/12/2024",
-                imageUrl: "images/cert-web.png"
-            }
-            // Add more as needed
-        ];
-
-        // Function to generate a single card's HTML
-        function generateCertificateCard(title, desc, certDate, imageUrl) {
-            return `
-      <div class="certificate-card">
-        <div class="certificate-container noselect">
-          <div class="canvas">
-            <div class="tracker tr-1"></div>
-            <div class="tracker tr-2"></div>
-            <div class="tracker tr-3"></div>
-            <div class="tracker tr-4"></div>
-            <div class="tracker tr-5"></div>
-            <div class="tracker tr-6"></div>
-            <div class="tracker tr-7"></div>
-            <div class="tracker tr-8"></div>
-            <div class="tracker tr-9"></div>
-            <div class="tracker tr-10"></div>
-            <div class="tracker tr-11"></div>
-            <div class="tracker tr-12"></div>
-            <div class="tracker tr-13"></div>
-            <div class="tracker tr-14"></div>
-            <div class="tracker tr-15"></div>
-            <div class="tracker tr-16"></div>
-            <div class="tracker tr-17"></div>
-            <div class="tracker tr-18"></div>
-            <div class="tracker tr-19"></div>
-            <div class="tracker tr-20"></div>
-            <div class="tracker tr-21"></div>
-            <div class="tracker tr-22"></div>
-            <div class="tracker tr-23"></div>
-            <div class="tracker tr-24"></div>
-            <div class="tracker tr-25"></div>
-            <div id="card">
-                <div class="prompt-container">
-                    <img class="cert-background" src="Assets/Images/coc.jpg"></img>
-                    <p id="prompt-title">${title}</p>
-                    <p id="prompt-description">${desc}</p>
-                    <p id="prompt-date">${certDate}</p>
-                </div>
-                <img class="certificate-image" src="${imageUrl}" alt="certificate-photo">
-            </div>
-          </div>
-        </div>
-      </div>
-      
-    `;
-        }
-
-        // Inject all cards into the container
-        const container = document.getElementById("certificates-content");
-        certificates.forEach(cert => {
-            container.insertAdjacentHTML("beforeend", generateCertificateCard(cert.title, cert.desc, cert.certDate, cert.imageUrl));
-        });
-    </script>
 
 
     <script src="JS/profile page scripts/AboutScript.js"></script>
+
     <script src="JS/profile page scripts/SkillsScript.js"></script>
     
     <script src="JS/global scripts/getImageUrl.js"></script>
@@ -482,9 +350,6 @@
 
     <script src="JS/projects page scripts/projectLoadFromFirestore.js"></script>
 
-    <script src="JS/projects page scripts/projectEdit.js"></script>
-
-    <script src="JS/projects page scripts/projectSubmit.js"></script>
     <script src="JS/global scripts/edit-profile.js"></script>
 </body>
 

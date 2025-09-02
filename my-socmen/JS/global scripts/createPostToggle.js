@@ -9,9 +9,6 @@ function showCreateForm() {
     const page = document.body.dataset.page;
     const container = getPageContainer();
 
-    console.log("Page:", page);
-    console.log("Container:", container);
-
     if (!container) {
         console.warn("⚠️ No container found for page", page);
         return;
@@ -46,12 +43,11 @@ function showCreateForm() {
 }
 
 
-// Example: open form when clicking "Create New"
 document.addEventListener("DOMContentLoaded", () => {
     const createBtn = document.getElementById("create-new-post"); // adjust selector if different
     if (createBtn) {
         createBtn.addEventListener("click", () => {
-            console.log("✅ Create button clicked"); // test log
+            console.log("✅ Create button clicked");
             showCreateForm();
         });
     } else {
