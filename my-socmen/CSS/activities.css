@@ -244,6 +244,7 @@
     display: flex;
     gap: 0.5rem;
     /* border: 1px solid red; */
+    margin-top: 1rem;
 }
 
 .activities-tags-container span {
@@ -474,8 +475,9 @@
 
 
 .grid-1 { grid-template-columns: 1fr; }
+.grid-1 img {max-height: 30rem;}
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; }
-.grid-2 {max-height: 30rem;}
+.grid-2 img {max-height: 30rem;}
 .grid-3 { display: grid; grid-template-columns: 2fr 1fr; gap: 0.25rem; }
 .grid-3 .big img { height: 100%; }
 .grid-3 .small { display: grid; gap: 0.25rem;}

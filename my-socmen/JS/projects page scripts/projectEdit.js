@@ -6,8 +6,6 @@ function openPostForm(page, mode = "edit", data = {}, uid) {
     container.innerHTML = getFormTemplate(page);
     container.style.display = "grid";
 
-    const singular = page.slice(0, -1);
-
     // Adjust title + button
     if (mode === "edit") {
         container.querySelector(".card-title").textContent = `Edit ${singular}`;

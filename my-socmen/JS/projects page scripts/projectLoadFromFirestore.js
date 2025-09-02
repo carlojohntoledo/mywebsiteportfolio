@@ -109,7 +109,7 @@ async function loadPostsFromFirestore(type = "projects") {
                             <!-- Tags -->
                             <div class="${type}-links-container scroll-fade">
                                 <div class="${type}-tags-container ${type}-tags">
-                                    ${(data.tags || []).map(tag => `<span class="tag">${tag}</span>`).join("")}
+                                    <p>tags: </p> ${(data.tags || []).map(tag => `<span class="tag">${tag}</span>`).join("")}
                                 </div>
                             </div>
 
@@ -325,89 +325,6 @@ async function loadPostsFromFirestore(type = "projects") {
         hideLoader();
     }
 }
-
-// ================= LIGHTBOX SCRIPT =================
-(function initLightbox() {
-    const lightbox = document.getElementById("lightbox");
-    const lightboxImg = lightbox.querySelector(".lightbox-img");
-    const closeBtn = lightbox.querySelector(".lightbox-close");
-    const prevBtn = lightbox.querySelector(".lightbox-prev");
-    const nextBtn = lightbox.querySelector(".lightbox-next");
-
-    let images = [];   // all images in the current post
-    let currentIndex = 0;
-
-    // Open lightbox
-    function openLightbox(imgList, index) {
-        images = imgList;
-        currentIndex = index;
-        lightboxImg.src = images[currentIndex];
-        lightbox.classList.remove("hidden");
-    }
-
-    // Close lightbox
-    function closeLightbox() {
-        lightbox.classList.add("hidden");
-        images = [];
-        currentIndex = 0;
-    }
-
-    // Navigate
-    function showPrev() {
-        if (!images.length) return;
-        currentIndex = (currentIndex - 1 + images.length) % images.length;
-        lightboxImg.src = images[currentIndex];
-    }
-
-    function showNext() {
-        if (!images.length) return;
-        currentIndex = (currentIndex + 1) % images.length;
-        lightboxImg.src = images[currentIndex];
-    }
-
-    // Event listeners
-    closeBtn.addEventListener("click", closeLightbox);
-    prevBtn.addEventListener("click", showPrev);
-    nextBtn.addEventListener("click", showNext);
-
-    // Close on background click
-    lightbox.addEventListener("click", (e) => {
-        if (e.target === lightbox) closeLightbox();
-    });
-
-    // Keyboard navigation
-    document.addEventListener("keydown", (e) => {
-        if (lightbox.classList.contains("hidden")) return;
-        if (e.key === "Escape") closeLightbox();
-        if (e.key === "ArrowLeft") showPrev();
-        if (e.key === "ArrowRight") showNext();
-    });
-
-
-
-    // Attach click handlers to activity images dynamically
-    document.body.addEventListener("click", function (e) {
-        const img = e.target.closest(".activity-images img, .projects-image-container img, .services-image-container img");
-        if (!img) return;
-
-        // Case 1: Activity grid
-        const activityContainer = img.closest(".activity-images");
-        if (activityContainer) {
-            const imgEls = activityContainer.querySelectorAll("img");
-            const imgList = Array.from(imgEls).map(el => el.src);
-            const index = imgList.indexOf(img.src);
-            openLightbox(imgList, index);
-            return;
-        }
-
-        // Case 2: Project/Service carousel
-        if (carouselData.has(img)) {
-            const data = carouselData.get(img);
-            openLightbox(data.urls, data.index); // ✅ full list + current index
-        }
-    });
-
-})();
 
 
 // =============================================================

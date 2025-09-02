@@ -71,17 +71,15 @@
         font-size: 3vw;
     }
 
-    .download-button-container
+    .profile-button-container
     {
         width: 100%;
         /*border: 1px solid orange;*/
         position: relative;
         top: 22vw;
-        display: grid;
-        justify-items: center;
     }
 
-    .download-button
+    .profile-button
     {
         width: 28vw;
         height: 5vw;
@@ -89,7 +87,7 @@
         margin: auto;
     }
 
-    .download-button p 
+    .profile-button p 
     {
         margin: auto;
         color: #e4e6eb;

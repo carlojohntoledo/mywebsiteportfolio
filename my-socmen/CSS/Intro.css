@@ -109,34 +109,42 @@ section.intro
     font-size: 1.3vw;
 }
 
-.download-button-container
+.profile-button-container
 {
     width: 100%;
     /*border: 1px solid orange;*/
     margin: auto;
     position: relative;
-    
+    display: flex; 
+    justify-content: end; 
+    gap: 0.5rem;
 }
 
-.download-button
+.profile-button
 {
     width: 12vw;
     height: 3vw;
     background-color: var(--accent-color);
     color: var(--text-color);
+    text-shadow: 1px 1px 2px rgb(69, 69, 69);
     position: relative;
     border-radius: 0.5rem;
     display: grid;
     float: right;
-    z-index: 98;
+    z-index: 3;
 }
 
-.download-button p 
+.profile-button p 
 {
     margin: auto;
     color: #e4e6eb;
     font-size: 1.1vw;
     position: relative;
+}
+
+.edit-profile-button
+{
+    cursor: pointer;
 }
 
 .line-one
