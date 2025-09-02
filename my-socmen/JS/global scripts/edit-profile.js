@@ -1,281 +1,253 @@
-// =============================================================
-// ✅ PROFILE.JS - Handle Profile Page Logic
-// Mirrors: edit.js, load.js, createToggle.js, submit.js
-// =============================================================
+// ============================================================
+// ✅ Profile Edit Form – Inject dynamically & handle logic
+// ============================================================
 
-// 🔹 Global references
-const db = firebase.firestore();
-let profileDocId = "mainProfile"; // you can store profile under a fixed ID
-let currentProfile = {
-    profilePhoto: null,
-    coverPhoto: null,
-    fullName: "",
-    roles: "",
-    skills: [],
-    certificates: []
+// --- Firestore + Cloudinary config ---
+const PROFILE_COLLECTION = "profile"; // Firestore collection
+const CLOUDINARY_FOLDER = {
+  profile: "profile-pictures",
+  cover: "cover-photos",
+  skill: "skills-logo",
+  certificate: "certificates",
 };
 
-// =============================================================
-// ✅ Init Profile Page
-// =============================================================
-document.addEventListener("DOMContentLoaded", () => {
-    const editBtn = document.querySelector(".edit-profile-button");
-    if (editBtn) {
-        editBtn.addEventListener("click", () => openProfileForm());
-    }
+// ================================
+// Toggle open profile form
+// ================================
+function openProfileForm(data = {}) {
+  const containerParent = document.querySelector(".create-card-container-parent");
+  if (!containerParent) return;
 
-    // Load profile on page load
-    loadProfileFromFirestore();
-});
+  // inject form
+  containerParent.innerHTML = getProfileFormTemplate(data);
+  containerParent.style.display = "grid";
 
-// =============================================================
-// ✅ Load Profile Data
-// =============================================================
-async function loadProfileFromFirestore() {
-    showLoader();
-    try {
-        const doc = await db.collection("profile").doc(profileDocId).get();
-        if (doc.exists) {
-            currentProfile = doc.data();
-            renderProfile(currentProfile);
-        }
-    } catch (err) {
-        console.error("❌ Error loading profile:", err);
-    } finally {
-        hideLoader();
-    }
+  // bind handlers
+  bindProfileFormHandlers(data);
 }
 
-// =============================================================
-// ✅ Render Profile UI
-// =============================================================
-function renderProfile(profile) {
-    // Profile + cover photos
-    document.querySelector(".coverphoto-container img").src = profile.coverPhoto || "Assets/Images/Cover Photos/default-cover-photo.png";
-    document.querySelector(".profilephoto-container img").src = profile.profilePhoto || "Assets/Images/Profile Pictures/default-profile-picture.jpg";
+// ================================
+// Build Form HTML
+// ================================
+function getProfileFormTemplate(data = {}) {
+  return `
+  <div class="create-post-container">
+    <div class="card">
+      <div class="card-title">Edit Profile</div>
+      <div class="card-body">
+        
+        <!-- Profile Photo -->
+        <div class="form-group">
+          <label>Profile Photo</label>
+          <input type="file" id="profile-photo-input" accept="image/*">
+          <div class="preview" id="profile-photo-preview">
+            <img src="${data.profilePhoto || 'Assets/Images/default-profile.png'}" alt="Profile Preview">
+          </div>
+        </div>
 
-    // Name + roles
-    document.querySelector(".name-text-container h1").textContent = profile.fullName || "Your Name";
-    document.querySelector(".profile-roles").textContent = profile.roles || "Your Profession";
+        <!-- Cover Photo -->
+        <div class="form-group">
+          <label>Cover Photo</label>
+          <input type="file" id="cover-photo-input" accept="image/*">
+          <div class="preview" id="cover-photo-preview">
+            <img src="${data.coverPhoto || 'Assets/Images/default-cover.png'}" alt="Cover Preview">
+          </div>
+        </div>
 
-    // Skills
-    const skillsContainer = document.getElementById("skills-content");
-    if (skillsContainer) {
-        skillsContainer.innerHTML = "";
-        (profile.skills || []).forEach(skill => {
-            skillsContainer.insertAdjacentHTML("beforeend", `
-                <div class="skill-card">
-                    <div class="skill-img"><img src="${skill.imageUrl}" alt="${skill.name}"></div>
-                    <div class="skill-name">${skill.name}</div>
-                </div>
-            `);
-        });
-    }
+        <!-- Skills -->
+        <div class="form-group">
+          <label>Skills</label>
+          <div id="skills-container"></div>
+          <button type="button" id="add-skill-btn">+ Add Skill</button>
+        </div>
 
-    // Certificates
-    const certContainer = document.getElementById("certificates-content");
-    if (certContainer) {
-        certContainer.innerHTML = "";
-        (profile.certificates || []).forEach(cert => {
-            certContainer.insertAdjacentHTML("beforeend", `
-                <div class="certificate-card">
-                    <div class="certificate-container">
-                        <div class="canvas">
-                            <div id="card">
-                                <div class="prompt-container">
-                                    <p id="prompt-title">${cert.title}</p>
-                                    <p id="prompt-description">${cert.description}</p>
-                                    <p id="prompt-date">${cert.date}</p>
-                                </div>
-                                <img class="certificate-image" src="${cert.imageUrl}" alt="certificate-photo">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `);
-        });
-    }
+        <!-- Certificates -->
+        <div class="form-group">
+          <label>Certificates</label>
+          <div id="certificates-container"></div>
+          <button type="button" id="add-cert-btn">+ Add Certificate</button>
+        </div>
+
+      </div>
+      <div class="card-footer">
+        <button id="save-profile-btn">Save</button>
+        <button id="cancel-profile-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+  `;
 }
 
-// =============================================================
-// ✅ Open Profile Edit Form
-// =============================================================
-function openProfileForm() {
-    const formContainer = document.querySelector(".create-card-container-parent");
-    if (!formContainer) return;
+// ================================
+// Add Skill / Cert Groups
+// ================================
+function createSkillGroup(skill = {}) {
+  return `
+    <div class="group skill-group">
+      <input type="text" class="skill-name" placeholder="Skill name" value="${skill.name || ""}">
+      <input type="file" class="skill-logo-input" accept="image/*">
+      <div class="preview"><img src="${skill.logo || 'Assets/Images/default-skill.png'}"></div>
+      <button type="button" class="remove-group">×</button>
+    </div>
+  `;
+}
 
-    formContainer.style.display = "block";
+function createCertGroup(cert = {}) {
+  return `
+    <div class="group cert-group">
+      <input type="text" class="cert-name" placeholder="Certificate name" value="${cert.name || ""}">
+      <input type="file" class="cert-logo-input" accept="image/*">
+      <div class="preview"><img src="${cert.logo || 'Assets/Images/default-cert.png'}"></div>
+      <button type="button" class="remove-group">×</button>
+    </div>
+  `;
+}
 
-    // Prefill values
-    const form = document.getElementById("create-profile-form");
-    const nameParts = (currentProfile.fullName || "").split(" ");
-    form.querySelectorAll(".input-profile-title")[0].value = nameParts[0] || "";
-    form.querySelectorAll(".input-profile-title")[1].value = nameParts[1] || "";
-    form.querySelectorAll(".input-profile-title")[2].value = nameParts[2] || "";
-    form.querySelector(".input-profile-roles").value = currentProfile.roles || "";
+// ================================
+// Bind Handlers
+// ================================
+function bindProfileFormHandlers(data) {
+  const parent = document.querySelector(".create-post-container");
+  if (!parent) return;
 
-    // Clear dynamic sections
-    document.getElementById("skills-forms").innerHTML = "";
-    document.getElementById("certificates-forms").innerHTML = "";
+  // Profile / Cover preview
+  setupSinglePreview("#profile-photo-input", "#profile-photo-preview img");
+  setupSinglePreview("#cover-photo-input", "#cover-photo-preview img");
 
-    // Load existing skills
-    (currentProfile.skills || []).forEach(skill => {
-        addSkillForm(skill);
-    });
+  // Skills
+  const skillsContainer = parent.querySelector("#skills-container");
+  parent.querySelector("#add-skill-btn").onclick = () => {
+    skillsContainer.insertAdjacentHTML("beforeend", createSkillGroup());
+    bindDynamicPreview(skillsContainer, ".skill-logo-input", "img");
+  };
 
-    // Load existing certificates
-    (currentProfile.certificates || []).forEach(cert => {
-        addCertificateForm(cert);
-    });
+  // Certificates
+  const certContainer = parent.querySelector("#certificates-container");
+  parent.querySelector("#add-cert-btn").onclick = () => {
+    certContainer.insertAdjacentHTML("beforeend", createCertGroup());
+    bindDynamicPreview(certContainer, ".cert-logo-input", "img");
+  };
 
-    // Add new entry buttons
-    document.getElementById("add-skill-btn").onclick = () => addSkillForm();
-    document.getElementById("add-certificate-btn").onclick = () => addCertificateForm();
+  // Delegated remove
+  parent.addEventListener("click", e => {
+    if (e.target.classList.contains("remove-group")) {
+      e.target.closest(".group").remove();
+    }
+  });
 
-    // Cancel button
-    const cancelBtn = document.getElementById("cancel-btn");
-    cancelBtn.onclick = () => {
-        formContainer.style.display = "none";
+  // Save
+  parent.querySelector("#save-profile-btn").onclick = () => saveProfile(data.id);
+
+  // Cancel
+  parent.querySelector("#cancel-profile-btn").onclick = () => {
+    parent.remove();
+    document.querySelector(".create-card-container-parent").style.display = "none";
+  };
+}
+
+// ================================
+// Preview helpers
+// ================================
+function setupSinglePreview(inputSel, imgSel) {
+  const input = document.querySelector(inputSel);
+  const img = document.querySelector(imgSel);
+  if (!input || !img) return;
+
+  input.onchange = () => {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => img.src = e.target.result;
+    reader.readAsDataURL(file);
+  };
+}
+
+function bindDynamicPreview(container, inputSel, imgSel) {
+  const inputs = container.querySelectorAll(inputSel);
+  inputs.forEach(input => {
+    input.onchange = () => {
+      const file = input.files[0];
+      if (!file) return;
+      const img = input.closest(".group").querySelector(imgSel);
+      const reader = new FileReader();
+      reader.onload = e => img.src = e.target.result;
+      reader.readAsDataURL(file);
     };
-
-    // Save button
-    const saveBtn = document.getElementById("profile-post-btn");
-    saveBtn.onclick = submitProfileForm;
+  });
 }
 
-// =============================================================
-// ✅ Dynamic Skill Forms
-// =============================================================
-function addSkillForm(skill = {}) {
-    const skillsContainer = document.getElementById("skills-forms");
-    const skillId = "skill-" + Date.now();
-    const div = document.createElement("div");
-    div.className = "profile-group-form skill-entry";
-    div.innerHTML = `
-        <input type="text" class="input-skill-name" placeholder="Skill Name" value="${skill.name || ""}">
-        <input type="text" class="input-skill-category" placeholder="Skill Category" value="${skill.category || ""}">
-        <input type="file" class="input-skill-photo" accept="image/*">
-        ${skill.imageUrl ? `<img src="${skill.imageUrl}" width="60">` : ""}
-        <button type="button" class="remove-btn">Remove</button>
-    `;
-    skillsContainer.appendChild(div);
+// ================================
+// Save profile
+// ================================
+async function saveProfile(uid) {
+  const parent = document.querySelector(".create-post-container");
+  if (!parent) return;
 
-    div.querySelector(".remove-btn").onclick = () => div.remove();
-}
+  const profileInput = parent.querySelector("#profile-photo-input").files[0];
+  const coverInput = parent.querySelector("#cover-photo-input").files[0];
 
-// =============================================================
-// ✅ Dynamic Certificate Forms
-// =============================================================
-function addCertificateForm(cert = {}) {
-    const certsContainer = document.getElementById("certificates-forms");
-    const div = document.createElement("div");
-    div.className = "profile-group-form certificate-entry";
-    div.innerHTML = `
-        <input type="text" class="input-certificate-title" placeholder="Certificate Title" value="${cert.title || ""}">
-        <input type="date" class="input-certificate-date" value="${cert.date || ""}">
-        <textarea class="input-certificate-description" placeholder="Description">${cert.description || ""}</textarea>
-        <input type="file" class="input-certificate-photo" accept="image/*">
-        ${cert.imageUrl ? `<img src="${cert.imageUrl}" width="100">` : ""}
-        <button type="button" class="remove-btn">Remove</button>
-    `;
-    certsContainer.appendChild(div);
+  // Upload profile + cover
+  const profileUrl = profileInput ? (await uploadToCloudinary(profileInput, "profile")).imageUrl : document.querySelector("#profile-photo-preview img").src;
+  const coverUrl = coverInput ? (await uploadToCloudinary(coverInput, "cover")).imageUrl : document.querySelector("#cover-photo-preview img").src;
 
-    div.querySelector(".remove-btn").onclick = () => div.remove();
-}
+  // Skills
+  const skills = [];
+  for (let group of parent.querySelectorAll(".skill-group")) {
+    const name = group.querySelector(".skill-name").value;
+    const file = group.querySelector(".skill-logo-input").files[0];
+    const imgEl = group.querySelector("img");
+    let logo = imgEl.src;
 
-// =============================================================
-// ✅ Submit Profile Form
-// =============================================================
-async function submitProfileForm() {
-    showLoader();
-    try {
-        const form = document.getElementById("create-profile-form");
-
-        // Collect inputs
-        const firstName = form.querySelectorAll(".input-profile-title")[0].value.trim();
-        const middleName = form.querySelectorAll(".input-profile-title")[1].value.trim();
-        const lastName = form.querySelectorAll(".input-profile-title")[2].value.trim();
-        const fullName = `${firstName} ${middleName} ${lastName}`.trim();
-        const roles = form.querySelector(".input-profile-roles").value.trim();
-
-        // Profile + cover photo
-        const profilePhotoInput = document.getElementById("profile-photo");
-        const coverPhotoInput = document.getElementById("cover-photo");
-
-        let profilePhotoUrl = currentProfile.profilePhoto;
-        let coverPhotoUrl = currentProfile.coverPhoto;
-
-        if (profilePhotoInput && profilePhotoInput.files.length > 0) {
-            const result = await uploadToCloudinary(profilePhotoInput.files[0], "profile");
-            profilePhotoUrl = result.imageUrl;
-        }
-        if (coverPhotoInput && coverPhotoInput.files.length > 0) {
-            const result = await uploadToCloudinary(coverPhotoInput.files[0], "cover");
-            coverPhotoUrl = result.imageUrl;
-        }
-
-        // 🔹 Gather all skills
-        const skills = [];
-        const skillEntries = document.querySelectorAll(".skill-entry");
-        for (let entry of skillEntries) {
-            const name = entry.querySelector(".input-skill-name").value;
-            const category = entry.querySelector(".input-skill-category").value;
-            const fileInput = entry.querySelector(".input-skill-photo");
-
-            let imageUrl = entry.querySelector("img") ? entry.querySelector("img").src : "";
-            if (fileInput && fileInput.files.length > 0) {
-                const result = await uploadToCloudinary(fileInput.files[0], "skills");
-                imageUrl = result.imageUrl;
-            }
-
-            if (name) {
-                skills.push({ name, category, imageUrl });
-            }
-        }
-
-        // 🔹 Gather all certificates
-        const certificates = [];
-        const certEntries = document.querySelectorAll(".certificate-entry");
-        for (let entry of certEntries) {
-            const title = entry.querySelector(".input-certificate-title").value;
-            const date = entry.querySelector(".input-certificate-date").value;
-            const description = entry.querySelector(".input-certificate-description").value;
-            const fileInput = entry.querySelector(".input-certificate-photo");
-
-            let imageUrl = entry.querySelector("img") ? entry.querySelector("img").src : "";
-            if (fileInput && fileInput.files.length > 0) {
-                const result = await uploadToCloudinary(fileInput.files[0], "certificates");
-                imageUrl = result.imageUrl;
-            }
-
-            if (title) {
-                certificates.push({ title, date, description, imageUrl });
-            }
-        }
-
-        // Build profile object
-        const newProfile = {
-            fullName,
-            roles,
-            profilePhoto: profilePhotoUrl,
-            coverPhoto: coverPhotoUrl,
-            skills,
-            certificates
-        };
-
-        // Save to Firestore
-        await db.collection("profile").doc(profileDocId).set(newProfile);
-
-        // Refresh UI
-        currentProfile = newProfile;
-        renderProfile(newProfile);
-
-        alert("✅ Profile successfully saved!");
-        document.querySelector(".create-profile-form-container").style.display = "none";
-    } catch (err) {
-        console.error("❌ Error saving profile:", err);
-        alert("Error saving profile.");
-    } finally {
-        hideLoader();
+    if (file) {
+      const res = await uploadToCloudinary(file, "skill");
+      logo = res.imageUrl;
     }
+    skills.push({ name, logo });
+  }
+
+  // Certificates
+  const certificates = [];
+  for (let group of parent.querySelectorAll(".cert-group")) {
+    const name = group.querySelector(".cert-name").value;
+    const file = group.querySelector(".cert-logo-input").files[0];
+    const imgEl = group.querySelector("img");
+    let logo = imgEl.src;
+
+    if (file) {
+      const res = await uploadToCloudinary(file, "certificate");
+      logo = res.imageUrl;
+    }
+    certificates.push({ name, logo });
+  }
+
+  // Save to Firestore
+  await db.collection(PROFILE_COLLECTION).doc(uid || "default").set({
+    profilePhoto: profileUrl,
+    coverPhoto: coverUrl,
+    skills,
+    certificates,
+    updatedAt: new Date(),
+  }, { merge: true });
+
+  alert("✅ Profile saved!");
+  parent.remove();
+  document.querySelector(".create-card-container-parent").style.display = "none";
 }
+// ============================================================
+// Open form when "Edit Profile" button is clicked
+// ============================================================
+document.addEventListener("click", async (e) => {
+  if (e.target.id === "edit-profile-button") {
+    // 🔹 Optionally fetch the current profile data from Firestore
+    let data = {};
+    try {
+      const doc = await db.collection(PROFILE_COLLECTION).doc("default").get();
+      if (doc.exists) data = doc.data();
+    } catch (err) {
+      console.error("Error loading profile:", err);
+    }
+
+    // 🔹 Open form with existing profile data
+    openProfileForm(data);
+  }
+});

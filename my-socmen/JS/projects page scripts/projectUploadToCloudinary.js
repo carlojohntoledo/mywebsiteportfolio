@@ -1,4 +1,6 @@
+// =============================================================
 // ✅ Helper: Compress large images before upload
+// =============================================================
 async function compressImage(file, maxMB = 2, quality = 0.7) {
     return new Promise((resolve, reject) => {
         if (!file.type.startsWith("image/")) return resolve(file); // not an image → skip
@@ -42,27 +44,47 @@ async function compressImage(file, maxMB = 2, quality = 0.7) {
     });
 }
 
+// =============================================================
 // ✅ Upload a single file to Cloudinary
-async function uploadToCloudinary(file, type = "projects") {
+//    - Supports projects, services, activities, profile
+//    - Profile supports sub-folders: profile-pictures, cover-photos,
+//      certificates, skills-logo
+// =============================================================
+async function uploadToCloudinary(file, type = "projects", folder = "") {
     const url = `https://api.cloudinary.com/v1_1/dglegfflv/upload`;
     const formData = new FormData();
-    formData.append("file", file);
 
-    // Map preset per type (if you want separate presets)
+    // ✅ Compress before upload
+    const compressed = await compressImage(file);
+    formData.append("file", compressed);
+
+    // ✅ Map presets per type
     const presetMap = {
         projects: "mysocmed_projects",
         services: "mysocmed_services",
-        activities: "mysocmed_activities"
+        activities: "mysocmed_activities",
+        profile: "mysocmed_profile" // 🔥 NEW preset for profile
     };
 
+    // ✅ Default to projects if no match
     formData.append("upload_preset", presetMap[type] || "mysocmed_projects");
+
+    // ✅ Optional: send folder for better organization
+    if (folder) {
+        formData.append("folder", folder); 
+        // Example: "mysocmed/profile/profile-pictures"
+    }
 
     const response = await fetch(url, { method: "POST", body: formData });
     const data = await response.json();
+
+    if (!response.ok || data.error) {
+        console.error("❌ Cloudinary Upload Error:", data.error);
+        throw new Error(data.error?.message || "Upload failed");
+    }
+
     return {
         imageUrl: data.secure_url || "",
         publicId: data.public_id || ""
     };
 }
-
-
