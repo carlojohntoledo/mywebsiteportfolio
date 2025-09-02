@@ -23,13 +23,7 @@
 
 
     <!-- Standard favicon -->
-    <link rel="icon" type="image/png" sizes="32x32" href="Assets/Images/InstaPort Icons/InstaPort Icon.png">
-
-    <!-- For Apple devices -->
-    <link rel="apple-touch-icon" sizes="180x180" href="Assets/Images/InstaPort Icons/InstaPort Icon.png">
-
-    <!-- Social media preview -->
-    <meta property="og:image" content="https://yourdomain.com/Assets/Images/InstaPort Icons/InstaPort Icon.png">
+    <link rel="icon" type="image/png" href="Assets/Images/InstaPort Icons/InstaPort Icon.png">
 </head>
 
 <body data-page="profile">
@@ -454,28 +448,6 @@
         const container = document.getElementById("certificates-content");
         certificates.forEach(cert => {
             container.insertAdjacentHTML("beforeend", generateCertificateCard(cert.title, cert.desc, cert.certDate, cert.imageUrl));
-        });
-    </script>
-
-    <script>
-        const toggleButton = document.getElementById('theme-toggle');
-        const body = document.body;
-
-        // Load saved theme from localStorage
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
-            body.classList.add(savedTheme);
-        }
-
-        // Toggle theme and save choice
-        toggleButton.addEventListener('click', () => {
-            body.classList.toggle('light-theme');
-
-            if (body.classList.contains('light-theme')) {
-                localStorage.setItem('theme', 'light-theme');
-            } else {
-                localStorage.setItem('theme', '');
-            }
         });
     </script>
 
