@@ -18,15 +18,18 @@
     <link rel="stylesheet" href="CSS/Skills.css">
     <link rel="stylesheet" href="CSS/certificates.css">
 
+    <link rel="stylesheet" href="https://unpkg.com/github-calendar/dist/github-calendar-responsive.css" />
 
-      <!-- Standard favicon -->
-  <link rel="icon" type="image/png" sizes="32x32" href="Assets/Images/InstaPort Icons/InstaPort Icon.png">
 
-  <!-- For Apple devices -->
-  <link rel="apple-touch-icon" sizes="180x180" href="Assets/Images/InstaPort Icons/InstaPort Icon.png">
-  
-  <!-- Social media preview -->
-  <meta property="og:image" content="https://yourdomain.com/Assets/Images/InstaPort Icons/InstaPort Icon.png">
+
+    <!-- Standard favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="Assets/Images/InstaPort Icons/InstaPort Icon.png">
+
+    <!-- For Apple devices -->
+    <link rel="apple-touch-icon" sizes="180x180" href="Assets/Images/InstaPort Icons/InstaPort Icon.png">
+
+    <!-- Social media preview -->
+    <meta property="og:image" content="https://yourdomain.com/Assets/Images/InstaPort Icons/InstaPort Icon.png">
 </head>
 
 <body data-page="profile">
@@ -142,7 +145,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                 </div>
             </section>
 
@@ -242,6 +245,10 @@
 
                 </div>
 
+                <div class="calendar">
+                    Loading GitHub Contributions...
+                </div>
+
 
             </section>
 
@@ -277,7 +284,7 @@
                         <div class="skills-card-container" id="skills-content">
                             <!-- Skill cards will go here -->
                         </div>
-                        
+
                     </div>
                 </div>
 
@@ -475,6 +482,11 @@
 
     <script src="JS/profile page scripts/AboutScript.js"></script>
     <script src="JS/services page scripts/SkillsScript.js"></script>
+
+    <script src="https://unpkg.com/github-calendar"></script>
+    <script>
+        new GitHubCalendar(".calendar", "carlojohntoledo", { responsive: true });
+    </script>
 </body>
 
 </html>
