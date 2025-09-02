@@ -470,14 +470,16 @@
 
 
 .activity-images { display: grid; gap: 0.25rem; }
-.activity-images img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; }
+.activity-images img { width: 100%; height: 100%; object-fit: cover;cursor: pointer;}
 
 
 .grid-1 { grid-template-columns: 1fr; }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; }
+.grid-2 {max-height: 30rem;}
 .grid-3 { display: grid; grid-template-columns: 2fr 1fr; gap: 0.25rem; }
 .grid-3 .big img { height: 100%; }
-.grid-3 .small { display: grid; gap: 0.25rem; }
+.grid-3 .small { display: grid; gap: 0.25rem;}
+.grid-3 .small img {max-height: 15rem;}
 .grid-4 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; }
 .grid-5 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; }
 .grid-5 .overlay-wrapper { position: relative; }
