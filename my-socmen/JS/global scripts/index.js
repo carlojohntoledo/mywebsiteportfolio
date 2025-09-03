@@ -263,3 +263,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error("❌ Error loading profile photo:", err);
     }
 });
+
+async function getProfilePhotoUrl() {
+    try {
+        const docRef = db.collection("profile").doc("user"); // adjust doc id
+        const doc = await docRef.get();
+        if (!doc.exists) return "Assets/Images/Profile Pictures/default-profile-picture.jpg";
+        const data = doc.data();
+        return data.profilePhotoUrl || "Assets/Images/Profile Pictures/default-profile-picture.jpg";
+    } catch (err) {
+        console.error("❌ Error fetching profile photo:", err);
+        return "Assets/Images/Profile Pictures/default-profile-picture.jpg";
+    }
+}

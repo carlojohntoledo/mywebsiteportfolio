@@ -13,7 +13,7 @@ async function loadPostsFromFirestore(type = "projects") {
     showLoader();
 
     try {
-
+        const profilePhotoUrl = await getProfilePhotoUrl();
 
         const snapshot = await db.collection(type)
             .orderBy("pinned", "desc")
@@ -68,7 +68,7 @@ async function loadPostsFromFirestore(type = "projects") {
                                 
                                 <div class="${type}-details-container">
                                     <div class="${type}-name-container">
-                                        <img class="sm-profilepic profile-photo" src="Assets/Images/Profile Pictures/default-profile-picture.jpg" alt="profile picture">
+                                        <img class="sm-profilepic profile-photo" src="${profilePhotoUrl}" alt="profile picture">
                                         <h1>Carlo John Toledo</h1>
                                         <p class="${type}-date" style="color: var(--text-color-sub)">
                                             ${formatTimeAgo(data.createdAt)} 
@@ -151,7 +151,7 @@ async function loadPostsFromFirestore(type = "projects") {
                                 <h1 class="${type}-title">${data.title || ''}</h1>
                                 <div class="${type}-details-container">
                                     <div class="${type}-name-container">
-                                        <img class="xs-profilepic profolie-photo" src="Assets/Images/Profile Pictures/default-profile-picture.jpg" alt="profile picture">
+                                        <img class="xs-profilepic profolie-photo" src="${profilePhotoUrl}" alt="profile picture">
                                         <p>Carlo John Toledo</p>
                                     </div>
                                     <div class="${type}-status-container">
@@ -216,7 +216,7 @@ async function loadPostsFromFirestore(type = "projects") {
                                 <h1 class="${type}-title">${data.title || ''}</h1>
                                 <div class="${type}-details-container">
                                     <div class="${type}-name-container">
-                                        <img class="xs-profilepic profile-photo" src="Assets/Images/Profile Pictures/default-profile-picture.jpg" alt="profile picture">
+                                        <img class="xs-profilepic profile-photo" src="${profilePhotoUrl}" alt="profile picture">
                                         <p>Carlo John Toledo</p>
                                     </div>
                                     <div class="${type}-status-container">
