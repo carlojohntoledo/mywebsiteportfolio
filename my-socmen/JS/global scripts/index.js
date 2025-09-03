@@ -236,3 +236,30 @@ function renderActivityImages(images) {
     });
 
 })();
+
+
+// ================= profile-photo-loader.js =================
+// Loads current user's profile photo from Firestore and updates all pages that use it
+
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        const docRef = db.collection("profile").doc("user"); // update if your doc ID differs
+        const doc = await docRef.get();
+        if (!doc.exists) {
+            console.log("ℹ️ Profile doc not found, using default profile photo.");
+            return;
+        }
+
+        const data = doc.data() || {};
+        const profilePhotoUrl = data.profilePhotoUrl || "Assets/Images/Profile Pictures/default-profile-picture.jpg";
+
+        // Find all img elements that should show profile photo
+        // Add a shared class "profile-photo" to all of them in your HTML
+        const imgs = document.querySelectorAll("img.profile-photo");
+        imgs.forEach(img => {
+            img.src = profilePhotoUrl;
+        });
+    } catch (err) {
+        console.error("❌ Error loading profile photo:", err);
+    }
+});
