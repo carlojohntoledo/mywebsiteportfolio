@@ -485,7 +485,7 @@
 .grid-4 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; }
 .grid-4 img {max-height: 15rem;}
 .grid-5 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; }
-.grid-5 img {max-height: 30rem;}
+.grid-5 img {max-height: 20rem;}
 .grid-5 .overlay-wrapper { position: relative; }
 .grid-5 .overlay {
   position: absolute;
