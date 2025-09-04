@@ -58,6 +58,9 @@ async function loadPostsFromFirestore(type = "projects") {
             }
 
 
+            
+
+
             switch (type) {
                 case "activities":
                     cardInnerHTML = `
@@ -253,6 +256,16 @@ async function loadPostsFromFirestore(type = "projects") {
                     console.warn(`⚠️ Unknown type: ${type}`);
             }
 
+            // Expand/Collapse description toggle
+            container.addEventListener("click", function (e) {
+                if (e.target.classList.contains("toggle-desc")) {
+                    const container = e.target.closest(".project-desc-container");
+                    const text = container.querySelector(".desc-text");
+                    text.classList.toggle("expanded");
+                    e.target.textContent = text.classList.contains("expanded") ? "See Less" : "See More";
+                }
+            });
+
             // Insert card HTML first
             containerDiv.innerHTML = cardInnerHTML;
 
@@ -324,6 +337,8 @@ async function loadPostsFromFirestore(type = "projects") {
     } finally {
         hideLoader();
     }
+
+
 }
 
 
@@ -384,6 +399,8 @@ function postSorter(page, posts) {
         // default fallback
         return 0;
     });
+
+
 }
 
 
