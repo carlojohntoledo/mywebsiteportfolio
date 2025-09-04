@@ -389,6 +389,7 @@
     align-items: center;
     -webkit-line-clamp: 1;
     box-sizing: border-box;
+    text-wrap: nowrap;
 }
 
 .projects-desc-container {

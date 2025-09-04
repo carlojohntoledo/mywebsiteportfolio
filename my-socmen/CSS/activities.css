@@ -257,6 +257,7 @@
     display: flex;
     align-items: center;
     -webkit-line-clamp: 1;
+    text-wrap: nowrap;
     box-sizing: border-box;
 }
 
