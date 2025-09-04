@@ -86,14 +86,6 @@ function showMessage(msg) {
  * getProfileDisplayElements
  * returns references to top-of-page profile display fields (if present)
  */
-function getProfileDisplayElements() {
-    return {
-        nameEl: document.getElementById("profile-name") || document.querySelector(".name-text-container-cont h1"),
-        rolesEl: document.querySelector(".profile-roles"),
-        profileImgEl: document.querySelector(".profilephoto-container img"),
-        coverImgEl: document.querySelector(".coverphoto-container img")
-    };
-}
 
 
 

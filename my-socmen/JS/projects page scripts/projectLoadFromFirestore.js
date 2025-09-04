@@ -14,7 +14,6 @@ async function loadPostsFromFirestore(type = "projects") {
 
     try {
         const profilePhotoUrl = await getProfilePhotoUrl();
-        await prefillProfileDisplay()
         const fullName = await getProfileFullName();
 
         const snapshot = await db.collection(type)
@@ -52,7 +51,7 @@ async function loadPostsFromFirestore(type = "projects") {
             card.classList.add("activities-card");
             card.setAttribute("data-id", doc.id);
 
-            
+
 
             // store all image urls as JSON string
             if (data.images && data.images.length > 0) {
@@ -62,7 +61,7 @@ async function loadPostsFromFirestore(type = "projects") {
             }
 
 
-            
+
 
 
             switch (type) {

@@ -308,30 +308,6 @@ async function getProfilePhotoUrl() {
     }
 }
 
-
-// ================= helpers.js =================
-// Returns full name string from profile collection
-
-async function getProfileFullName() {
-    try {
-        const docRef = db.collection("profile").doc("user"); // adjust doc ID if needed
-        const doc = await docRef.get();
-        if (!doc.exists) return "Unknown User";
-
-        const data = doc.data() || {};
-        const firstName = data.firstName || "";
-        const middleName = data.middleName || "";
-        const lastName = data.lastName || "";
-
-        return [firstName, middleName, lastName]
-            .filter(Boolean) // remove empty parts
-            .join(" ");      // "Carlo John Toledo"
-    } catch (err) {
-        console.error("❌ Error fetching profile name:", err);
-        return "Unknown User";
-    }
-}
-
 // =============================================================
 // ================= Prefill top-of-page profile ==============
 // =============================================================
@@ -340,6 +316,16 @@ async function getProfileFullName() {
  * Loads the profile doc and populates the visible profile fields at top of page.
  * Called on DOMContentLoaded and after profile save.
  */
+
+function getProfileDisplayElements() {
+    return {
+        nameEl: document.getElementById("profile-name") || document.querySelector(".name-text-container-cont h1"),
+        rolesEl: document.querySelector(".profile-roles"),
+        profileImgEl: document.querySelector(".profilephoto-container img"),
+        coverImgEl: document.querySelector(".coverphoto-container img")
+    };
+}
+
 async function prefillProfileDisplay() {
     try {
         const { nameEl, rolesEl, profileImgEl, coverImgEl } = getProfileDisplayElements();
@@ -408,3 +394,4 @@ async function getProfileFullName() {
         return "";
     }
 }
+
