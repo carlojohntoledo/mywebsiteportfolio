@@ -66,7 +66,7 @@ function getFormTemplate(page) {
             <div class="create-post-container">
             <div class="create-${page}-form-container">
                 <div class="create-${page}-header">
-                <h1 class="card-title">Create </h1>
+                <h1 class="card-title">Create ${singular} </h1>
                 <span class="create-${page}-button-container red-btn" id="cancel-btn">Cancel</span>
                 <span class="create-${page}-button-container green-btn" id="activities-post-btn">Post</span>
                 </div>
@@ -140,7 +140,7 @@ function getFormTemplate(page) {
                 <div class="create-post-container">
                 <div class="create-${page}-form-container">
                     <div class="create-${page}-header">
-                    <h1 class="card-title">Create </h1>
+                    <h1 class="card-title">Create ${singular} </h1>
                     <span class="create-${page}-button-container red-btn" id="cancel-btn">Cancel</span>
                     <span class="create-${page}-button-container green-btn" id="services-post-btn">Post</span>
                     </div>
@@ -247,7 +247,7 @@ function getFormTemplate(page) {
             <div class="create-post-container">
             <div class="create-${page}-form-container">
                 <div class="create-${page}-header">
-                <h1 class="card-title">Create </h1>
+                <h1 class="card-title">Create ${singular} </h1>
                 <span class="create-${page}-button-container red-btn" id="cancel-btn">Cancel</span>
                 <span class="create-${page}-button-container green-btn" id="projects-post-btn">Post</span>
                 </div>
