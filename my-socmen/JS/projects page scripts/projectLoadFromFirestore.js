@@ -14,6 +14,7 @@ async function loadPostsFromFirestore(type = "projects") {
 
     try {
         const profilePhotoUrl = await getProfilePhotoUrl();
+        await prefillProfileDisplay()
         const fullName = await getProfileFullName();
 
         const snapshot = await db.collection(type)
@@ -75,7 +76,9 @@ async function loadPostsFromFirestore(type = "projects") {
                                 <div class="${type}-details-container">
                                     <div class="${type}-name-container">
                                         <img class="sm-profilepic profile-photo" src="${profilePhotoUrl}" alt="profile picture">
-                                        <h1 class="profile-name"><a href"profile.html" style="text-decoration: none">${fullName}</a></h1>
+                                        <h1 class="profile-name">
+                                            <a href="profile.html" style="text-decoration: none">${fullName}</a>
+                                        </h1>
                                         <p class="${type}-date" style="color: var(--text-color-sub)">
                                             ${formatTimeAgo(data.createdAt)} 
                                             ${data.updatedAt && data.updatedAt.seconds !== data.createdAt?.seconds ? "(edited)" : ""}
@@ -158,7 +161,9 @@ async function loadPostsFromFirestore(type = "projects") {
                                 <div class="${type}-details-container">
                                     <div class="${type}-name-container">
                                         <img class="xs-profilepic profolie-photo" src="${profilePhotoUrl}" alt="profile picture">
-                                        <p class="profile-name">${fullName}<a href"profile.html" style="text-decoration: none"></a></p>
+                                        <p class="profile-name">
+                                            <a href="profile.html" style="text-decoration: none">${fullName}</a>
+                                        </p>
                                     </div>
                                     <div class="${type}-status-container">
                                         <p class="${type}-date">${data.date || ''}</p>
@@ -223,7 +228,9 @@ async function loadPostsFromFirestore(type = "projects") {
                                 <div class="${type}-details-container">
                                     <div class="${type}-name-container">
                                         <img class="xs-profilepic profile-photo" src="${profilePhotoUrl}" alt="profile picture">
-                                        <p class="profile-name">${fullName}<a href"profile.html" style="text-decoration: none"></a></p>
+                                        <p class="profile-name">
+                                            <a href="profile.html" style="text-decoration: none">${fullName}</a>
+                                        </p>
                                     </div>
                                     <div class="${type}-status-container">
                                         <p class="${type}-date">${data.date || ''}</p>

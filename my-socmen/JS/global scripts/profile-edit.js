@@ -95,43 +95,7 @@ function getProfileDisplayElements() {
     };
 }
 
-// =============================================================
-// ================= Prefill top-of-page profile ==============
-// =============================================================
-/**
- * prefillProfileDisplay()
- * Loads the profile doc and populates the visible profile fields at top of page.
- * Called on DOMContentLoaded and after profile save.
- */
-async function prefillProfileDisplay() {
-    try {
-        const { nameEl, rolesEl, profileImgEl, coverImgEl } = getProfileDisplayElements();
-        // fetch profile doc
-        const docRef = db.collection(PROFILE_DOC_COLLECTION).doc(PROFILE_DOC_ID);
-        const doc = await docRef.get();
-        if (!doc.exists) {
-            console.log("ℹ️ Profile doc not found (prefill display)");
-            return;
-        }
-        const data = doc.data() || {};
 
-        // Build full name from firstname/middlename/lastname (if present)
-        const firstname = data.firstname || "";
-        const middlename = data.middlename ? ` ${data.middlename}` : "";
-        const lastname = data.lastname ? ` ${data.lastname}` : "";
-        const fullName = `${firstname}${middlename}${lastname}`.trim() || nameEl?.textContent || "";
-
-        if (nameEl) nameEl.textContent = fullName;
-        if (rolesEl) rolesEl.textContent = data.roles || rolesEl?.textContent || "";
-
-        // Images
-        if (profileImgEl) profileImgEl.src = data.profilePhotoUrl || "Assets/Images/Profile Pictures/default-profile-picture.jpg";
-        if (coverImgEl) coverImgEl.src = data.coverPhotoUrl || "Assets/Images/Cover Photos/default-cover-photo.png";
-
-    } catch (err) {
-        console.error("❌ Error pre-filling profile display:", err);
-    }
-}
 
 // =============================================================
 // ================= Load Skills & Render ======================

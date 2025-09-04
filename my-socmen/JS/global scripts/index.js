@@ -332,19 +332,79 @@ async function getProfileFullName() {
     }
 }
 
-// ================= profile-name-loader.js =================
-// Loads and updates all elements with class="profile-name"
-
-document.addEventListener("DOMContentLoaded", async () => {
+// =============================================================
+// ================= Prefill top-of-page profile ==============
+// =============================================================
+/**
+ * prefillProfileDisplay()
+ * Loads the profile doc and populates the visible profile fields at top of page.
+ * Called on DOMContentLoaded and after profile save.
+ */
+async function prefillProfileDisplay() {
     try {
-        const fullName = await getProfileFullName();
+        const { nameEl, rolesEl, profileImgEl, coverImgEl } = getProfileDisplayElements();
 
-        // Update all placeholders with .profile-name
-        const els = document.querySelectorAll(".profile-name");
-        els.forEach(el => {
+        const docRef = db.collection(PROFILE_DOC_COLLECTION).doc(PROFILE_DOC_ID);
+        const doc = await docRef.get();
+        if (!doc.exists) {
+            console.log("ℹ️ Profile doc not found (prefill display)");
+            return;
+        }
+
+        const data = doc.data() || {};
+
+        // Build full name
+        const firstname = data.firstname || "";
+        const middlename = data.middlename ? ` ${data.middlename}` : "";
+        const lastname = data.lastname ? ` ${data.lastname}` : "";
+        const fullName = `${firstname}${middlename}${lastname}`.trim() || nameEl?.textContent || "";
+
+        // --- Update "main" display elements
+        if (nameEl) nameEl.textContent = fullName;
+        if (rolesEl) rolesEl.textContent = data.roles || rolesEl?.textContent || "";
+
+        if (profileImgEl) {
+            profileImgEl.src = data.profilePhotoUrl || "Assets/Images/Profile Pictures/default-profile-picture.jpg";
+        }
+        if (coverImgEl) {
+            coverImgEl.src = data.coverPhotoUrl || "Assets/Images/Cover Photos/default-cover-photo.png";
+        }
+
+        // --- NEW: Update all shared elements across pages
+        document.querySelectorAll(".profile-name").forEach(el => {
             el.textContent = fullName;
         });
+        document.querySelectorAll(".profile-role").forEach(el => {
+            el.textContent = data.roles || "";
+        });
+        document.querySelectorAll("img.profile-photo").forEach(img => {
+            img.src = data.profilePhotoUrl || "Assets/Images/Profile Pictures/default-profile-picture.jpg";
+        });
+        document.querySelectorAll("img.cover-photo").forEach(img => {
+            img.src = data.coverPhotoUrl || "Assets/Images/Cover Photos/default-cover-photo.png";
+        });
+
     } catch (err) {
-        console.error("❌ Error loading profile name:", err);
+        console.error("❌ Error pre-filling profile display:", err);
     }
-});
+}
+
+// ================= profile-utils.js =================
+// Returns the full name (First Middle Last) from Firestore profile doc
+
+async function getProfileFullName() {
+    try {
+        const docRef = db.collection(PROFILE_DOC_COLLECTION).doc(PROFILE_DOC_ID);
+        const doc = await docRef.get();
+        if (!doc.exists) return "";
+
+        const data = doc.data() || {};
+        const firstname = data.firstname || "";
+        const middlename = data.middlename ? ` ${data.middlename}` : "";
+        const lastname = data.lastname ? ` ${data.lastname}` : "";
+        return `${firstname}${middlename}${lastname}`.trim();
+    } catch (err) {
+        console.error("❌ Error fetching profile full name:", err);
+        return "";
+    }
+}
