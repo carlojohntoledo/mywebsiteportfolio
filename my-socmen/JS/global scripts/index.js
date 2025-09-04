@@ -308,44 +308,42 @@ async function getProfilePhotoUrl() {
     }
 }
 
-// ================= profile-name-loader.js =================
-// Loads current user's profile name (First, Middle, Last) from Firestore
-// and updates all pages that use it
 
-// Constants (must match your edit form code)
-const PROFILE_DOC_COLLECTION = "profile";
-const PROFILE_DOC_ID = "user"; // update if you use another ID
+// ================= helpers.js =================
+// Returns full name string from profile collection
+
+async function getProfileFullName() {
+    try {
+        const docRef = db.collection("profile").doc("user"); // adjust doc ID if needed
+        const doc = await docRef.get();
+        if (!doc.exists) return "Unknown User";
+
+        const data = doc.data() || {};
+        const firstName = data.firstName || "";
+        const middleName = data.middleName || "";
+        const lastName = data.lastName || "";
+
+        return [firstName, middleName, lastName]
+            .filter(Boolean) // remove empty parts
+            .join(" ");      // "Carlo John Toledo"
+    } catch (err) {
+        console.error("❌ Error fetching profile name:", err);
+        return "Unknown User";
+    }
+}
+
+// ================= profile-name-loader.js =================
+// Loads and updates all elements with class="profile-name"
 
 document.addEventListener("DOMContentLoaded", async () => {
     try {
-        const docRef = db.collection(PROFILE_DOC_COLLECTION).doc(PROFILE_DOC_ID);
-        const doc = await docRef.get();
-        if (!doc.exists) {
-            console.log("ℹ️ Profile doc not found, using default name.");
-            return;
-        }
+        const fullName = await getProfileFullName();
 
-        const data = doc.data() || {};
-        const firstname = data.firstname || "";
-        const middlename = data.middlename || "";
-        const lastname = data.lastname || "";
-
-        // Build full name gracefully
-        const fullName = [firstname, middlename, lastname].filter(Boolean).join(" ");
-
-        // Update all .profile-name elements in the DOM
-        const nameEls = document.querySelectorAll(".profile-name");
-        nameEls.forEach(el => {
+        // Update all placeholders with .profile-name
+        const els = document.querySelectorAll(".profile-name");
+        els.forEach(el => {
             el.textContent = fullName;
         });
-
-        // Also update roles if you want
-        const roles = data.roles || "";
-        const roleEls = document.querySelectorAll(".profile-roles");
-        roleEls.forEach(el => {
-            el.textContent = roles;
-        });
-
     } catch (err) {
         console.error("❌ Error loading profile name:", err);
     }
