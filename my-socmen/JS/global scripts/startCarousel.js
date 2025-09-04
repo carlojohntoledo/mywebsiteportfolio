@@ -22,12 +22,19 @@ function startCarousel(imgElement, images) {
 
     setInterval(() => {
         imgElement.style.opacity = 0;
-        imgElement.style.transform = "scale(1)";
+        imgElement.style.transform = "translate(-50%, -50%) scale(1)";
         setTimeout(() => {
             currentIndex = (currentIndex + 1) % urls.length;
             imgElement.src = urls[currentIndex];
+
+            // reset scale instantly (no transition)
+            imgElement.style.transition = "none";
+            imgElement.style.transform = "translate(-50%, -50%) scale(1)";
+            void imgElement.offsetWidth; // force reflow to apply reset
+
+            imgElement.style.transition = "opacity 1s ease, transform 10s ease";
             imgElement.style.opacity = 1;
-            imgElement.style.transform = "scale(1.15)";
+            imgElement.style.transform = "translate(-50%, -50%) scale(1.1)";
         }, 1000);
-    }, 10000);
+    }, 5000);
 }
