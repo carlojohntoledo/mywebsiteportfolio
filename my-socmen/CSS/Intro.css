@@ -34,6 +34,7 @@ section.intro
     margin-top: 0px;
     /* border: 1px solid red; */
     position: relative;
+    cursor: pointer;
 }
 
 .coverphoto-container img
@@ -69,6 +70,7 @@ section.intro
     position: relative;
     align-items: center;
     display: grid;
+    cursor: pointer;
 }
 
 .profilephoto-container img

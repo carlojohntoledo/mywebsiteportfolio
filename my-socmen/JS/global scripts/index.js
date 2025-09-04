@@ -224,7 +224,7 @@ function renderActivityImages(images) {
     // Attach click handlers to activity, project, service, and certificate images dynamically
     document.body.addEventListener("click", function (e) {
         // Case 1: Activity grid
-        const img = e.target.closest(".activity-images img, .projects-image-container img, .services-image-container img");
+        const img = e.target.closest(".activity-images img, .projects-image-container img, .services-image-container img, .profilephoto-container img");
         if (img) {
             const activityContainer = img.closest(".activity-images");
             if (activityContainer) {
@@ -252,11 +252,22 @@ function renderActivityImages(images) {
             openLightbox([certImg.src], 0);
             return;
         }
+
+        // Case 3: Intro (cover photo & profile photo)
+        const coverImg = e.target.closest(".coverphoto-container img");
+        if (coverImg) {
+            openLightbox([coverImg.src], 0);
+            return;
+        }
+
+        const profileImg = e.target.closest(".profilephoto-container img");
+        if (profileImg) {
+            openLightbox([profileImg.src], 0);
+            return;
+        }
     });
 
 })();
-
-
 
 // ================= profile-photo-loader.js =================
 // Loads current user's profile photo from Firestore and updates all pages that use it
@@ -296,3 +307,46 @@ async function getProfilePhotoUrl() {
         return "Assets/Images/Profile Pictures/default-profile-picture.jpg";
     }
 }
+
+// ================= profile-name-loader.js =================
+// Loads current user's profile name (First, Middle, Last) from Firestore
+// and updates all pages that use it
+
+// Constants (must match your edit form code)
+const PROFILE_DOC_COLLECTION = "profile";
+const PROFILE_DOC_ID = "user"; // update if you use another ID
+
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        const docRef = db.collection(PROFILE_DOC_COLLECTION).doc(PROFILE_DOC_ID);
+        const doc = await docRef.get();
+        if (!doc.exists) {
+            console.log("ℹ️ Profile doc not found, using default name.");
+            return;
+        }
+
+        const data = doc.data() || {};
+        const firstname = data.firstname || "";
+        const middlename = data.middlename || "";
+        const lastname = data.lastname || "";
+
+        // Build full name gracefully
+        const fullName = [firstname, middlename, lastname].filter(Boolean).join(" ");
+
+        // Update all .profile-name elements in the DOM
+        const nameEls = document.querySelectorAll(".profile-name");
+        nameEls.forEach(el => {
+            el.textContent = fullName;
+        });
+
+        // Also update roles if you want
+        const roles = data.roles || "";
+        const roleEls = document.querySelectorAll(".profile-roles");
+        roleEls.forEach(el => {
+            el.textContent = roles;
+        });
+
+    } catch (err) {
+        console.error("❌ Error loading profile name:", err);
+    }
+});
