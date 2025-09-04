@@ -13,7 +13,11 @@ function openPostForm(page, mode = "edit", data = {}, uid) {
     }
 
     // Prefill normal inputs
-    if (data.title) container.querySelector(`.input-${page}-title`).value = data.title;
+    // Prefill normal inputs (skip title for activities)
+    if (page !== "activities" && data.title) {
+        const titleInput = container.querySelector(`.input-${page}-title`);
+        if (titleInput) titleInput.value = data.title;
+    }
     if (data.description) container.querySelector(`.input-${page}-description`).value = data.description;
     if (data.date) container.querySelector(`.input-${page}-date`).value = data.date;
     if (data.status) container.querySelector(`.input-${page}-status`).value = data.status;
