@@ -171,6 +171,15 @@ function renderActivityImages(images) {
         currentIndex = index;
         lightboxImg.src = images[currentIndex];
         lightbox.classList.remove("hidden");
+
+        // ✅ Hide/show navigation buttons
+        if (images.length <= 1) {
+            prevBtn.style.display = "none";
+            nextBtn.style.display = "none";
+        } else {
+            prevBtn.style.display = "";
+            nextBtn.style.display = "";
+        }
     }
 
     // Close lightbox
@@ -182,13 +191,13 @@ function renderActivityImages(images) {
 
     // Navigate
     function showPrev() {
-        if (!images.length) return;
+        if (images.length <= 1) return; // prevent navigation when only 1 image
         currentIndex = (currentIndex - 1 + images.length) % images.length;
         lightboxImg.src = images[currentIndex];
     }
 
     function showNext() {
-        if (!images.length) return;
+        if (images.length <= 1) return; // prevent navigation when only 1 image
         currentIndex = (currentIndex + 1) % images.length;
         lightboxImg.src = images[currentIndex];
     }
@@ -207,50 +216,46 @@ function renderActivityImages(images) {
     document.addEventListener("keydown", (e) => {
         if (lightbox.classList.contains("hidden")) return;
         if (e.key === "Escape") closeLightbox();
+        if (images.length <= 1) return; // ✅ disable arrow keys when only 1 image
         if (e.key === "ArrowLeft") showPrev();
         if (e.key === "ArrowRight") showNext();
     });
 
-
-
-    // Attach click handlers to activity images dynamically
     // Attach click handlers to activity, project, service, and certificate images dynamically
-document.body.addEventListener("click", function (e) {
-    const img = e.target.closest(
-        ".activity-images img, .projects-image-container img, .services-image-container img, .certificate-card img.certificate-image"
-    );
-    if (!img) return;
+    document.body.addEventListener("click", function (e) {
+        // Case 1: Activity grid
+        const img = e.target.closest(".activity-images img, .projects-image-container img, .services-image-container img");
+        if (img) {
+            const activityContainer = img.closest(".activity-images");
+            if (activityContainer) {
+                const imgEls = activityContainer.querySelectorAll("img");
+                const imgList = Array.from(imgEls).map(el => el.src);
+                const index = imgList.indexOf(img.src);
+                openLightbox(imgList, index);
+                return;
+            }
 
-    // Case 1: Activity grid
-    const activityContainer = img.closest(".activity-images");
-    if (activityContainer) {
-        const imgEls = activityContainer.querySelectorAll("img");
-        const imgList = Array.from(imgEls).map(el => el.src);
-        const index = imgList.indexOf(img.src);
-        openLightbox(imgList, index);
-        return;
-    }
+            if (carouselData.has(img)) {
+                const data = carouselData.get(img);
+                openLightbox(data.urls, data.index); // ✅ full list + current index
+                return;
+            }
+        }
 
-    // Case 2: Project/Service carousel
-    if (carouselData.has(img)) {
-        const data = carouselData.get(img);
-        openLightbox(data.urls, data.index); // ✅ full list + current index
-        return;
-    }
+        // Case 2: Certificates (catch clicks on trackers OR image)
+        const certCard = e.target.closest(".certificate-card");
+        if (certCard) {
+            const certImg = certCard.querySelector("img.certificate-image");
+            if (!certImg) return;
 
-    // Case 3: Certificates
-    const certCard = img.closest(".certificate-card");
-    if (certCard) {
-        const imgEls = certCard.querySelectorAll("img.certificate-image");
-        const imgList = Array.from(imgEls).map(el => el.src);
-        const index = imgList.indexOf(img.src);
-        openLightbox(imgList, index);
-        return;
-    }
-});
-
+            // always 1 image per certificate
+            openLightbox([certImg.src], 0);
+            return;
+        }
+    });
 
 })();
+
 
 
 // ================= profile-photo-loader.js =================
