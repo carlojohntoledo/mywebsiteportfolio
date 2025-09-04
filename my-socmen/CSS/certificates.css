@@ -214,7 +214,7 @@ section.certificates-section {
     aspect-ratio: 16/9;
     border-radius: 0.25rem;
     z-index: -1;
-    transition: 300ms ease-in-out-out;
+    transition: all 1s ease;
     filter: blur(0.25rem);
     opacity: 0.5;
 }
@@ -230,20 +230,9 @@ section.certificates-section {
     cursor: pointer;
 }
 
-.tracker:hover~#card #prompt-title {
+.tracker:hover~#card p {
     display: none;
-}
-
-.tracker:hover~#card #prompt-description {
-    display: none;
-}
-
-.tracker:hover~#card #prompt-date {
-    display: none;
-}
-
-.tracker:hover~#card .cert-background {
-    display: none;
+    transition: all 1s ease;
 }
 
 .tracker:hover~#card {
