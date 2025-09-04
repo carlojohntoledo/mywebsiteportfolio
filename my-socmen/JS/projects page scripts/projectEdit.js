@@ -15,15 +15,24 @@ function openPostForm(page, mode = "edit", data = {}, uid) {
     // Prefill normal inputs
     // Prefill normal inputs (skip title for activities)
     if (page !== "activities" && data.title) {
-        const titleInput = container.querySelector(`.input-${page}-title`);
-        if (titleInput) titleInput.value = data.title;
+      const titleInput = container.querySelector(`.input-${page}-title`);
+      const dateInput = container.querySelector(`.input-${page}-date`);
+      const statusInput = container.querySelector(`.input-${page}-status`);
+      const pdfLinkInput = container.querySelector(`.input-${page}-pdf-link`);
+      const linkInput = container.querySelector(`.input-${page}-link`);
+      
+      // Set values if inputs exist
+      if (pdfLinkInput) pdfLinkInput.value = data.pdfLink || "";  
+      if (linkInput) linkInput.value = data.link || "";
+      if (titleInput) titleInput.value = data.title || "";
+      if (dateInput) dateInput.value = data.date || "";
+      if (statusInput) statusInput.value = data.status || "draft"; // Default to "draft" if not set
     }
-    if (data.description) container.querySelector(`.input-${page}-description`).value = data.description;
-    if (data.date) container.querySelector(`.input-${page}-date`).value = data.date;
-    if (data.status) container.querySelector(`.input-${page}-status`).value = data.status;
-    if (data.tags) container.querySelector(`.input-${page}-tags`).value = data.tags;
-    if (data.pdfLink) container.querySelector(`.input-${page}-pdf-link`).value = data.pdfLink;
-    if (data.link) container.querySelector(`.input-${page}-link`).value = data.link;
+
+
+    if (data.description) container.querySelector(`.input-${page}-description`).value = data.description || "";
+    if (data.tags) container.querySelector(`.input-${page}-tags`).value = data.tags || "";
+    if (data.link) container.querySelector(`.input-${page}-link`).value = data.link || "";
 
     // ==============================
     // Prefill images for edit mode
