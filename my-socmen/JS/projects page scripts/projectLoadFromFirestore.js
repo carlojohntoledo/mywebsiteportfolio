@@ -266,14 +266,21 @@ async function loadPostsFromFirestore(type = "projects") {
             }
 
             // Expand/Collapse description toggle
-            container.addEventListener("click", function (e) {
+            card.addEventListener("click", function (e) {
                 if (e.target.classList.contains("toggle-desc")) {
-                    const container = e.target.closest(".project-desc-container");
-                    const text = container.querySelector(".desc-text");
+                    const descContainer = e.target.closest(`.${type}-desc-container`);
+                    if (!descContainer) return;
+
+                    const text = descContainer.querySelector(".desc-text");
+                    if (!text) return;
+
                     text.classList.toggle("expanded");
-                    e.target.textContent = text.classList.contains("expanded") ? "See Less" : "See More";
+                    e.target.textContent = text.classList.contains("expanded")
+                        ? "See Less"
+                        : "See More";
                 }
             });
+
 
             // Insert card HTML first
             containerDiv.innerHTML = cardInnerHTML;

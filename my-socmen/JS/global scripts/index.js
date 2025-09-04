@@ -380,18 +380,20 @@ async function prefillProfileDisplay() {
 
 async function getProfileFullName() {
     try {
-        const docRef = db.collection(PROFILE_DOC_COLLECTION).doc(PROFILE_DOC_ID);
+        const docRef = db.collection("profile").doc("user"); // same as photo function
         const doc = await docRef.get();
         if (!doc.exists) return "";
 
         const data = doc.data() || {};
-        const firstname = data.firstname || "";
-        const middlename = data.middlename ? ` ${data.middlename}` : "";
-        const lastname = data.lastname ? ` ${data.lastname}` : "";
-        return `${firstname}${middlename}${lastname}`.trim();
+        const firstname = data.firstName || data.firstname || "";
+        const middlename = data.middleName || data.middlename || "";
+        const lastname = data.lastName || data.lastname || "";
+
+        return [firstname, middlename, lastname].filter(Boolean).join(" ");
     } catch (err) {
         console.error("❌ Error fetching profile full name:", err);
         return "";
     }
 }
+
 
