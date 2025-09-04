@@ -66,7 +66,7 @@ function getFormTemplate(page) {
             <div class="create-post-container">
             <div class="create-${page}-form-container">
                 <div class="create-${page}-header">
-                <h1 class="card-title">Create ${singular}</h1>
+                <h1 class="card-title">Create </h1>
                 <span class="create-${page}-button-container red-btn" id="cancel-btn">Cancel</span>
                 <span class="create-${page}-button-container green-btn" id="activities-post-btn">Post</span>
                 </div>
@@ -97,14 +97,14 @@ function getFormTemplate(page) {
 
                     <!-- DESCRIPTION -->
                     <div class="create-${page}-containers ${page}-label">
-                    <textarea class="input-${page}-description" required></textarea>
-                    <label>${singular} Description*</label>
+                    <textarea class="input-${page}-description" ></textarea>
+                    <label>Description</label>
                     </div>
 
                     <!-- TAGS -->
                     <div class="create-${page}-containers ${page}-label">
                     <input class="input-${page}-tags" placeholder="html, css, js..." type="text">
-                    <label>${singular} Tags</label>
+                    <label>Tags</label>
                     </div>
 
                     <!-- IMAGE UPLOAD -->
@@ -140,7 +140,7 @@ function getFormTemplate(page) {
                 <div class="create-post-container">
                 <div class="create-${page}-form-container">
                     <div class="create-${page}-header">
-                    <h1 class="card-title">Create ${singular}</h1>
+                    <h1 class="card-title">Create </h1>
                     <span class="create-${page}-button-container red-btn" id="cancel-btn">Cancel</span>
                     <span class="create-${page}-button-container green-btn" id="services-post-btn">Post</span>
                     </div>
@@ -172,13 +172,13 @@ function getFormTemplate(page) {
                         <!-- TITLE -->
                         <div class="create-${page}-containers ${page}-label">
                             <input class="input-${page}-title" type="text" required>
-                            <label>${singular} Title*</label>
+                            <label> Title*</label>
                         </div>
 
                         <!-- DESCRIPTION -->
                         <div class="create-${page}-containers ${page}-label">
                             <textarea class="input-${page}-description" required></textarea>
-                            <label>${singular} Description*</label>
+                            <label> Description*</label>
                         </div>
 
                         <!-- EXPERIENCE + STATUS -->
@@ -192,7 +192,7 @@ function getFormTemplate(page) {
                                     <option value="5-10yrs">5 - 10 years</option>
                                     <option value="10+yrs">More than 10 years</option>
                                 </select>
-                                <label>${singular} Experience*</label>
+                                <label> Experience*</label>
                             </div>
 
                             <!-- Updated STATUS OPTIONS -->
@@ -203,14 +203,14 @@ function getFormTemplate(page) {
                                     <option value="Completed">Completed</option>
                                     <option value="Unavailable">Unavailable</option>
                                 </select>
-                                <label>${singular} Status*</label>
+                                <label> Status*</label>
                             </div>
                         </div>
 
                         <!-- TAGS -->
                         <div class="create-${page}-containers ${page}-label">
                             <input class="input-${page}-tags" placeholder="design, seo, consulting..." type="text">
-                            <label>${singular} Tags</label>
+                            <label> Tags</label>
                         </div>
 
                         <!-- IMAGE UPLOAD -->
@@ -247,7 +247,7 @@ function getFormTemplate(page) {
             <div class="create-post-container">
             <div class="create-${page}-form-container">
                 <div class="create-${page}-header">
-                <h1 class="card-title">Create ${singular}</h1>
+                <h1 class="card-title">Create </h1>
                 <span class="create-${page}-button-container red-btn" id="cancel-btn">Cancel</span>
                 <span class="create-${page}-button-container green-btn" id="projects-post-btn">Post</span>
                 </div>
@@ -279,20 +279,20 @@ function getFormTemplate(page) {
                     <!-- TITLE -->
                     <div class="create-${page}-containers ${page}-label">
                     <input class="input-${page}-title" type="text" required>
-                    <label>${singular} Title*</label>
+                    <label> Title*</label>
                     </div>
 
                     <!-- DESCRIPTION -->
                     <div class="create-${page}-containers ${page}-label">
                     <textarea class="input-${page}-description" required></textarea>
-                    <label>${singular} Description*</label>
+                    <label> Description*</label>
                     </div>
 
                     <!-- DATE + STATUS -->
                     <div class="flex-container">
                     <div class="create-${page}-containers ${page}-label">
                         <input class="input-${page}-date" type="date" required>
-                        <label>${singular} Date*</label>
+                        <label> Date*</label>
                     </div>
                     <div class="create-${page}-containers ${page}-label">
                         <select class="input-${page}-status" required>
@@ -300,25 +300,25 @@ function getFormTemplate(page) {
                         <option value="Under Development">Under Development</option>
                         <option value="Planned">Planned</option>
                         </select>
-                        <label>${singular} Status*</label>
+                        <label> Status*</label>
                     </div>
                     </div>
 
                     <!-- TAGS -->
                     <div class="create-${page}-containers ${page}-label">
                     <input class="input-${page}-tags" placeholder="html, css, js..." type="text">
-                    <label>${singular} Tags</label>
+                    <label> Tags</label>
                     </div>
 
                     <!-- LINKS -->
                     <div class="flex-container">
                     <div class="create-${page}-containers ${page}-label">
                         <input class="input-${page}-pdf-link" type="url" placeholder="https://...">
-                        <label>${singular} PDF Link</label>
+                        <label> PDF Link</label>
                     </div>
                     <div class="create-${page}-containers ${page}-label">
                         <input class="input-${page}-link" type="url" placeholder="https://...">
-                        <label>${singular} Link</label>
+                        <label> Link</label>
                     </div>
                     </div>
 
