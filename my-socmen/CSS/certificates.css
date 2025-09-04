@@ -219,6 +219,25 @@ section.certificates-section {
     opacity: 0.5;
 }
 
+.certificate-card-remove {
+    position: absolute;
+    display: grid;
+    align-items: center;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border-radius: 100%;
+    cursor: pointer;
+    padding: 0.25rem;
+    font-size: var(--font-md);
+    text-align: center;
+    margin: 0;
+    z-index: 201;
+    width: 1.5rem;
+    aspect-ratio: 1/1;
+}
+
 .tracker {
     position: absolute;
     z-index: 200;

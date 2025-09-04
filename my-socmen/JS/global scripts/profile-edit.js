@@ -236,16 +236,17 @@ async function loadCertificatesFromFirestore() {
                       <div class="tracker tr-25"></div>
                       <div class="certificate-card-inner" id="card">
                           <div class="prompt-container">
-                              <img class="cert-background" src="Assets/Images/coc.jpg" />
+                              <img class="cert-background" src="${imgUrl}" alt="${title}" />
                               <p class="prompt-title">${title}</p>
                               <p class="prompt-description">${desc}</p>
                               <p class="prompt-date">${date}</p>
                           </div>
                           <img class="certificate-image" src="${imgUrl}" alt="${title}">
+                          <div class="certificate-card-remove" title="Remove certificate">X</div>
                       </div>
                     </div>
                   </div>
-                  <div class="certificate-card-remove" title="Remove certificate">Delete</div>
+                  
                 </div>
             `;
             container.insertAdjacentHTML("beforeend", cardHtml);
