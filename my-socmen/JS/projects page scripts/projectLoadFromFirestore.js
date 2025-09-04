@@ -265,8 +265,12 @@ async function loadPostsFromFirestore(type = "projects") {
                     console.warn(`⚠️ Unknown type: ${type}`);
             }
 
+            
+            // Insert card HTML first
+            containerDiv.innerHTML = cardInnerHTML;
+
             // Expand/Collapse description toggle
-            card.addEventListener("click", function (e) {
+            containerDiv.addEventListener("click", function (e) {
                 if (e.target.classList.contains("toggle-desc")) {
                     const descContainer = e.target.closest(`.${type}-desc-container`);
                     if (!descContainer) return;
@@ -281,9 +285,6 @@ async function loadPostsFromFirestore(type = "projects") {
                 }
             });
 
-
-            // Insert card HTML first
-            containerDiv.innerHTML = cardInnerHTML;
 
             // Random pastel tags
             const tagsHtml = (data.tags || [])
