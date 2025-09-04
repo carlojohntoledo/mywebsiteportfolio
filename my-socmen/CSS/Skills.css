@@ -85,7 +85,7 @@ section.skills-section {
 
 .skills-content-container {
   width: 95%;
-  height: 25rem;
+  max-height: 25rem;
   /* border: 1px solid yellow; */
   overflow-y: auto;
   display: grid;

@@ -100,7 +100,7 @@
     cursor: pointer;
     text-align: left;
     margin: auto;
-    padding: 1rem 0rem;
+    padding: 0.5rem 0rem;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
@@ -108,7 +108,7 @@
 
 .create-post-btn svg {
     margin: auto;
-    height: 100%;
+    height: 75%;
 }
 
 .create-post-btn p {
@@ -116,6 +116,7 @@
     width: max-content;
     font-weight: bold;
     color: var(--text-color);
+    font-size: var(--font-xs);
     line-clamp: 1;
     white-space: nowrap;
     /* border: 1px solid; */
