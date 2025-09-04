@@ -193,7 +193,7 @@
     grid-template-columns: auto 1fr 1fr;
     grid-template-rows: auto;
     align-items: center;
-    line-clamp: 1;
+    -webkit-line-clamp: 1;
     text-wrap: nowrap;
     /* border: 1px solid red; */
 }
@@ -256,7 +256,7 @@
     transition: background-color 0.3s ease;
     display: flex;
     align-items: center;
-    line-clamp: 1;
+    -webkit-line-clamp: 1;
     box-sizing: border-box;
 }
 
@@ -269,18 +269,18 @@
 
 .desc-text {
     display: -webkit-box;
-    line-clamp: 5;
+    -webkit-line-clamp: 5;
     text-align: justify;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
     transition: max-height 0.3s ease;
     max-height: 6em;
-    /* fallback for browsers not supporting line-clamp */
+    /* fallback for browsers not supporting -webkit-line-clamp */
 }
 
 .desc-text.expanded {
-    line-clamp: unset;
+    -webkit-line-clamp: unset;
     max-height: none;
 }
 
