@@ -214,26 +214,41 @@ function renderActivityImages(images) {
 
 
     // Attach click handlers to activity images dynamically
-    document.body.addEventListener("click", function (e) {
-        const img = e.target.closest(".activity-images img, .projects-image-container img, .services-image-container img");
-        if (!img) return;
+    // Attach click handlers to activity, project, service, and certificate images dynamically
+document.body.addEventListener("click", function (e) {
+    const img = e.target.closest(
+        ".activity-images img, .projects-image-container img, .services-image-container img, .certificate-card img.certificate-image"
+    );
+    if (!img) return;
 
-        // Case 1: Activity grid
-        const activityContainer = img.closest(".activity-images");
-        if (activityContainer) {
-            const imgEls = activityContainer.querySelectorAll("img");
-            const imgList = Array.from(imgEls).map(el => el.src);
-            const index = imgList.indexOf(img.src);
-            openLightbox(imgList, index);
-            return;
-        }
+    // Case 1: Activity grid
+    const activityContainer = img.closest(".activity-images");
+    if (activityContainer) {
+        const imgEls = activityContainer.querySelectorAll("img");
+        const imgList = Array.from(imgEls).map(el => el.src);
+        const index = imgList.indexOf(img.src);
+        openLightbox(imgList, index);
+        return;
+    }
 
-        // Case 2: Project/Service carousel
-        if (carouselData.has(img)) {
-            const data = carouselData.get(img);
-            openLightbox(data.urls, data.index); // ✅ full list + current index
-        }
-    });
+    // Case 2: Project/Service carousel
+    if (carouselData.has(img)) {
+        const data = carouselData.get(img);
+        openLightbox(data.urls, data.index); // ✅ full list + current index
+        return;
+    }
+
+    // Case 3: Certificates
+    const certCard = img.closest(".certificate-card");
+    if (certCard) {
+        const imgEls = certCard.querySelectorAll("img.certificate-image");
+        const imgList = Array.from(imgEls).map(el => el.src);
+        const index = imgList.indexOf(img.src);
+        openLightbox(imgList, index);
+        return;
+    }
+});
+
 
 })();
 
