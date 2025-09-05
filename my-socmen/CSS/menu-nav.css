@@ -34,12 +34,9 @@
     cursor: pointer;
     align-items: center;
     justify-content: center;
-    border-radius: 0.5rem;
-    border: none;
     color: white;
     font-weight: 500;
     /* background: linear-gradient(145deg, #333334, #333334); */
-    background-color: var(--primary-color);
     transition: all 0.2s ease;
     overflow: hidden;
     margin: auto;
@@ -49,8 +46,8 @@
 
 .radio-inputs .menu-radio input:checked+.name {
     /* background: linear-gradient(145deg, #f6f03b, #ac9307); */
-    background-color: var(--accent-color);
-    color: white;
+    border-bottom: 0.25rem var(--accent-color) solid;
+    color: var(--accent-color);
     font-weight: 600;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     transform: translateY(2px);

@@ -4,7 +4,6 @@
     align-content: start;
     justify-content: start;
     /* border: 1px solid; */
-    padding-top: 0.5rem;
     padding-bottom: 1rem;
     overflow-y: auto;
     grid-area: main-section;
@@ -168,7 +167,7 @@
     z-index: 1;
     top: 0;
     left: 0;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
     background-color: black;
     opacity: 1;
     transform: scale(1);
@@ -296,7 +295,7 @@
     text-align: left;
     user-select: none;
     width: 100%;
-    /* border-bottom: 0.1rem solid var(--primary-color); */ 
+    /* border-bottom: 0.1rem solid var(--primary-color); */
 }
 
 .toggle-desc:hover {
@@ -324,7 +323,7 @@
     /* border: 1px solid; */
     display: flex;
     justify-content: end;
-    gap: 1rem; 
+    gap: 1rem;
 }
 
 .addons-container a {
@@ -391,7 +390,7 @@
     right: 1rem;
     top: 0.5rem;
     cursor: pointer;
-    
+
 }
 
 .post-extra-list-container {
@@ -400,7 +399,7 @@
     right: var(--list_position_right);
     top: 1rem;
     display: none;
-    
+
 }
 
 .post-extra-list-container.open {
@@ -471,34 +470,91 @@
 }
 
 
-.activity-images { display: grid; gap: 0.25rem; }
-.activity-images img { width: 100%; height: 100%; object-fit: cover;cursor: pointer;}
+.activity-images {
+    display: grid;
+    gap: 0.25rem;
+}
+
+.activity-images img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+}
 
 
-.grid-1 { grid-template-columns: 1fr; }
-.grid-1 img {max-height: 30rem;}
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; }
-.grid-2 img {max-height: 30rem;}
-.grid-3 { display: grid; grid-template-columns: 2fr 1fr; gap: 0.25rem; }
-.grid-3 .big img { height: 100%; }
-.grid-3 .small { display: grid; gap: 0.25rem;}
-.grid-3 .small img {max-height: 15rem;}
-.grid-4 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; }
-.grid-4 img {max-height: 15rem;}
-.grid-5 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; }
-.grid-5 img {max-height: 20rem;}
-.grid-5 .overlay-wrapper { position: relative; }
+.grid-1 {
+    grid-template-columns: 1fr;
+}
+
+.grid-1 img {
+    max-height: 30rem;
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.25rem;
+}
+
+.grid-2 img {
+    max-height: 30rem;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 0.25rem;
+}
+
+.grid-3 .big img {
+    height: 100%;
+}
+
+.grid-3 .small {
+    display: grid;
+    gap: 0.25rem;
+}
+
+.grid-3 .small img {
+    max-height: 15rem;
+}
+
+.grid-4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.25rem;
+}
+
+.grid-4 img {
+    max-height: 15rem;
+}
+
+.grid-5 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.25rem;
+}
+
+.grid-5 img {
+    max-height: 20rem;
+}
+
+.grid-5 .overlay-wrapper {
+    position: relative;
+}
+
 .grid-5 .overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0,0,0,0.5);
-  color: #fff;
-  font-weight: bold;
-  font-size: 1.25rem;
-  pointer-events: none;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.25rem;
+    pointer-events: none;
 }
 
 

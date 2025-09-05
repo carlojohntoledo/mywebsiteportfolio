@@ -15,19 +15,6 @@
     display: none;
 }
 
-.create-post-container {
-    margin: auto;
-    width: 65vw;
-    height: max-content;
-    grid-template-rows: 100%;
-    background-color: var(--primary-color);
-    border-radius: 1rem;
-    display: grid;
-    padding-bottom: 1rem;
-    position: relative;
-    z-index: 997;
-    /* border: 1px solid green; */
-}
 
 .create-activities-header {
     /* border: 1px solid; */
@@ -66,7 +53,8 @@
 
 .create-activities-form-viewport {
     /* border: 1px solid red; */
-    height: 75vh;
+    height: max-content;
+    max-height: 75vh;
     overflow-y: overlay;
     margin: 1rem;
     border-radius: 1rem;
@@ -341,20 +329,14 @@
         position: fixed;
     }
 
-
-    .create-post-container {
-        width: 100%;
-        border-radius: 0;
-        height: 100%;
-    }
-
     .create-activities-form-container form {
         border-radius: 0;
     }
 
     .create-activities-form-viewport {
         /* border: 1px solid red; */
-        height: 80vh;
+        height: max-content;
+        max-height: 80vh;
         overflow-y: overlay;
         margin: 1rem;
         border-radius: 0;

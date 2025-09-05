@@ -4,7 +4,6 @@
     align-content: start;
     justify-content: start;
     /* border: 1px solid; */
-    padding-top: 0.5rem;
     padding-bottom: 1rem;
     overflow-y: auto;
     grid-area: main-section;

@@ -15,19 +15,7 @@
     display: none;
 }
 
-.create-post-container {
-    margin: auto;
-    width: 65vw;
-    height: max-content;
-    grid-template-rows: 100%;
-    background-color: var(--primary-color);
-    border-radius: 1rem;
-    display: grid;
-    padding-bottom: 1rem;
-    position: relative;
-    z-index: 997;
-    /* border: 1px solid green; */
-}
+
 
 .create-profile-header {
     /* border: 1px solid; */
@@ -67,7 +55,8 @@
 
 .create-profile-form-viewport {
     /* border: 1px solid red; */
-    height: 75vh;
+    height: max-content;
+    max-height: 75vh;
     overflow-y: overlay;
     margin: 1rem;
     border-radius: 1rem;
@@ -464,13 +453,6 @@
 
     .create-card-container-parent {
         position: fixed;
-    }
-
-
-    .create-post-container {
-        width: 100%;
-        border-radius: 0;
-        height: 100%;
     }
 
     .create-profile-form-container form {

@@ -4,7 +4,6 @@
     align-content: start;
     justify-content: start;
     /* border: 1px solid; */
-    padding-top: 0.5rem;
     padding-bottom: 1rem;
     overflow-y: auto;
     grid-area: main-section;
@@ -181,9 +180,10 @@
     z-index: 1;
     top: 0;
     left: 0;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
     background-color: black;
-    transition: opacity 2s ease-in-out, transform 5s linear; /* fade + zoom */
+    transition: opacity 2s ease-in-out, transform 5s linear;
+    /* fade + zoom */
     opacity: 1;
     transform: scale(1);
 }
@@ -342,7 +342,7 @@
     /* border: 1px solid; */
     display: flex;
     justify-content: end;
-    gap: 1rem; 
+    gap: 1rem;
 }
 
 .addons-container a {
@@ -409,7 +409,7 @@
     right: 1rem;
     top: 0.5rem;
     cursor: pointer;
-    
+
 }
 
 .post-extra-list-container {
@@ -418,7 +418,7 @@
     right: var(--list_position_right);
     top: 1rem;
     display: none;
-    
+
 }
 
 .post-extra-list-container.open {

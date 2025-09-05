@@ -320,7 +320,18 @@ textarea {
     font-size: 1.5rem;
 }
 
-
+.create-post-container {
+    margin: auto;
+    width: 65vw;
+    height: max-content;
+    background-color: var(--primary-color);
+    border-radius: 1rem;
+    display: grid;
+    padding-bottom: 1rem;
+    position: relative;
+    z-index: 997;
+    /* border: 1px solid green; */
+}
 
 /* Mobile Responsive Adjustments */
 @media (max-width: 768px) {
@@ -348,6 +359,12 @@ textarea {
     .menu-nav {
         grid-template-columns: 0% 75% 25%;
         grid-template-areas: "menu-nav";
+    }
+
+    .create-post-container {
+        width: 100%;
+        border-radius: 0;
+        height: 100%;
     }
 }
 

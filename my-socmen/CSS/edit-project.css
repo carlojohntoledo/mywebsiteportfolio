@@ -65,7 +65,8 @@
 
 .edit-project-form-viewport {
     /* border: 1px solid red; */
-    height: 75vh;
+    height: max-content;
+    max-height: 75vh;
     overflow-y: overlay;
     margin: 1rem;
     border-radius: 1rem;
@@ -352,7 +353,8 @@
 
     .edit-project-form-viewport {
         /* border: 1px solid red; */
-        height: 80vh;
+        height: max-content;
+        max-height: 80vh;
         overflow-y: overlay;
         margin: 1rem;
         border-radius: 0;

@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (editSkillBtn) {
         editSkillBtn.addEventListener("click", () => {
             console.log("✅ Edit Skill button clicked"); // test log
-            showSkillEditForm();
+            showAddSkillForm();
         });
     } else {
         console.warn("⚠️ Edit Skill button not found");
@@ -32,11 +32,11 @@ document.addEventListener("DOMContentLoaded", () => {
         console.warn("⚠️ Edit Certificate button not found");
     }
 
-    
+
 });
 
 
-function showSkillEditForm() {
+function showAddSkillForm() {
     const editSkillContainer = document.querySelector(".create-card-container-parent");
     if (!editSkillContainer) {
         console.error("❌ Edit form container not found");

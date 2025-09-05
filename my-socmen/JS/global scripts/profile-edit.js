@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (editSkillBtn) {
         editSkillBtn.addEventListener("click", () => {
             console.log("✅ Add New Skill clicked");
-            showSkillEditForm();
+            showAddSkillForm();
         });
     } else {
         console.warn("⚠️ Add New Skill button not found");
@@ -258,14 +258,13 @@ async function handleCertificateRemove(e) {
 // ================= Injected forms (original HTML kept) =======
 // =============================================================
 
-// ---------- showSkillEditForm (kept your original injected markup) ----------
-function showSkillEditForm() {
+// ---------- showAddSkillForm (kept your original injected markup) ----------
+function showAddSkillForm() {
     const editSkillContainer = document.querySelector(".create-card-container-parent");
     if (!editSkillContainer) {
         console.error("❌ Edit form container not found");
         return;
     }
-    console.log("This is Edit")
     editSkillContainer.innerHTML = `
         <!-- SKILLS -->
         <div class="create-post-container">
@@ -967,7 +966,7 @@ document.addEventListener("click", async (e) => {
 // you can attach them to window. Otherwise they remain local to this module.
 // Example:
 // window.showProfileEditForm = showProfileEditForm;
-// window.showSkillEditForm = showSkillEditForm;
+// window.showAddSkillForm = showAddSkillForm;
 // window.showCertificateEditForm = showCertificateEditForm;
 // window.loadSkillsFromFirestore = loadSkillsFromFirestore;
 // window.loadCertificatesFromFirestore = loadCertificatesFromFirestore;
