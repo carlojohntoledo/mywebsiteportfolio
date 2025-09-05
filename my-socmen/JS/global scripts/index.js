@@ -245,6 +245,12 @@ function renderActivityImages(images) {
         // Case 2: Certificates (catch clicks on trackers OR image)
         const certCard = e.target.closest(".certificate-card");
         if (certCard) {
+
+            if (e.target.classList.contains("certificate-card-remove")) {
+                handleCertificateRemove(e);
+                return; // ⛔ stop lightbox
+            }
+
             const certImg = certCard.querySelector("img.certificate-image");
             if (!certImg) return;
 

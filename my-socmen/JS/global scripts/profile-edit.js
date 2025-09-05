@@ -160,49 +160,49 @@ async function loadCertificatesFromFirestore() {
             const imgUrl = c.fileUrl || "Assets/Images/placeholder.svg";
             const publicId = c.filePublicId || "";
 
-            // We'll produce a card similar to your generateCertificateCard markup so CSS matches
+            // 🔹 your original cardHtml preserved
             const cardHtml = `
                 <div class="certificate-card" data-id="${docId}" data-public-id="${publicId}">
-                  <div class="certificate-container noselect">
-                    <div class="canvas">
-                      <div class="tracker tr-1"></div>
-                      <div class="tracker tr-2"></div>
-                      <div class="tracker tr-3"></div>
-                      <div class="tracker tr-4"></div>
-                      <div class="tracker tr-5"></div>
-                      <div class="tracker tr-6"></div>
-                      <div class="tracker tr-7"></div>
-                      <div class="tracker tr-8"></div>
-                      <div class="tracker tr-9"></div>
-                      <div class="tracker tr-10"></div>
-                      <div class="tracker tr-11"></div>
-                      <div class="tracker tr-12"></div>
-                      <div class="tracker tr-13"></div>
-                      <div class="tracker tr-14"></div>
-                      <div class="tracker tr-15"></div>
-                      <div class="tracker tr-16"></div>
-                      <div class="tracker tr-17"></div>
-                      <div class="tracker tr-18"></div>
-                      <div class="tracker tr-19"></div>
-                      <div class="tracker tr-20"></div>
-                      <div class="tracker tr-21"></div>
-                      <div class="tracker tr-22"></div>
-                      <div class="tracker tr-23"></div>
-                      <div class="tracker tr-24"></div>
-                      <div class="tracker tr-25"></div>
-                      <div class="certificate-card-inner" id="card">
-                          <div class="prompt-container">
-                              <img class="cert-background" src="${imgUrl}" alt="${title}" />
-                              <p class="prompt-title">${title}</p>
-                              <p class="prompt-description">${desc}</p>
-                              <p class="prompt-date">${date}</p>
-                          </div>
-                          <img class="certificate-image" src="${imgUrl}" alt="${title}">
-                          <div class="certificate-card-remove" title="Remove certificate">X</div>
-                      </div>
+                
+                    <div class="certificate-card-remove" title="Remove certificate">X</div>
+                    <div class="certificate-container noselect">
+                        <div class="canvas">
+                            <div class="tracker tr-1"></div>
+                            <div class="tracker tr-2"></div>
+                            <div class="tracker tr-3"></div>
+                            <div class="tracker tr-4"></div>
+                            <div class="tracker tr-5"></div>
+                            <div class="tracker tr-6"></div>
+                            <div class="tracker tr-7"></div>
+                            <div class="tracker tr-8"></div>
+                            <div class="tracker tr-9"></div>
+                            <div class="tracker tr-10"></div>
+                            <div class="tracker tr-11"></div>
+                            <div class="tracker tr-12"></div>
+                            <div class="tracker tr-13"></div>
+                            <div class="tracker tr-14"></div>
+                            <div class="tracker tr-15"></div>
+                            <div class="tracker tr-16"></div>
+                            <div class="tracker tr-17"></div>
+                            <div class="tracker tr-18"></div>
+                            <div class="tracker tr-19"></div>
+                            <div class="tracker tr-20"></div>
+                            <div class="tracker tr-21"></div>
+                            <div class="tracker tr-22"></div>
+                            <div class="tracker tr-23"></div>
+                            <div class="tracker tr-24"></div>
+                            <div class="tracker tr-25"></div>
+                            <div class="certificate-card-inner" id="card">
+                                <div class="prompt-container">
+                                    <img class="cert-background" src="${imgUrl}" alt="${title}" />
+                                    <p class="prompt-title">${title}</p>
+                                    <p class="prompt-description">${desc}</p>
+                                    <p class="prompt-date">${date}</p>
+                                </div>
+                                <img class="certificate-image" src="${imgUrl}" alt="${title}">
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                  
                 </div>
             `;
             container.insertAdjacentHTML("beforeend", cardHtml);
@@ -213,6 +213,46 @@ async function loadCertificatesFromFirestore() {
         hideLoader();
     }
 }
+
+// ================= REMOVE CERTIFICATE BUTTON =================
+// =============================================================
+// ✅ Certificate Remove Handler
+// =============================================================
+async function handleCertificateRemove(e) {
+    if (!e.target.classList.contains("certificate-card-remove")) return;
+
+    e.stopPropagation(); // ✅ prevent triggering lightbox
+
+    const certCard = e.target.closest(".certificate-card");
+    if (!certCard) return;
+
+    const docId = certCard.dataset.id;
+    const publicId = certCard.dataset.publicId;
+
+    if (confirm("Are you sure you want to delete this certificate?")) {
+        showLoader();
+        try {
+            // 🔹 Delete from Cloudinary
+            if (publicId) {
+                await deleteFromCloudinary(publicId);
+            }
+
+            // 🔹 Delete from Firestore
+            await db.collection(CERTS_COLLECTION).doc(docId).delete();
+
+            // 🔹 Remove from DOM
+            certCard.remove();
+
+            console.log(`✅ Certificate deleted: ${docId}`);
+        } catch (err) {
+            console.error("❌ Error deleting certificate:", err);
+            alert("Error deleting certificate.");
+        } finally {
+            hideLoader();
+        }
+    }
+}
+
 
 // =============================================================
 // ================= Injected forms (original HTML kept) =======

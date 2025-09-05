@@ -165,7 +165,7 @@ async function loadPostsFromFirestore(type = "projects") {
                                         </p>
                                     </div>
                                     <div class="${type}-status-container">
-                                        <p class="${type}-date">${data.date || ''}</p>
+                                        <p class="${type}-date">Experience: ${data.date || ''}</p>
                                     </div>
                                 </div>
                             </div>
@@ -265,7 +265,7 @@ async function loadPostsFromFirestore(type = "projects") {
                     console.warn(`⚠️ Unknown type: ${type}`);
             }
 
-            
+
             // Insert card HTML first
             containerDiv.innerHTML = cardInnerHTML;
 
