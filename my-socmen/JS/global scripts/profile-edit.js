@@ -265,7 +265,7 @@ function showSkillEditForm() {
         console.error("❌ Edit form container not found");
         return;
     }
-
+    console.log("This is Edit")
     editSkillContainer.innerHTML = `
         <!-- SKILLS -->
         <div class="create-post-container">
