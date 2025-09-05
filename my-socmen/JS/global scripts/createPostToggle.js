@@ -290,18 +290,18 @@ function getFormTemplate(page) {
 
                     <!-- DATE + STATUS -->
                     <div class="flex-container">
-                    <div class="create-${page}-containers ${page}-label">
-                        <input class="input-${page}-date" type="date" required>
-                        <label> Date*</label>
-                    </div>
-                    <div class="create-${page}-containers ${page}-label">
-                        <select class="input-${page}-status" required>
-                        <option value="Published">Published</option>
-                        <option value="Under Development">Under Development</option>
-                        <option value="Planned">Planned</option>
-                        </select>
-                        <label> Status*</label>
-                    </div>
+                        <div class="create-${page}-containers ${page}-label">
+                            <input class="input-${page}-date" type="date" required>
+                            <label> Date*</label>
+                        </div>
+                        <div class="create-${page}-containers ${page}-label">
+                            <select class="input-${page}-status" required>
+                            <option value="Published">Published</option>
+                            <option value="Under Development">Under Development</option>
+                            <option value="Planned">Planned</option>
+                            </select>
+                            <label> Status*</label>
+                        </div>
                     </div>
 
                     <!-- TAGS -->

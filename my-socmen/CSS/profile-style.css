@@ -1,4 +1,3 @@
-
 .profile-content-parent {
     display: grid;
     grid-auto-flow: row;
@@ -16,20 +15,29 @@
 
 .profile-main-content {
     display: grid;
-    width: 100%;;
+    width: 100%;
+    ;
     grid-area: main-content;
     gap: 0.5rem;
     /* border: 1px solid blue; */
     padding-bottom: 1rem;
 }
 
+#profile-coverphoto-preview {
+    max-height: 15rem;
+}
+
+#profile-coverphoto-preview img {
+    object-fit: cover;
+    width: 100%;
+}
 
 
 /* Mobile Responsive Adjustments */
 @media (max-width: 768px) {
 
     .profile-content-parent {
-    grid-template-rows: 7dvh 93dvh;
+        grid-template-rows: 7dvh 93dvh;
 
-}
+    }
 }

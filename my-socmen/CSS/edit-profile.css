@@ -92,6 +92,21 @@
     gap: 0.5rem;
 }
 
+.abt-flex-container {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    color: var(--text-color);
+    flex-wrap: wrap;
+    margin: 0.5rem 0;
+}
+
+.abt-flex-container h1 {
+    width: 70%;
+    font-size: var(--font-xl);
+    /* border: 1px solid; */
+}
+
 .create-profile-containers {
     width: 100%;
     position: relative;
@@ -103,7 +118,6 @@
 .create-profile-containers textarea,
 .create-profile-containers select {
     background-color: transparent;
-    resize: none;
     max-width: 100%;
     width: 100%;
     min-height: 3rem;
@@ -328,6 +342,21 @@
     height: 2rem;
 }
 
+.remove-group-form {
+    margin: 0.5rem;
+    padding: 0.5rem;
+    cursor: pointer;
+    width: 1rem;
+    /* border: 1px solid; */
+    text-align: center;
+    justify-self: end;
+    border-radius: 0.5rem;
+}
+
+.remove-group-form:hover {
+    background-color: #fe4f60;
+}
+
 .profile-image {
     transition: opacity 0.5s ease-in-out;
 }
@@ -336,8 +365,7 @@
     opacity: 0;
 }
 
-.add-new-certificate,
-.add-new-skill {
+.add-new-form {
     margin: auto;
     border: 0.15rem solid var(--primary-color);
     padding: 0.5rem 0.75rem;
@@ -345,8 +373,7 @@
     cursor: pointer;
 }
 
-.add-new-certificate:hover,
-.add-new-skill:hover {
+.add-new-form:hover {
     background-color: var(--secondary-color);
     color: var(--text-color);
 }
@@ -354,13 +381,18 @@
 .profile-group-form {
     grid-template-columns: 100%;
     gap: 0.5rem;
-    border: 1px dashed;
+    border: 0.1rem dashed;
     padding: 1rem 0.5rem;
     color: var(--secondary-color);
     display: grid;
     gap: 1rem;
     overflow-y: auto;
     max-height: 15rem;
+}
+
+.abt-group-form {
+    padding: 0.5rem;
+    border: 1px dashed var(--primary-color);
 }
 
 .skill-group-separator,
@@ -454,5 +486,3 @@
     }
 
 }
-
-

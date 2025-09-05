@@ -105,7 +105,10 @@ if (overviewLink) {
 function showOccupationDetails() {
     var rowTwo = document.getElementById('row-two');
     rowTwo.innerHTML = `
-    <h1>Occupation</h1>
+    <div class="abt-flex-container">
+        <h1>Occupation</h1>
+        <div class="add-new-form" id="add-new-certificate">Add +</div>
+    </div>
     <div id="row-two-container">
         <div class="content-container">
             <img class="companies" src="Assets/Images/itc logo.png" alt="itc">
@@ -180,7 +183,10 @@ if (occupationLink) {
 function showEducationDetails() {
     var rowTwo = document.getElementById('row-two');
     rowTwo.innerHTML = `
-    <h1>Education</h1>
+    <div class="abt-flex-container">
+        <h1>Education</h1>
+        <div class="add-new-form" id="add-new-certificate">Add +</div>
+    </div>
     <div id="row-two-container">
         <h1>Tertiary Education</h1>
         <div class="content-container">
@@ -234,7 +240,10 @@ if (educationLink) {
 function showContactInfoDetails() {
     var rowTwo = document.getElementById('row-two');
     rowTwo.innerHTML = `
-    <h1>Contact info</h1>
+    <div class="abt-flex-container">
+        <h1>Contact Info</h1>
+        <div class="add-new-form" id="add-new-contact">Add +</div>
+    </div>
     <div id="row-two-container">
         <h1>Contact number</h1>
         <div class="content-container">
@@ -377,7 +386,10 @@ if (contactinfoLink) {
 function showAboutmeDetails() {
     var rowTwo = document.getElementById('row-two');
     rowTwo.innerHTML = `
-    <h1>Details about Carlo</h1>
+    <div class="abt-flex-container">
+        <h1>Personal Info</h1>
+        <div class="add-new-form" id="add-new-certificate">Add +</div>
+    </div>
     <div id="row-two-container">
         <h1>Biography</h1>
         <div class="biography-content-container">

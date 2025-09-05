@@ -1,8 +1,6 @@
-@media only screen and (max-width: 768px)
-{
+@media only screen and (max-width: 768px) {
 
-    .bio-container
-    {
+    .bio-container {
         width: 100%;
         border-radius: 0px;
         top: 10px;
@@ -10,29 +8,25 @@
 
     }
 
-    .bio-container .row-one h1
-    {
+    .bio-container .row-one h1 {
         font-size: 5vw;
         margin: 2vw;
     }
 
-    .row-one
-    {
+    .row-one {
         min-width: 200px;
         position: relative;
         display: block;
         margin: 3vw;
     }
 
-    #row-one-container 
-    {
+    #row-one-container {
         width: 100%;
         display: block;
         position: relative;
     }
 
-    #row-one-container  a
-    {
+    #row-one-container a {
         display: block;
         color: var(--text-color-sub);
         text-align: left;
@@ -45,44 +39,38 @@
         transition: background-color 0.5s, color 0.5s, transform 0.5s;
     }
 
-    #row-one-container  a:hover
-    {
+    #row-one-container a:hover {
         background-color: #3A3B3C;
         border-radius: 1rem;
     }
 
-    #row-one-container  a.active 
-    {
-        
+    #row-one-container a.active {
+
         transform: translateY(5px);
         width: 91.5%;
         border-radius: 1rem;
     }
 
-    #row-one-container  p
-    {
+    #row-one-container p {
         margin: 0px;
     }
 
-    .row-two
-    {
+    .row-two {
         position: relative;
         display: grid;
         margin: 0%;
         width: 100%;
     }
 
-    .bio-container .row-two h1
-    {
+    .bio-container .row-two h1 {
         font-size: 4vw;
-        margin: 0%;
+        margin: 0;
         position: relative;
         margin-left: 3vw;
         margin-bottom: 20px;
     }
 
-    #row-two-container 
-    {
+    #row-two-container {
         /*border: 1px solid #3A3B3C;*/
         position: relative;
         width: 90%;
@@ -91,47 +79,40 @@
         margin: auto;
     }
 
-    #row-two-container h1
-    {
+    #row-two-container h1 {
         margin: 0%;
         margin-bottom: 3vw;
     }
 
 
-    #row-two-container .content-container
-    {
+    #row-two-container .content-container {
         width: 100%;
     }
 
-    .icons
-    {
+    .icons {
         width: 100%;
         height: 100%;
     }
 
-    .companies 
-    {
+    .companies {
         width: 8vw;
         height: 8vw;
         margin: 0px;
         border-radius: 100%;
     }
 
-    .content-container .text-container
-    {
+    .content-container .text-container {
         margin: 0px;
         position: relative;
     }
 
-    .text-container h3
-    {
+    .text-container h3 {
         margin: 0;
         font-size: var(--font-md);
         color: var(--text-color);
     }
 
-    .text-container p
-    {
+    .text-container p {
         margin: 0;
         font-size: var(--font-sm);
         color: var(--text-color-sub);
@@ -139,5 +120,5 @@
 
 
 
-        
+
 }

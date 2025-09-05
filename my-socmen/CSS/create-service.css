@@ -1,6 +1,7 @@
 /* ---------- CRATE services FORM ----------- */
 
-.create-card-container-parent {  /* Common for both service and services */
+.create-card-container-parent {
+    /* Common for both service and services */
     width: 100%;
     left: 0;
     top: 0;
@@ -103,7 +104,6 @@
 .create-services-containers textarea,
 .create-services-containers select {
     background-color: transparent;
-    resize: none;
     max-width: 100%;
     width: 100%;
     min-height: 3rem;
@@ -362,4 +362,3 @@
     }
 
 }
-

@@ -180,6 +180,8 @@ body {
 textarea {
     font-family: "Roboto", monospace;
     font-optical-sizing: auto;
+    resize: vertical;
+    overflow: auto;
 }
 
 .content-parent {

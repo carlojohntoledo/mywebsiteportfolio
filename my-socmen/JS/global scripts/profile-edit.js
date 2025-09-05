@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.warn("⚠️ Edit Profile button not found");
     }
 
-    const editSkillBtn = document.querySelector(".add-new-skill");
+    const editSkillBtn = document.querySelector("#add-new-skill");
     if (editSkillBtn) {
         editSkillBtn.addEventListener("click", () => {
             console.log("✅ Add New Skill clicked");
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.warn("⚠️ Add New Skill button not found");
     }
 
-    const editCertificateBtn = document.querySelector(".add-new-certificate");
+    const editCertificateBtn = document.querySelector("#add-new-certificate");
     if (editCertificateBtn) {
         editCertificateBtn.addEventListener("click", () => {
             console.log("✅ Add New Certificate clicked");

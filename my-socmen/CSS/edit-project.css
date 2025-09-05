@@ -103,7 +103,6 @@
 .edit-project-containers textarea,
 .edit-project-containers select {
     background-color: transparent;
-    resize: none;
     max-width: 100%;
     width: 100%;
     min-height: 3rem;
