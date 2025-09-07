@@ -2,50 +2,62 @@
     background-color: var(--tertiary-color);
     position: sticky;
     border-bottom: 0.1rem solid var(--primary-color);
+    display: grid;
 }
 
 .radio-inputs {
     display: grid;
-    grid-template-columns: 25% 25% 25% 25%;
-    grid-template-rows: auto;
-    width: 100%;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    width: 90%;
     height: 100%;
+    gap: 1rem;
     margin: auto;
     align-items: center;
     /* border: 1px solid red; */
 }
 
 .radio-inputs .menu-radio {
-    margin: auto;
     text-align: center;
     text-decoration: none;
-    width: 100%;
-    height: 70%;
     cursor: pointer;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 1fr auto;
     /* border: 1px solid; */
+    width: 100%;
+    height: 100%;
+    position: relative;
 }
 
 .radio-inputs .menu-radio input {
     display: none;
 }
 
+.radio-inputs .menu-radio .menu-icon {
+    /* border: 1px solid blue; */
+    margin: auto;
+    height: 90%;
+    padding: 0 1rem;
+}
+
 .radio-inputs .menu-radio .name {
     display: grid;
     cursor: pointer;
     align-items: center;
-    justify-content: center;
+    justify-self: start;
     color: var(--text-color);
     font-weight: 500;
     transition: all 0.2s ease;
     overflow: hidden;
     margin: auto;
-    width: 90%;
+    width: 100%;
     font-size: var(--font-xs);
+    /* border: 1px solid red; */
 }
 
 .radio-inputs .menu-radio:has(input:checked) .name {
 
-    border-bottom: 0.2rem var(--accent-color) solid;
+    border-bottom: 0.15rem var(--accent-color) solid;
 }
 
 
@@ -292,9 +304,6 @@
 
     .radio-inputs .menu-radio input:checked+.menu-icon,
     .radio-inputs .menu-radio input:checked+.menu-icon path {
-
-        padding: 0rem 1rem;
-        padding-bottom: 0.4rem;
         border-bottom: 0.2rem var(--accent-color) solid;
     }
 

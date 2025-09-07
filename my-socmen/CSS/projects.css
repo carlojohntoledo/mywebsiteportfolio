@@ -401,6 +401,7 @@
     text-overflow: ellipsis;
     transition: max-height 0.3s ease;
     max-height: 6em;
+    white-space: pre-wrap;
     /* fallback for browsers not supporting line-clamp */
 }
 

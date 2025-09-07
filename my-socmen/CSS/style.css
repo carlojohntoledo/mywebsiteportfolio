@@ -182,6 +182,7 @@ textarea {
     font-optical-sizing: auto;
     resize: vertical;
     overflow: auto;
+    white-space: pre-wrap;
 }
 
 .content-parent {
