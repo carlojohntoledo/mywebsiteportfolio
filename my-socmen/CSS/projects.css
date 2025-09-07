@@ -67,6 +67,7 @@
     border: none;
     border-radius: 2rem;
     height: 90%;
+    resize: none;
     /* border-bottom: 0.1rem solid var(--text-color-sub); */
 }
 

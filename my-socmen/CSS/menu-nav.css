@@ -10,7 +10,6 @@
     grid-template-rows: auto;
     width: 100%;
     height: 100%;
-    font-size: var(--font-md);
     margin: auto;
     align-items: center;
     /* border: 1px solid red; */
@@ -22,6 +21,7 @@
     text-decoration: none;
     width: 100%;
     height: 70%;
+    cursor: pointer;
     /* border: 1px solid; */
 }
 
@@ -34,45 +34,36 @@
     cursor: pointer;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: var(--text-color);
     font-weight: 500;
-    /* background: linear-gradient(145deg, #333334, #333334); */
     transition: all 0.2s ease;
     overflow: hidden;
     margin: auto;
-    height: 100%;
     width: 90%;
+    font-size: var(--font-xs);
 }
 
-.radio-inputs .menu-radio input:checked+svg {
-    padding: 0 0.5rem;
-    width: 3rem;
+.radio-inputs .menu-radio:has(input:checked) .name {
+
+    border-bottom: 0.2rem var(--accent-color) solid;
 }
 
-.radio-inputs .menu-radio input:checked+.name,
+
+.radio-inputs .menu-radio:has(input:checked) .name,
 .radio-inputs .menu-radio input:checked+.menu-icon,
 .radio-inputs .menu-radio input:checked+.menu-icon path {
-    /* background: linear-gradient(145deg, #f6f03b, #ac9307); */
-    border-bottom: 0.25rem var(--accent-color) solid;
     color: var(--accent-color);
     font-weight: 600;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     fill: var(--accent-color);
     stroke: none;
-    padding-bottom: 0.3rem;
+    padding-bottom: 0.15rem;
 }
 
 
 /* Hover effect */
-.radio-inputs .menu-radio:hover .name,
 .radio-inputs .menu-radio:hover .menu-icon {
-    /* background: linear-gradient(145deg, #484849, #484849); */
-    transform: translateY(-1px);
-}
-
-.radio-inputs .menu-radio:hover input:checked+.name,
-.radio-inputs .menu-radio:hover input:checked+.menu-icon {
-    transform: translateY(1px);
+    transform: translateY(-0.25rem);
 }
 
 /* Animation */
@@ -88,8 +79,8 @@
 .radio-inputs .menu-radio .menu-icon::after {
     content: "";
     position: absolute;
-    width: 6px;
-    height: 6px;
+    width: 0.5rem;
+    height: 0.5rem;
     border-radius: 50%;
     opacity: 0;
     pointer-events: none;
@@ -297,6 +288,14 @@
 
     .radio-inputs .menu-radio .name {
         display: none;
+    }
+
+    .radio-inputs .menu-radio input:checked+.menu-icon,
+    .radio-inputs .menu-radio input:checked+.menu-icon path {
+
+        padding: 0rem 1rem;
+        padding-bottom: 0.4rem;
+        border-bottom: 0.2rem var(--accent-color) solid;
     }
 
 }

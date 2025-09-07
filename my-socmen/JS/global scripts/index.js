@@ -426,7 +426,7 @@ function showMenuNav() {
                         <path d="M4,8.931V20a1,1,0,0,0,1,1H19a1,1,0,0,0,1-1V8.931a1,1,0,0,0-.441-.828L12,3,4.441,8.1A1,1,0,0,0,4,8.931ZM10,14a1,1,0,0,1,1-1h2a1,1,0,0,1,1,1v5H10Z"></path>
                     </g>
                 </svg>
-                <span class="name">Activity</span>
+                <p class="name">Activity</p>
             </label>
             <label class="menu-radio" data-href="profile.html">
                 <input name="radio" type="radio" ${bodyData === "profile" ? "checked" : ""}/>
