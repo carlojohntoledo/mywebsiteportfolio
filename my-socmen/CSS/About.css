@@ -192,12 +192,19 @@ section.About {
     display: grid;
 }
 
-
-.occupation-delete {
-    /* display: none; */
+.occupation-actions {
     position: absolute;
     top: 0;
     right: 0;
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    gap: 0.25rem;
+}
+
+.occupation-delete,
+.occupation-edit {
+    /* display: none; */
     border-radius: 100%;
     border: none;
     background-color: var(--background-color);
@@ -205,9 +212,18 @@ section.About {
     color: var(--text-color);
     box-shadow: none;
     text-align: center;
+    display: grid;
+    align-items: center;
+    justify-content: center;
 }
 
-.occupation-delete:hover {
+.occupation-edit {
+    border-radius: 0.2rem;
+}
+
+
+.occupation-delete:hover,
+.occupation-edit:hover {
     background-color: #ff3131;
 
 }

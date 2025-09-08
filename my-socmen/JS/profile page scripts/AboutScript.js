@@ -121,30 +121,31 @@ async function showOccupationDetails() {
     if (!container) return;
 
     try {
-        // ✅ Query ordered by "from" (start date), latest first
         const snapshot = await db.collection("occupations")
             .orderBy("from", "desc")
             .get();
 
-        container.innerHTML = ""; // clear first
+        container.innerHTML = "";
 
         snapshot.forEach(doc => {
             const data = doc.data();
 
-            // Format dates
-            const fromDate = data.from ? new Date(data.from).toLocaleDateString() : "";
+            const fromDate = data.from ? new Date(data.from).toISOString().split("T")[0] : "";
             let toDate = "Present";
             if (data.to && data.to !== "Present") {
-                toDate = new Date(data.to).toLocaleDateString();
+                toDate = new Date(data.to).toISOString().split("T")[0];
             }
 
-            // ✅ Add "Former" if ended before today
+            let displayToDate = data.to === "Present"
+                ? "Present"
+                : new Date(data.to).toLocaleDateString();
+
+            // Add "Former" if not present & ended before today
             let jobTitle = data.jobTitle;
             if (data.to && data.to !== "Present" && new Date(data.to) < new Date()) {
                 jobTitle = `Former ${data.jobTitle}`;
             }
 
-            // Build occupation card
             const occupationDiv = document.createElement("div");
             occupationDiv.classList.add("content-container");
             occupationDiv.dataset.id = doc.id;
@@ -172,20 +173,48 @@ async function showOccupationDetails() {
                 </svg>
                 <div class="text-container">
                     <h3>${jobTitle} at ${data.company}</h3>
-                    <p>${fromDate} - ${toDate} <br><br>
+                    <p>${new Date(data.from).toLocaleDateString()} - ${displayToDate} <br><br>
                     ${data.description || ''}</p>
                 </div>
-                <button class="occupation-delete">✖</button>
+                <div class="occupation-actions">
+                    <button class="occupation-edit">Edit</button>
+                    <button class="occupation-delete">✖</button>
+                </div>
             `;
 
             container.appendChild(occupationDiv);
+
+            // ✅ DELETE
+            const delBtn = occupationDiv.querySelector(".occupation-delete");
+            if (delBtn) {
+                delBtn.addEventListener("click", async () => {
+                    if (confirm("Delete this occupation?")) {
+                        await db.collection("occupations").doc(doc.id).delete();
+                        occupationDiv.remove();
+                        console.log("❌ Occupation deleted:", doc.id);
+                    }
+                });
+            }
+
+            // ✅ EDIT
+            const editBtn = occupationDiv.querySelector(".occupation-edit");
+            if (editBtn) {
+                editBtn.addEventListener("click", () => {
+                    showAddOccupationForm({
+                        id: doc.id,
+                        company: data.company,
+                        jobTitle: data.jobTitle,
+                        from: fromDate,
+                        to: data.to || "Present",
+                        description: data.description || ""
+                    });
+                });
+            }
         });
 
     } catch (err) {
         console.error("❌ Error loading occupations:", err);
         container.innerHTML = `<p style="color:red;">Failed to load occupations.</p>`;
-    } finally {
-        if (typeof hideLoader === "function") hideLoader();
     }
 }
 
