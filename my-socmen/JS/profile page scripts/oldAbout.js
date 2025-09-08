@@ -101,76 +101,83 @@ if (overviewLink) {
 
 
 
-// =============================================================
-// ✅ SHOW OCCUPATION DETAILS FROM FIRESTORE
-// =============================================================
-async function showOccupationDetails() {
-    const rowTwo = document.getElementById('row-two');
-    if (!rowTwo) return;
-
-    // Header + Add button
+// Function to change the content of row two when "Occupation" link is clicked
+function showOccupationDetails() {
+    var rowTwo = document.getElementById('row-two');
     rowTwo.innerHTML = `
-        <div class="abt-flex-container">
-            <h1>Occupation</h1>
-            <button class="add-new-form" id="add-new-occupation">Add +</button>
+    <div class="abt-flex-container">
+        <h1>Occupation</h1>
+        <button class="add-new-form" id="add-new-occupation">Add +</button>
+    </div>
+    <div id="row-two-container">
+        <div class="content-container">
+            <img class="companies" src="Assets/Images/itc logo.png" alt="itc">
+            <div class="text-container">
+                <h3>System Administrator at Intelligent Touch Corporation</h3>
+                <p>August 7, 2023 - Present <br> <br>
+                    Responsible for the deployment of the LMS, 
+                    IFS and other system software updated and working. Helping the client's 
+                    tech to setup system environment for the software. Always support and 
+                    troubleshoot the error of the software. Also, helping the co-workers 
+                    needs in the network environment.
+                </p>
+            </div>
         </div>
-        <div id="row-two-container"></div>
-    `;
-
-    const container = document.getElementById('row-two-container');
-    if (!container) return;
-
-    try {
-        // Optional: show loader if you have one
-        // if (typeof showLoader === "function") showLoader();
-
-        const snapshot = await db.collection("occupations")
-            .orderBy("createdAt", "desc")
-            .get();
-
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            const fromDate = data.from ? new Date(data.from).toLocaleDateString() : "";
-            const toDate = data.to ? new Date(data.to).toLocaleDateString() : "Present";
-
-            // Build occupation card
-            const occupationDiv = document.createElement("div");
-            occupationDiv.classList.add("content-container");
-
-            occupationDiv.innerHTML = `
-                <svg class="icons" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"></path>
-                </svg>
-                <div class="text-container">
-                    <h3>${data.jobTitle} at ${data.company}</h3>
-                    <p>${fromDate} - ${toDate} <br><br>
-                    ${data.description || ''}</p>
-                </div>
-            `;
-
-            container.appendChild(occupationDiv);
-        });
-
-    } catch (err) {
-        console.error("❌ Error loading occupations:", err);
-        container.innerHTML = `<p style="color:red;">Failed to load occupations.</p>`;
-    } finally {
-        if (typeof hideLoader === "function") hideLoader();
-    }
+        <div class="content-container">
+            <img class="companies" src="Assets/Images/cvsu logo.png" alt="cvsu">
+            <div class="text-container">
+                <h3>Former IT INSTRUCTOR at Cavite State University Trece Campus</h3>
+                <p>
+                    October 10, 2022 - February 2023 <br> <br>
+                    Prepare lesson plans, course outlines, schedules, and assignments. 
+                    Identify the main objectives and skills or concepts that participants need to learn. 
+                    Explain key concepts and principles, and create assignments or hands-on activities to 
+                    allow students to develop practical skills.
+                </p>
+            </div> 
+        </div>
+        <div class="content-container">
+            <img class="companies" src="Assets/Images/usaid.jpg" alt="usaid">
+            <div class="text-container">
+                <h3>Former Cavite Provincial Health Office Mobile Vaccine Team Encoder under U.S. Agency for International Development (USAID)</h3>
+                <p>
+                    March 2022 - September 2022 <br> <br>
+                    USAID is the world’s premier international development agency and catalytic actor 
+                    driving development results. In partnership with Cavite Provincial Health Office 
+                    to form the Cavite Mobile Vaccine Team giving COVID-19 Vaccines around the province. 
+                    As an Encoder, the task is to record all data in the vaccine cards of the patients 
+                    and encode it using Excel or DVAS, which includes their name, address, age, birthdate, 
+                    telephone number, category, and vaccine inoculated to the patient. 
+                </p>
+            </div> 
+        </div>
+        <div class="content-container">
+            <img class="companies" src="Assets/Images/cvsu logo.png" alt="cvsu">
+            <div class="text-container">
+                <h3>Front-End Website Developer (On the Job Training) Cavite State University - Trece Martires City Campus Website. </h3>
+                <p>
+                    June 2021 - August 2021 <br> <br>
+                    Cavite State University – Trece Martires City Campus Website (cvsutrececampus.com) 
+                    is a website that contains information about the said campus including the student and 
+                    staff portal. As a Front-End Developer of the website, the task given is to input the data 
+                    needed for the creation of the website through the database. 
+                </p>
+            </div> 
+        </div>
+        
+    </div>`;
 }
 
-// Expose globally so Add button can use it
 window.showOccupationDetails = showOccupationDetails;
 
-// Add click listener to the "Occupation" link
-const occupationLink = document.querySelector('#row-one-container a[href="#Occupation"]');
+// Add an event listener to the "Occupation" link
+var occupationLink = document.querySelector('#row-one-container a[href="#Occupation"]');
 if (occupationLink) {
     occupationLink.addEventListener('click', function (event) {
-        event.preventDefault();
-        showOccupationDetails();
+        event.preventDefault(); // Prevent default link behavior
+        showOccupationDetails(); // Call the function to show occupation details
     });
 }
-
 
 
 
