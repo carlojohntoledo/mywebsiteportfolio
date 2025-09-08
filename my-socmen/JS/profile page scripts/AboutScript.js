@@ -112,7 +112,7 @@ async function showOccupationDetails() {
     rowTwo.innerHTML = `
         <div class="abt-flex-container">
             <h1>Employment History</h1>
-            <button class="add-new-form" id="add-new-occupation">Add +</button>
+            <button class="add-new-form-btn" id="add-new-occupation">+</button>
         </div>
         <div id="row-two-container"></div>
     `;

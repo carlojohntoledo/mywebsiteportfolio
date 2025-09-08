@@ -112,6 +112,22 @@ section.About {
     margin: auto;
 }
 
+.add-new-form-btn {
+    margin: auto;
+    border: 0.15rem solid var(--primary-color);
+    font-size: var(--font-xl);
+    color: var(--text-color);
+    background-color: transparent;
+    padding: 0.25rem 0.75rem;
+    width: max-content;
+    cursor: pointer;
+}
+
+.add-new-form-btn:hover {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+}
+
 #row-two-container .content-container {
     width: 100%;
     height: max-content;
