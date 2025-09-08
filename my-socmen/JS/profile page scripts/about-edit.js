@@ -1,6 +1,6 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("click", () => {
     // Wire up the main buttons that open the injected forms
-    const addOccupation = document.getElementById("add-new-occupation");
+    const addOccupation = e.target.closest("#add-new-occupation");
     if (addOccupation) {
         addOccupation.addEventListener("click", () => {
             console.log("✅ Add Occupation button clicked");
@@ -10,30 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
         console.warn("⚠️ Add Occupation button not found");
     }
 
-    const editSkillBtn = document.querySelector("#add-new-skill");
-    if (editSkillBtn) {
-        editSkillBtn.addEventListener("click", () => {
-            console.log("✅ Add New Skill clicked");
-            showAddSkillForm();
-        });
-    } else {
-        console.warn("⚠️ Add New Skill button not found");
-    }
-
-    const editCertificateBtn = document.querySelector("#add-new-certificate");
-    if (editCertificateBtn) {
-        editCertificateBtn.addEventListener("click", () => {
-            console.log("✅ Add New Certificate clicked");
-            showCertificateEditForm();
-        });
-    } else {
-        console.warn("⚠️ Add New Certificate button not found");
-    }
-
-    // Load skills & certificates on page load so profile shows latest data
-    loadSkillsFromFirestore();       // populates #skills-content
-    loadCertificatesFromFirestore(); // populates #certificates-content
-    prefillProfileDisplay();         // prefills top-of-page profile (profile-name, profile-roles, images)
 });
 
 
