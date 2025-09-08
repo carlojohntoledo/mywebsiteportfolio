@@ -107,7 +107,7 @@ function showOccupationDetails() {
     rowTwo.innerHTML = `
     <div class="abt-flex-container">
         <h1>Occupation</h1>
-        <div class="add-new-form" id="add-new-certificate">Add +</div>
+        <div class="add-new-form" id="add-new-occupation">Add +</div>
     </div>
     <div id="row-two-container">
         <div class="content-container">
