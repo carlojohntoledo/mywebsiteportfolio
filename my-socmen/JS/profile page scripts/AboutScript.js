@@ -111,7 +111,7 @@ async function showOccupationDetails() {
     // Header + Add button
     rowTwo.innerHTML = `
         <div class="abt-flex-container">
-            <h1>Occupation</h1>
+            <h1>Employment History</h1>
             <button class="add-new-form" id="add-new-occupation">Add +</button>
         </div>
         <div id="row-two-container"></div>
@@ -136,6 +136,7 @@ async function showOccupationDetails() {
             // Build occupation card
             const occupationDiv = document.createElement("div");
             occupationDiv.classList.add("content-container");
+            occupationDiv.dataset.id = doc.id;
 
             occupationDiv.innerHTML = `
                 <svg class="icons" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -146,6 +147,7 @@ async function showOccupationDetails() {
                     <p>${fromDate} - ${toDate} <br><br>
                     ${data.description || ''}</p>
                 </div>
+                <button class="occupation-delete">✖</button>
             `;
 
             container.appendChild(occupationDiv);
@@ -170,6 +172,34 @@ if (occupationLink) {
         showOccupationDetails();
     });
 }
+
+document.addEventListener("click", async (e) => {
+    const delBtn = e.target.closest(".occupation-delete");
+    if (!delBtn) return;
+
+    const card = delBtn.closest(".content-container");
+    const docId = card?.dataset.id;
+    if (!docId) return;
+
+    if (!confirm("🗑️ Delete this occupation?")) return;
+
+    try {
+        if (typeof showLoader === "function") showLoader();
+
+        // Delete document from Firestore
+        await db.collection("occupations").doc(docId).delete();
+
+        // Remove from UI immediately
+        card.remove();
+
+        console.log(`✅ Deleted occupation ${docId}`);
+    } catch (err) {
+        console.error("❌ Error deleting occupation:", err);
+        alert(err.message || "Error deleting occupation.");
+    } finally {
+        if (typeof hideLoader === "function") hideLoader();
+    }
+});
 
 
 

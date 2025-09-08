@@ -62,13 +62,6 @@
         width: 100%;
     }
 
-    .bio-container .row-two h1 {
-        font-size: 4vw;
-        margin: 0;
-        position: relative;
-        margin-left: 3vw;
-        margin-bottom: 20px;
-    }
 
     #row-two-container {
         /*border: 1px solid #3A3B3C;*/
@@ -79,14 +72,24 @@
         margin: auto;
     }
 
-    #row-two-container h1 {
-        margin: 0%;
-        margin-bottom: 3vw;
+    .abt-flex-container {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 0.5rem;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-color);
+    }
+
+    .abt-flex-container h1 {
+        font-size: var(--font-xl);
+        /* border: 1px solid red; */
     }
 
 
     #row-two-container .content-container {
         width: 100%;
+        /* border-left: 0.2rem solid var(--accent-color); */
     }
 
     .companies {

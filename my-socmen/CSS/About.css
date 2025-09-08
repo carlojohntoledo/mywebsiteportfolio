@@ -84,7 +84,6 @@ section.About {
     /* border: 1px solid red; */
 }
 
-
 #row-two-container {
     /* border: 1px solid #3A3B3C; */
     position: relative;
@@ -92,6 +91,25 @@ section.About {
     display: block;
     gap: 1rem;
     margin: 0;
+}
+
+.abt-flex-container {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color);
+    flex-wrap: wrap;
+    /* border: 1px solid; */
+    margin: 0rem 0.5rem;
+}
+
+.abt-flex-container h1 {
+    width: 100%;
+    font-size: var(--font-xl);
+    /* border: 1px solid; */
+    margin: auto;
 }
 
 #row-two-container .content-container {
@@ -156,4 +174,20 @@ section.About {
     height: max-content;
     position: relative;
     display: grid;
+}
+
+
+.occupation-delete {
+    /* display: none; */
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-radius: 100%;
+    background-color: var(--primary-color);
+    cursor: pointer;
+}
+
+.occupation-delete:hover {
+    background-color: #ff3131;
+
 }

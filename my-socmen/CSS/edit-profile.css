@@ -81,20 +81,7 @@
     gap: 0.5rem;
 }
 
-.abt-flex-container {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    color: var(--text-color);
-    flex-wrap: wrap;
-    margin: 0.5rem 0;
-}
 
-.abt-flex-container h1 {
-    width: 70%;
-    font-size: var(--font-xl);
-    /* border: 1px solid; */
-}
 
 .create-profile-containers {
     width: 100%;
