@@ -221,12 +221,14 @@ document.addEventListener("click", async (e) => {
         // Remove from UI immediately
         card.remove();
 
+
         console.log(`✅ Deleted occupation ${docId}`);
     } catch (err) {
         console.error("❌ Error deleting occupation:", err);
         alert(err.message || "Error deleting occupation.");
     } finally {
         if (typeof hideLoader === "function") hideLoader();
+        showOccupationDetails();
     }
 });
 

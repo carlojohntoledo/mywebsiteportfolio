@@ -134,8 +134,16 @@ function showAddOccupationForm() {
 document.addEventListener("click", (e) => {
     const saveBtn = e.target.closest("#profile-post-btn");
     if (saveBtn) {
-        e.preventDefault();
-        saveOccupation();
+
+        try {
+            e.preventDefault();
+            saveOccupation();
+        } catch (err) {
+            console.error("❌ Error saving occupation:", err);
+            alert(err.message || "Error saving occupation.");
+        } finally {
+            showOccupationDetails();
+        }
     }
 });
 
@@ -185,6 +193,8 @@ async function saveOccupation() {
 
         container.style.display = "none";
         container.innerHTML = "";
+
+
 
     } catch (err) {
         console.error("❌ Error saving occupation:", err);
