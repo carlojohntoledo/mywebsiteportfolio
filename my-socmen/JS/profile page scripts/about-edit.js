@@ -73,14 +73,20 @@ function showAddOccupationForm() {
                         <!-- Date -->
                         <div class="flex-container">
                             <div class="create-profile-containers profile-label">
-                                <input class="input-profile-date" type="date" required>
+                                <input class="input-profile-date" id="profile-fromdate" type="date" required>
                                 <label>From*</label>
                             </div>
                             <div class="create-profile-containers profile-label">
-                                <input class="input-profile-date" type="date" required>
+                                <select class="input-profile-date" id="profile-todate" required>
+                                    <option value="Present">Present</option>
+                                    <option value="custom">Pick a Date</option>
+                                </select>
                                 <label>To*</label>
+                                <!-- Hidden date input shown only if "Pick a Date" is selected -->
+                                <input class="input-profile-date hidden" id="profile-todate-custom" type="date">
                             </div>
                         </div>
+
 
                         <!-- Description -->
                         <div class="flex-container">
@@ -106,6 +112,20 @@ function showAddOccupationForm() {
     } else {
         console.warn("⚠️ Cancel button not found in injected skill form.");
     }
+
+    document.addEventListener("change", (e) => {
+        if (e.target.id === "profile-todate") {
+            const customDateInput = document.getElementById("profile-todate-custom");
+            if (e.target.value === "custom") {
+                customDateInput.classList.remove("hidden");
+                customDateInput.required = true;
+            } else {
+                customDateInput.classList.add("hidden");
+                customDateInput.required = false;
+            }
+        }
+    });
+
 }
 
 // =============================================================
@@ -125,17 +145,24 @@ async function saveOccupation() {
 
     const companyEl = document.getElementById("profile-companyname");
     const jobTitleEl = document.getElementById("profile-jobtitle");
-    const fromDateEl = container.querySelectorAll(".input-profile-date")[0];
-    const toDateEl = container.querySelectorAll(".input-profile-date")[1];
+    const fromDateEl = document.getElementById("profile-fromdate");
+    const toDateSelect = document.getElementById("profile-todate");
+    const toDateCustom = document.getElementById("profile-todate-custom");
     const descEl = container.querySelector(".input-profile-description");
     const errorEl = container.querySelector("#form-warning");
 
     // Simple validation
-    if (!companyEl.value.trim() || !jobTitleEl.value.trim() || !fromDateEl.value || !toDateEl.value || !descEl.value.trim()) {
+    if (!companyEl.value.trim() || !jobTitleEl.value.trim() || !fromDateEl.value || !descEl.value.trim()) {
         if (errorEl) errorEl.style.display = "flex";
         return;
     } else if (errorEl) {
         errorEl.style.display = "none";
+    }
+
+    // Handle toDate
+    let toDate = "Present";
+    if (toDateSelect.value === "custom" && toDateCustom.value) {
+        toDate = toDateCustom.value;
     }
 
     // Prepare payload
@@ -143,31 +170,22 @@ async function saveOccupation() {
         company: companyEl.value.trim(),
         jobTitle: jobTitleEl.value.trim(),
         from: fromDateEl.value,
-        to: toDateEl.value,
+        to: toDate,
         description: descEl.value.trim(),
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
     try {
-        // Optionally show loader
         if (typeof showLoader === "function") showLoader();
 
-        // Add to Firestore (collection: "occupations")
         await db.collection("occupations").add(payload);
 
         console.log("✅ Occupation saved successfully");
 
-        // Clear form + hide container
         container.style.display = "none";
         container.innerHTML = "";
 
-        // Refresh occupation list
-        if (typeof loadOccupationsFromFirestore === "function") {
-            await loadOccupationsFromFirestore();
-        }
-
-        alert("✅ Occupation saved successfully!");
     } catch (err) {
         console.error("❌ Error saving occupation:", err);
         alert(err.message || "Error saving occupation.");

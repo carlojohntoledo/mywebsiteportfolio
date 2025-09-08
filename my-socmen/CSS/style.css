@@ -133,6 +133,10 @@ body {
 
 }
 
+.hidden {
+    display: none;
+}
+
 .loader-container {
     position: absolute;
     width: 100%;
