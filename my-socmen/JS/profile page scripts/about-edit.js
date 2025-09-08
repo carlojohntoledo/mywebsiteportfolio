@@ -1,25 +1,22 @@
-document.addEventListener("click", () => {
+document.addEventListener("click", (e) => {
     // Wire up the main buttons that open the injected forms
     const addOccupation = e.target.closest("#add-new-occupation");
     if (addOccupation) {
-        addOccupation.addEventListener("click", () => {
-            console.log("✅ Add Occupation button clicked");
-            showAddOccupationForm(); // injects and opens form; prefill handled inside function
-        });
-    } else {
-        console.warn("⚠️ Add Occupation button not found");
+        console.log("✅ Add Occupation button clicked");
+        showAddOccupationForm(); // injects and opens form; prefill handled inside function
     }
 
 });
 
 
-
 function showAddOccupationForm() {
     const addOcuppationCont = document.querySelector(".create-card-container-parent");
+    addOcuppationCont.style.display = "grid";
     if (!addOcuppationCont) {
         console.error("❌ Occupation form container not found");
         return;
     }
+
     addOcuppationCont.innerHTML = `
         <div class="create-post-container">
             <div class="create-profile-form-container">
@@ -99,4 +96,82 @@ function showAddOccupationForm() {
             </div>
         </div>
     `;
+
+    const cancelBtn = addOcuppationCont.querySelector('#cancel-btn');
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', () => {
+            addOcuppationCont.style.display = "none";
+            addOcuppationCont.innerHTML = "";
+        });
+    } else {
+        console.warn("⚠️ Cancel button not found in injected skill form.");
+    }
+}
+
+// =============================================================
+// ✅ ADD SUBMIT/SAVE FOR OCCUPATION FORM
+// =============================================================
+document.addEventListener("click", (e) => {
+    const saveBtn = e.target.closest("#profile-post-btn");
+    if (saveBtn) {
+        e.preventDefault();
+        saveOccupation();
+    }
+});
+
+async function saveOccupation() {
+    const container = document.querySelector(".create-card-container-parent");
+    if (!container) return;
+
+    const companyEl = document.getElementById("profile-companyname");
+    const jobTitleEl = document.getElementById("profile-jobtitle");
+    const fromDateEl = container.querySelectorAll(".input-profile-date")[0];
+    const toDateEl = container.querySelectorAll(".input-profile-date")[1];
+    const descEl = container.querySelector(".input-profile-description");
+    const errorEl = container.querySelector("#form-warning");
+
+    // Simple validation
+    if (!companyEl.value.trim() || !jobTitleEl.value.trim() || !fromDateEl.value || !toDateEl.value || !descEl.value.trim()) {
+        if (errorEl) errorEl.style.display = "flex";
+        return;
+    } else if (errorEl) {
+        errorEl.style.display = "none";
+    }
+
+    // Prepare payload
+    const payload = {
+        company: companyEl.value.trim(),
+        jobTitle: jobTitleEl.value.trim(),
+        from: fromDateEl.value,
+        to: toDateEl.value,
+        description: descEl.value.trim(),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    try {
+        // Optionally show loader
+        if (typeof showLoader === "function") showLoader();
+
+        // Add to Firestore (collection: "occupations")
+        await db.collection("occupations").add(payload);
+
+        console.log("✅ Occupation saved successfully");
+
+        // Clear form + hide container
+        container.style.display = "none";
+        container.innerHTML = "";
+
+        // Refresh occupation list
+        if (typeof loadOccupationsFromFirestore === "function") {
+            await loadOccupationsFromFirestore();
+        }
+
+        alert("✅ Occupation saved successfully!");
+    } catch (err) {
+        console.error("❌ Error saving occupation:", err);
+        alert(err.message || "Error saving occupation.");
+    } finally {
+        if (typeof hideLoader === "function") hideLoader();
+    }
 }
