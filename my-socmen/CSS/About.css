@@ -119,8 +119,8 @@ section.About {
     color: var(--text-color);
     background-color: transparent;
     padding: 0.25rem 0.75rem;
-    width: max-content;
     cursor: pointer;
+    box-shadow: none;
 }
 
 .add-new-form-btn:hover {
@@ -199,8 +199,12 @@ section.About {
     top: 0;
     right: 0;
     border-radius: 100%;
-    background-color: var(--primary-color);
+    border: none;
+    background-color: var(--background-color);
     cursor: pointer;
+    color: var(--text-color);
+    box-shadow: none;
+    text-align: center;
 }
 
 .occupation-delete:hover {
