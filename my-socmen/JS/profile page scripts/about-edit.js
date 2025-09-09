@@ -257,7 +257,7 @@ function showAddEducationForm(existingData = null) {
                         <!-- Education Level -->
                         <div class="flex-container">
                         <div class="create-profile-containers profile-label">
-                            <select class="input-profile-date" id="aboutme-level" required>
+                            <select class="input-profile-date" id="edu-level" required>
                             <option value="primary">Primary</option>
                             <option value="secondary">Secondary</option>
                             <option value="tertiary">Tertiary</option>
