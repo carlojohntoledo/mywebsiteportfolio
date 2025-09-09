@@ -35,7 +35,7 @@ function showAddOccupationForm(existingData = null) {
                 <div class="create-profile-header">
                     <h1 class="card-title">About Me</h1>
                     <span class="create-profile-button-container red-btn" id="cancel-btn">Cancel</span>
-                    <span class="create-profile-button-container green-btn" id="profile-post-btn">
+                    <span class="create-profile-button-container green-btn" id="occupation-post-btn">
                         ${isEdit ? "Update" : "Save"}
                     </span>
                 </div>
@@ -105,7 +105,7 @@ function showAddOccupationForm(existingData = null) {
     });
 
     // save/update
-    const saveBtn = addOcuppationCont.querySelector("#profile-post-btn");
+    const saveBtn = addOcuppationCont.querySelector("#occupation-post-btn");
     saveBtn.addEventListener("click", async (e) => {
         e.preventDefault();
         const payload = {
@@ -152,7 +152,7 @@ function showAddOccupationForm(existingData = null) {
 // ✅ ADD SUBMIT/SAVE FOR OCCUPATION FORM
 // =============================================================
 document.addEventListener("click", (e) => {
-    const saveBtn = e.target.closest("#profile-post-btn");
+    const saveBtn = e.target.closest("#occupation-post-btn");
     if (saveBtn) {
 
         try {
@@ -241,7 +241,7 @@ function showAddEducationForm(existingData = null) {
                 <div class="create-profile-header">
                     <h1 class="card-title">About Me</h1>
                     <span class="create-profile-button-container red-btn" id="cancel-btn">Cancel</span>
-                    <span class="create-profile-button-container green-btn" id="profile-post-btn">
+                    <span class="create-profile-button-container green-btn" id="education-post-btn">
                         ${isEdit ? "Update" : "Save"}
                     </span>
                 </div>
@@ -360,7 +360,7 @@ function showAddEducationForm(existingData = null) {
     toggleCourseField(); // initialize on load
 
     // save/update
-    const saveBtn = addEducationCont.querySelector("#profile-post-btn");
+    const saveBtn = addEducationCont.querySelector("#education-post-btn");
     saveBtn.addEventListener("click", async (e) => {
         e.preventDefault();
         const payload = {
@@ -403,7 +403,7 @@ function showAddEducationForm(existingData = null) {
 // ✅ ADD SUBMIT/SAVE FOR EDUCATION FORM
 // =============================================================
 document.addEventListener("click", (e) => {
-    const saveBtn = e.target.closest("#profile-post-btn");
+    const saveBtn = e.target.closest("#education-post-btn");
     if (saveBtn) {
         try {
             e.preventDefault();
