@@ -272,7 +272,7 @@ function showAddEducationForm(existingData = null) {
                         <!-- University/School Name -->
                         <div class="flex-container">
                         <div class="create-profile-containers profile-label">
-                            <input class="input-profile-title" id="aboutme-schoolname" type="text" required>
+                            <input class="input-profile-title" id="edu-schoolname" type="text" required>
                             <label>University/School Name*</label>
                         </div>
                         </div>
@@ -280,7 +280,7 @@ function showAddEducationForm(existingData = null) {
                         <!-- School Address -->
                         <div class="flex-container">
                         <div class="create-profile-containers profile-label">
-                            <input class="input-profile-title" id="aboutme-schooladdress" type="text" required>
+                            <input class="input-profile-title" id="edu-schooladdress" type="text" required>
                             <label>University/School Address*</label>
                         </div>
                         </div>
@@ -296,7 +296,7 @@ function showAddEducationForm(existingData = null) {
                         <!-- Enrollment Status -->
                         <div class="flex-container">
                         <div class="create-profile-containers profile-label">
-                            <select class="input-profile-date" id="aboutme-status" required>
+                            <select class="input-profile-date" id="edu-status" required>
                             <option value="Graduate">Graduate</option>
                             <option value="Under Graduate">Under Graduate</option>
                             <option value="Drop Out">Drop Out</option>
@@ -309,11 +309,11 @@ function showAddEducationForm(existingData = null) {
                         <!-- Date -->
                         <div class="flex-container">
                         <div class="create-profile-containers profile-label">
-                            <input class="input-profile-date" id="aboutme-fromdate" type="date" required>
+                            <input class="input-profile-date" id="edu-fromdate" type="date" required>
                             <label>From*</label>
                         </div>
                         <div class="create-profile-containers profile-label">
-                            <input class="input-profile-date" id="aboutme-todate" type="date">
+                            <input class="input-profile-date" id="edu-todate" type="date">
                             <label>To*</label>
                         </div>
                         </div>
