@@ -309,11 +309,11 @@ function showAddEducationForm(existingData = null) {
                         <!-- Date -->
                         <div class="flex-container">
                         <div class="create-profile-containers profile-label">
-                            <input class="input-profile-date" id="edu-fromdate" type="date" required>
+                            <input class="input-profile-date" id="edu-from" type="date" required>
                             <label>From*</label>
                         </div>
                         <div class="create-profile-containers profile-label">
-                            <input class="input-profile-date" id="edu-todate" type="date">
+                            <input class="input-profile-date" id="edu-to" type="date">
                             <label>To*</label>
                         </div>
                         </div>
