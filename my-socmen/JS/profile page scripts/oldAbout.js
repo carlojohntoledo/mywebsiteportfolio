@@ -182,58 +182,167 @@ if (occupationLink) {
 
 
 // Function to change the content of row two when "Education" link is clicked
-function showEducationDetails() {
-    var rowTwo = document.getElementById('row-two');
+// =============================================================
+// ✅ SHOW EDUCATION DETAILS FROM FIRESTORE
+// =============================================================
+async function showEducationDetails() {
+    const rowTwo = document.getElementById("row-two");
+    if (!rowTwo) return;
+
+    // Reset container with header
     rowTwo.innerHTML = `
-    <div class="abt-flex-container">
-        <h1>Education</h1>
-        <div class="add-new-form" id="add-new-certificate">Add +</div>
-    </div>
-    <div id="row-two-container">
-        <h1>Tertiary Education</h1>
-        <div class="content-container">
-            <img class="companies" src="Assets/Images/cvsu logo.png" alt="cvsu">
-            <div class="text-container">
-                <h3>Studied Bachelor of Science in Information Technology at Cavite State University Trece Campus</h3>
-                <p>
-                    Trece Martires City Cavite <br>
-                    Class of 2017 - 2022
-                </p>
+        <div class="abt-flex-container">
+            <h1>Education</h1>
+            <div class="add-new-form-btn" id="add-new-education">+</div>
+        </div>
+        <div id="row-two-container" class="flex flex-col gap-6"></div>
+    `;
+
+    const container = document.getElementById("row-two-container");
+    if (!container) return;
+
+    try {
+        // 🔹 Show skeleton loader
+        container.innerHTML = `
+            <div class="content-loader">
+                <div class="wrapper">
+                    <div class="circle"></div>
+                    <div class="line-1"></div>
+                    <div class="line-2"></div>
+                    <div class="line-3"></div>
+                    <div class="line-4"></div>
+                </div>
             </div>
-        </div>
-        <h1>Secondary School</h1>
-        <div class="content-container">
-            <img class="companies" src="Assets/Images/lanhs.jpg" alt="lanhs">
-            <div class="text-container">
-                <h3>Studied at Luis Aguado National High School</h3>
-                <p>
-                    Trece Martires City Cavite <br>
-                    Class of 2015
-                </p>
-            </div> 
-        </div>
-        <h1>Primary School</h1>
-        <div class="content-container">
-            <img class="companies" src="Assets/Images/malagasangelem.png" alt="malagasang">
-            <div class="text-container">
-                <h3>Studied at Malagasang 1-E Elementary School</h3>
-                <p>
-                    Imus Cavite <br>
-                    Class of 2011
-                </p>
-            </div> 
-        </div>
-    </div>`;
+        `;
+
+        const snapshot = await db.collection("education").get();
+
+        container.innerHTML = ""; // clear loader
+
+        // Group docs by education level
+        const groups = {};
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const level = data.level || "Other";
+            if (!groups[level]) groups[level] = [];
+            groups[level].push({ id: doc.id, ...data });
+        });
+
+        // Define display order (highest first)
+        const order = ["Doctorate", "Masters", "Tertiary", "Vocational", "Secondary", "Primary", "Other"];
+
+        order.forEach(level => {
+            if (!groups[level]) return; // skip if no data
+
+            // Sort by "from" year (latest first)
+            groups[level].sort((a, b) => {
+                const aFrom = a.from === "Present" ? new Date().getFullYear() : new Date(a.from).getFullYear();
+                const bFrom = b.from === "Present" ? new Date().getFullYear() : new Date(b.from).getFullYear();
+                return bFrom - aFrom;
+            });
+
+            // Add section heading
+            const heading = document.createElement("h1");
+            heading.textContent = `${level} Education`;
+            container.appendChild(heading);
+
+            // Add each entry
+            groups[level].forEach(item => {
+                const fromYear = item.from && item.from !== "Present"
+                    ? new Date(item.from).getFullYear()
+                    : "";
+
+                let toYear = "Present";
+                if (item.to && item.to !== "Present") {
+                    toYear = new Date(item.to).getFullYear();
+                }
+
+                const card = document.createElement("div");
+                card.classList.add("content-container");
+                card.dataset.id = item.id;
+
+                card.innerHTML = `
+                    <svg class="icons" xmlns="http://www.w3.org/2000/svg" fill="none" 
+                         viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M4.26 10.147a60.438 60.438 0 0 0-.491 
+                            6.347A48.62 48.62 0 0 1 12 20.904a48.62 
+                            48.62 0 0 1 8.232-4.41 60.46 60.46 0 
+                            0 0-.491-6.347m-15.482 0a50.636 
+                            50.636 0 0 0-2.658-.813A59.906 
+                            59.906 0 0 1 12 3.493a59.903 
+                            59.903 0 0 1 10.399 5.84c-.896.248
+                            -1.783.52-2.658.814m-15.482 
+                            0A50.717 50.717 0 0 1 12 
+                            13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 
+                            15a.75.75 0 1 0 0-1.5.75.75 
+                            0 0 0 0 1.5Zm0 0v-3.675A55.378 
+                            55.378 0 0 1 12 8.443m-7.007 
+                            11.55A5.981 5.981 0 0 0 
+                            6.75 15.75v-1.5"></path>
+                    </svg>
+                    <div class="text-container">
+                        <h3>Studied ${item.course ? item.course : ""} at ${item.school}</h3>
+                        <p>
+                            ${item.location || ""} <br>
+                            ${fromYear} - ${toYear}
+                        </p>
+                    </div>
+                    <div class="education-actions">
+                        <button class="education-edit">Edit</button>
+                        <button class="education-delete">✖</button>
+                    </div>
+                `;
+
+                container.appendChild(card);
+
+                // ✅ DELETE
+                const delBtn = card.querySelector(".education-delete");
+                if (delBtn) {
+                    delBtn.addEventListener("click", async () => {
+                        if (!confirm("🗑️ Delete this education entry?")) return;
+                        await db.collection("education").doc(item.id).delete();
+                        card.remove();
+                        console.log("❌ Education deleted:", item.id);
+                    });
+                }
+
+                // ✅ EDIT
+                const editBtn = card.querySelector(".education-edit");
+                if (editBtn) {
+                    editBtn.addEventListener("click", () => {
+                        showAddEducationForm({
+                            id: item.id,
+                            school: item.school,
+                            course: item.course || "",
+                            level: item.level,
+                            from: item.from || "",
+                            to: item.to || "",
+                            location: item.location || ""
+                        });
+                    });
+                }
+            });
+        });
+
+    } catch (err) {
+        console.error("❌ Error loading education:", err);
+        container.innerHTML = `<p style="color:red;">Failed to load education details.</p>`;
+    }
 }
 
-// Add an event listener to the "Education" link
-var educationLink = document.querySelector('#row-one-container a[href="#Education"]');
+// Expose globally so Add button can use it
+window.showEducationDetails = showEducationDetails;
+
+// Add click listener to the "Education" link
+const educationLink = document.querySelector('#row-one-container a[href="#Education"]');
 if (educationLink) {
-    educationLink.addEventListener('click', function (event) {
-        event.preventDefault(); // Prevent default link behavior
-        showEducationDetails(); // Call the function to show education details
+    educationLink.addEventListener("click", function (event) {
+        event.preventDefault();
+        showEducationDetails();
     });
 }
+
 
 
 

@@ -12,7 +12,7 @@ document.addEventListener("click", (e) => {
     // Wire up the main buttons that open the injected forms
     const addEducation = e.target.closest("#add-new-education");
     if (addEducation) {
-        console.log("✅ Add Occupation button clicked");
+        console.log("✅ Add Education button clicked");
         showAddEducationForm(); // injects and opens form; prefill handled inside function
     }
 
