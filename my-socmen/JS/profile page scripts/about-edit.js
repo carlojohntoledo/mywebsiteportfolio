@@ -286,9 +286,9 @@ function showAddEducationForm(existingData = null) {
                         </div>
 
                         <!-- Course Title -->
-                        <div class="flex-container">
+                        <div class="flex-container" id="course-container">
                         <div class="create-profile-containers profile-label">
-                            <input class="input-profile-title" id="aboutme-course" type="text" placeholder="Bachelor of Science in..." required>
+                            <input class="input-profile-title" id="edu-course" type="text" placeholder="Bachelor of Science in..." required>
                             <label>Course Title*</label>
                         </div>
                         </div>
