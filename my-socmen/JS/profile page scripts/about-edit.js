@@ -256,74 +256,66 @@ function showAddEducationForm(existingData = null) {
 
                         <!-- Education Level -->
                         <div class="flex-container">
-                            <div class="create-profile-containers profile-label">
-                                <select class="input-profile-date" id="edu-level" required>
-                                    <option value="">Select Level</option>
-                                    <option value="primary" ${existingData?.level === "primary" ? "selected" : ""}>Primary</option>
-                                    <option value="secondary" ${existingData?.level === "secondary" ? "selected" : ""}>Secondary</option>
-                                    <option value="tertiary" ${existingData?.level === "tertiary" ? "selected" : ""}>Tertiary</option>
-                                    <option value="vocational" ${existingData?.level === "vocational" ? "selected" : ""}>Vocational</option>
-                                    <option value="masters" ${existingData?.level === "masters" ? "selected" : ""}>Masters</option>
-                                    <option value="doctorate" ${existingData?.level === "doctorate" ? "selected" : ""}>Doctorate</option>
-                                </select>
-                                <label>Education Level*</label>
-                            </div>
+                        <div class="create-profile-containers profile-label">
+                            <select class="input-profile-date" id="aboutme-level" required>
+                            <option value="primary">Primary</option>
+                            <option value="secondary">Secondary</option>
+                            <option value="tertiary">Tertiary</option>
+                            <option value="vocational">Vocational</option>
+                            <option value="masters">Masters</option>
+                            <option value="doctorate">Doctorate</option>
+                            </select>
+                            <label>Education Level*</label>
+                        </div>
                         </div>
 
-                        <!-- School Name -->
+                        <!-- University/School Name -->
                         <div class="flex-container">
-                            <div class="create-profile-containers profile-label">
-                                <input class="input-profile-title" id="edu-schoolname" type="text" 
-                                    required value="${existingData?.school || ''}">
-                                <label>University/School Name*</label>
-                            </div>
+                        <div class="create-profile-containers profile-label">
+                            <input class="input-profile-title" id="aboutme-schoolname" type="text" required>
+                            <label>University/School Name*</label>
+                        </div>
                         </div>
 
                         <!-- School Address -->
                         <div class="flex-container">
-                            <div class="create-profile-containers profile-label">
-                                <input class="input-profile-title" id="edu-schooladdress" type="text" 
-                                    required value="${existingData?.address || ''}">
-                                <label>University/School Address*</label>
-                            </div>
+                        <div class="create-profile-containers profile-label">
+                            <input class="input-profile-title" id="aboutme-schooladdress" type="text" required>
+                            <label>University/School Address*</label>
+                        </div>
                         </div>
 
-                        <!-- Course Title (conditionally required) -->
-                        <div class="flex-container" id="course-container" style="display:none;">
-                            <div class="create-profile-containers profile-label">
-                                <input class="input-profile-title" id="edu-course" type="text"
-                                    placeholder="Bachelor of Science in..." 
-                                    value="${existingData?.course || ''}">
-                                <label>Course Title*</label>
-                            </div>
+                        <!-- Course Title -->
+                        <div class="flex-container">
+                        <div class="create-profile-containers profile-label">
+                            <input class="input-profile-title" id="aboutme-course" type="text" placeholder="Bachelor of Science in..." required>
+                            <label>Course Title*</label>
+                        </div>
                         </div>
 
                         <!-- Enrollment Status -->
                         <div class="flex-container">
-                            <div class="create-profile-containers profile-label">
-                                <select class="input-profile-date" id="edu-status" required>
-                                    <option value="">Select Status</option>
-                                    <option value="Graduate" ${existingData?.status === "Graduate" ? "selected" : ""}>Graduate</option>
-                                    <option value="Under Graduate" ${existingData?.status === "Under Graduate" ? "selected" : ""}>Under Graduate</option>
-                                    <option value="Drop Out" ${existingData?.status === "Drop Out" ? "selected" : ""}>Drop Out</option>
-                                    <option value="On Leave" ${existingData?.status === "On Leave" ? "selected" : ""}>On Leave</option>
-                                </select>
-                                <label>Enrollment Status*</label>
-                            </div>
+                        <div class="create-profile-containers profile-label">
+                            <select class="input-profile-date" id="aboutme-status" required>
+                            <option value="Graduate">Graduate</option>
+                            <option value="Under Graduate">Under Graduate</option>
+                            <option value="Drop Out">Drop Out</option>
+                            <option value="On Leave">On Leave</option>
+                            </select>
+                            <label>Enrollment Status*</label>
+                        </div>
                         </div>
 
-                        <!-- Dates -->
+                        <!-- Date -->
                         <div class="flex-container">
-                            <div class="create-profile-containers profile-label">
-                                <input class="input-profile-date" id="edu-from" type="date" 
-                                    required value="${existingData?.from || ''}">
-                                <label>From*</label>
-                            </div>
-                            <div class="create-profile-containers profile-label">
-                                <input class="input-profile-date" id="edu-to" type="date" 
-                                    required value="${existingData?.to || ''}">
-                                <label>To*</label>
-                            </div>
+                        <div class="create-profile-containers profile-label">
+                            <input class="input-profile-date" id="aboutme-fromdate" type="date" required>
+                            <label>From*</label>
+                        </div>
+                        <div class="create-profile-containers profile-label">
+                            <input class="input-profile-date" id="aboutme-todate" type="date">
+                            <label>To*</label>
+                        </div>
                         </div>
                     </form>
                 </div>
