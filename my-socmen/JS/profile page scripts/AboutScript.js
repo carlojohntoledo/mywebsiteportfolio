@@ -315,9 +315,6 @@ function loadOccupationsFromFirestore() {
 }
 
 
-
-
-// Function to change the content of row two when "Education" link is clicked
 // =============================================================
 // ✅ SHOW EDUCATION DETAILS FROM FIRESTORE
 // =============================================================
@@ -351,9 +348,7 @@ async function showEducationDetails() {
             </div>
         `;
 
-        const snapshot = await db.collection("education")
-            .orderBy("from", "desc")
-            .get();
+        const snapshot = await db.collection("education").get();
 
         container.innerHTML = ""; // clear loader
 
@@ -361,16 +356,23 @@ async function showEducationDetails() {
         const groups = {};
         snapshot.forEach(doc => {
             const data = doc.data();
-            const level = data.level || "Other"; // expected: Tertiary, Vocational, Secondary, Primary
+            const level = data.level || "Other";
             if (!groups[level]) groups[level] = [];
             groups[level].push({ id: doc.id, ...data });
         });
 
-        // Define display order
-        const order = ["Tertiary", "Vocational", "Secondary", "Primary", "Other"];
+        // Define display order (highest first)
+        const order = ["Doctorate", "Masters", "Tertiary", "Vocational", "Secondary", "Primary", "Other"];
 
         order.forEach(level => {
-            if (!groups[level]) return; // skip if no data for this level
+            if (!groups[level]) return; // skip if no data
+
+            // Sort by "from" year (latest first)
+            groups[level].sort((a, b) => {
+                const aFrom = a.from === "Present" ? new Date().getFullYear() : new Date(a.from).getFullYear();
+                const bFrom = b.from === "Present" ? new Date().getFullYear() : new Date(b.from).getFullYear();
+                return bFrom - aFrom;
+            });
 
             // Add section heading
             const heading = document.createElement("h1");
@@ -379,8 +381,14 @@ async function showEducationDetails() {
 
             // Add each entry
             groups[level].forEach(item => {
-                const fromDate = item.from ? new Date(item.from).toLocaleDateString() : "";
-                const toDate = item.to ? new Date(item.to).toLocaleDateString() : "";
+                const fromYear = item.from && item.from !== "Present"
+                    ? new Date(item.from).getFullYear()
+                    : "";
+
+                let toYear = "Present";
+                if (item.to && item.to !== "Present") {
+                    toYear = new Date(item.to).getFullYear();
+                }
 
                 const card = document.createElement("div");
                 card.classList.add("content-container");
@@ -410,7 +418,7 @@ async function showEducationDetails() {
                         <h3>Studied ${item.course ? item.course : ""} at ${item.school}</h3>
                         <p>
                             ${item.location || ""} <br>
-                            ${fromDate} - ${toDate}
+                            ${fromYear} - ${toYear}
                         </p>
                     </div>
                     <div class="education-actions">
@@ -467,9 +475,6 @@ if (educationLink) {
         showEducationDetails();
     });
 }
-
-
-
 
 
 // Function to change the content of row two when "Contact Info" link is clicked

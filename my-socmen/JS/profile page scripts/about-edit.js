@@ -398,3 +398,89 @@ function showAddEducationForm(existingData = null) {
         }
     });
 }
+
+// =============================================================
+// ✅ ADD SUBMIT/SAVE FOR EDUCATION FORM
+// =============================================================
+document.addEventListener("click", (e) => {
+    const saveBtn = e.target.closest("#profile-post-btn");
+    if (saveBtn) {
+        try {
+            e.preventDefault();
+            saveEducation();
+        } catch (err) {
+            console.error("❌ Error saving education:", err);
+            alert(err.message || "Error saving education.");
+        } finally {
+            showEducationDetails();
+        }
+    }
+});
+
+async function saveEducation() {
+    const container = document.querySelector(".create-card-container-parent");
+    if (!container) return;
+
+    const levelEl = container.querySelector("#aboutme-level");
+    const schoolEl = container.querySelector("#aboutme-schoolname");
+    const addressEl = container.querySelector("#aboutme-schooladdress");
+    const courseEl = container.querySelector("#aboutme-course");
+    const statusEl = container.querySelector("#aboutme-status");
+    const fromEl = container.querySelector("#aboutme-fromdate");
+    const toEl = container.querySelector("#aboutme-todate");
+    const errorEl = container.querySelector("#form-warning");
+
+    // Validation rules
+    const isPrimaryOrSecondary = levelEl.value === "primary" || levelEl.value === "secondary";
+
+    if (
+        !levelEl.value ||
+        !schoolEl.value.trim() ||
+        !addressEl.value.trim() ||
+        (!isPrimaryOrSecondary && !courseEl.value.trim()) ||
+        !statusEl.value ||
+        !fromEl.value
+    ) {
+        if (errorEl) errorEl.style.display = "flex";
+        return;
+    } else if (errorEl) {
+        errorEl.style.display = "none";
+    }
+
+    // Handle toDate
+    let toDate = "Present";
+    if (toEl.value) {
+        toDate = toEl.value;
+    }
+
+    // Prepare payload
+    const payload = {
+        level: levelEl.value,
+        school: schoolEl.value.trim(),
+        address: addressEl.value.trim(),
+        course: isPrimaryOrSecondary ? "" : courseEl.value.trim(),
+        status: statusEl.value,
+        from: fromEl.value,
+        to: toDate,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    try {
+        if (typeof showLoader === "function") showLoader();
+
+        await db.collection("education").add(payload);
+
+        console.log("✅ Education saved successfully");
+
+        // Close and clear form
+        container.style.display = "none";
+        container.innerHTML = "";
+
+    } catch (err) {
+        console.error("❌ Error saving education:", err);
+        alert(err.message || "Error saving education.");
+    } finally {
+        if (typeof hideLoader === "function") hideLoader();
+    }
+}
