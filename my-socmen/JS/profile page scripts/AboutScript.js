@@ -318,58 +318,156 @@ function loadOccupationsFromFirestore() {
 
 
 // Function to change the content of row two when "Education" link is clicked
-function showEducationDetails() {
-    var rowTwo = document.getElementById('row-two');
+// =============================================================
+// ✅ SHOW EDUCATION DETAILS FROM FIRESTORE
+// =============================================================
+async function showEducationDetails() {
+    const rowTwo = document.getElementById("row-two");
+    if (!rowTwo) return;
+
+    // Reset container with header
     rowTwo.innerHTML = `
-    <div class="abt-flex-container">
-        <h1>Education</h1>
-        <div class="add-new-form" id="add-new-certificate">Add +</div>
-    </div>
-    <div id="row-two-container">
-        <h1>Tertiary Education</h1>
-        <div class="content-container">
-            <img class="companies" src="Assets/Images/cvsu logo.png" alt="cvsu">
-            <div class="text-container">
-                <h3>Studied Bachelor of Science in Information Technology at Cavite State University Trece Campus</h3>
-                <p>
-                    Trece Martires City Cavite <br>
-                    Class of 2017 - 2022
-                </p>
+        <div class="abt-flex-container">
+            <h1>Education</h1>
+            <div class="add-new-form-btn" id="add-new-education">+</div>
+        </div>
+        <div id="row-two-container" class="flex flex-col gap-6"></div>
+    `;
+
+    const container = document.getElementById("row-two-container");
+    if (!container) return;
+
+    try {
+        // 🔹 Show skeleton loader
+        container.innerHTML = `
+            <div class="content-loader">
+                <div class="wrapper">
+                    <div class="circle"></div>
+                    <div class="line-1"></div>
+                    <div class="line-2"></div>
+                    <div class="line-3"></div>
+                    <div class="line-4"></div>
+                </div>
             </div>
-        </div>
-        <h1>Secondary School</h1>
-        <div class="content-container">
-            <img class="companies" src="Assets/Images/lanhs.jpg" alt="lanhs">
-            <div class="text-container">
-                <h3>Studied at Luis Aguado National High School</h3>
-                <p>
-                    Trece Martires City Cavite <br>
-                    Class of 2015
-                </p>
-            </div> 
-        </div>
-        <h1>Primary School</h1>
-        <div class="content-container">
-            <img class="companies" src="Assets/Images/malagasangelem.png" alt="malagasang">
-            <div class="text-container">
-                <h3>Studied at Malagasang 1-E Elementary School</h3>
-                <p>
-                    Imus Cavite <br>
-                    Class of 2011
-                </p>
-            </div> 
-        </div>
-    </div>`;
+        `;
+
+        const snapshot = await db.collection("education")
+            .orderBy("from", "desc")
+            .get();
+
+        container.innerHTML = ""; // clear loader
+
+        // Group docs by education level
+        const groups = {};
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const level = data.level || "Other"; // expected: Tertiary, Vocational, Secondary, Primary
+            if (!groups[level]) groups[level] = [];
+            groups[level].push({ id: doc.id, ...data });
+        });
+
+        // Define display order
+        const order = ["Tertiary", "Vocational", "Secondary", "Primary", "Other"];
+
+        order.forEach(level => {
+            if (!groups[level]) return; // skip if no data for this level
+
+            // Add section heading
+            const heading = document.createElement("h1");
+            heading.textContent = `${level} Education`;
+            container.appendChild(heading);
+
+            // Add each entry
+            groups[level].forEach(item => {
+                const fromDate = item.from ? new Date(item.from).toLocaleDateString() : "";
+                const toDate = item.to ? new Date(item.to).toLocaleDateString() : "";
+
+                const card = document.createElement("div");
+                card.classList.add("content-container");
+                card.dataset.id = item.id;
+
+                card.innerHTML = `
+                    <svg class="icons" xmlns="http://www.w3.org/2000/svg" fill="none" 
+                         viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M4.26 10.147a60.438 60.438 0 0 0-.491 
+                            6.347A48.62 48.62 0 0 1 12 20.904a48.62 
+                            48.62 0 0 1 8.232-4.41 60.46 60.46 0 
+                            0 0-.491-6.347m-15.482 0a50.636 
+                            50.636 0 0 0-2.658-.813A59.906 
+                            59.906 0 0 1 12 3.493a59.903 
+                            59.903 0 0 1 10.399 5.84c-.896.248
+                            -1.783.52-2.658.814m-15.482 
+                            0A50.717 50.717 0 0 1 12 
+                            13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 
+                            15a.75.75 0 1 0 0-1.5.75.75 
+                            0 0 0 0 1.5Zm0 0v-3.675A55.378 
+                            55.378 0 0 1 12 8.443m-7.007 
+                            11.55A5.981 5.981 0 0 0 
+                            6.75 15.75v-1.5"></path>
+                    </svg>
+                    <div class="text-container">
+                        <h3>Studied ${item.course ? item.course : ""} at ${item.school}</h3>
+                        <p>
+                            ${item.location || ""} <br>
+                            ${fromDate} - ${toDate}
+                        </p>
+                    </div>
+                    <div class="education-actions">
+                        <button class="education-edit">Edit</button>
+                        <button class="education-delete">✖</button>
+                    </div>
+                `;
+
+                container.appendChild(card);
+
+                // ✅ DELETE
+                const delBtn = card.querySelector(".education-delete");
+                if (delBtn) {
+                    delBtn.addEventListener("click", async () => {
+                        if (!confirm("🗑️ Delete this education entry?")) return;
+                        await db.collection("education").doc(item.id).delete();
+                        card.remove();
+                        console.log("❌ Education deleted:", item.id);
+                    });
+                }
+
+                // ✅ EDIT
+                const editBtn = card.querySelector(".education-edit");
+                if (editBtn) {
+                    editBtn.addEventListener("click", () => {
+                        showAddEducationForm({
+                            id: item.id,
+                            school: item.school,
+                            course: item.course || "",
+                            level: item.level,
+                            from: item.from || "",
+                            to: item.to || "",
+                            location: item.location || ""
+                        });
+                    });
+                }
+            });
+        });
+
+    } catch (err) {
+        console.error("❌ Error loading education:", err);
+        container.innerHTML = `<p style="color:red;">Failed to load education details.</p>`;
+    }
 }
 
-// Add an event listener to the "Education" link
-var educationLink = document.querySelector('#row-one-container a[href="#Education"]');
+// Expose globally so Add button can use it
+window.showEducationDetails = showEducationDetails;
+
+// Add click listener to the "Education" link
+const educationLink = document.querySelector('#row-one-container a[href="#Education"]');
 if (educationLink) {
-    educationLink.addEventListener('click', function (event) {
-        event.preventDefault(); // Prevent default link behavior
-        showEducationDetails(); // Call the function to show education details
+    educationLink.addEventListener("click", function (event) {
+        event.preventDefault();
+        showEducationDetails();
     });
 }
+
 
 
 
@@ -380,7 +478,7 @@ function showContactInfoDetails() {
     rowTwo.innerHTML = `
     <div class="abt-flex-container">
         <h1>Contact Info</h1>
-        <div class="add-new-form" id="add-new-contact">Add +</div>
+        <div class="add-new-form-btn" id="add-new-contact">+</div>
     </div>
     <div id="row-two-container">
         <h1>Contact number</h1>
@@ -526,7 +624,7 @@ function showAboutmeDetails() {
     rowTwo.innerHTML = `
     <div class="abt-flex-container">
         <h1>Personal Info</h1>
-        <div class="add-new-form" id="add-new-certificate">Add +</div>
+        <div class="add-new-form-btn" id="add-new-aboutme">+</div>
     </div>
     <div id="row-two-container">
         <h1>Biography</h1>
@@ -535,25 +633,7 @@ function showAboutmeDetails() {
                 <p>
                 <strong>Carlo John Toledo Pabien</strong>, born on May 12, 1999, in Bacoor City, Cavite, came into this world as the third of four siblings,
                 raised by his parents Dynna Pabien and Jovito Pabien. His early years were shaped by the vibrant atmosphere of Imus Cavite, 
-                where he developed a curiosity and eagerness to explore. <br> <br>
-
-                Carlo embarked on his academic journey in Malagasang 1-E Elementary School, Imus, Cavite, for his elementary education. Later, 
-                he transitioned to Luis Aguado National High School in Trece Martires City during his first year of high school. Throughout his 
-                formative years, Carlo exhibited a keen interest in various skills, particularly in the realm of music and arts. <br> <br>
-                
-                In pursuit of his passion, Carlo initially set his sights on a career in architecture when he entered college. However, 
-                his journey took an unexpected turn, leading him to a different path—Bachelor of Science in Information Technology (BSIT). 
-                Despite the initial deviation from his original plan, Carlo discovered his aptitude for working with computers, turning the 
-                change of course into a valuable and fulfilling experience. <br> <br>
-                
-                Carlo successfully navigated the challenges of college life and emerged as a proud graduate of Cavite State University Trece 
-                Martires City Campus, belonging to the class of 2017 to 2022. His dedication and perseverance were further exemplified when he 
-                achieved success in the Civil Service Commission exam of 2023, showcasing his commitment to personal and professional development. <br> <br>
-                
-                Now equipped with a solid educational foundation and the distinction of a BSIT graduate, Carlo is poised to embark on a promising 
-                career in Information Technology. Fueled by a passion for delivering efficient and impactful services, he is actively seeking opportunities 
-                to elevate his IT career to new heights. With a blend of skills, education, and determination, Carlo John Toledo Pabien is ready to make meaningful 
-                contributions to the dynamic world of Information Technology. <br> <br>
+                where he developed a curiosity and eagerness to explore.
                 </p>
             </div>
         </div>
