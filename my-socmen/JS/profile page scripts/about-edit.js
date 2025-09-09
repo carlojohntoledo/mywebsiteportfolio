@@ -413,13 +413,13 @@ async function saveEducation() {
     const container = document.querySelector(".create-card-container-parent");
     if (!container) return;
 
-    const levelEl = container.querySelector("#aboutme-level");
-    const schoolEl = container.querySelector("#aboutme-schoolname");
-    const addressEl = container.querySelector("#aboutme-schooladdress");
-    const courseEl = container.querySelector("#aboutme-course");
-    const statusEl = container.querySelector("#aboutme-status");
-    const fromEl = container.querySelector("#aboutme-fromdate");
-    const toEl = container.querySelector("#aboutme-todate");
+    const levelEl = container.querySelector("#edu-level");
+    const schoolEl = container.querySelector("#edu-schoolname");
+    const addressEl = container.querySelector("#edu-schooladdress");
+    const courseEl = container.querySelector("#edu-course");
+    const statusEl = container.querySelector("#edu-status");
+    const fromEl = container.querySelector("#edu-from");
+    const toEl = container.querySelector("#edu-to");
     const errorEl = container.querySelector("#form-warning");
 
     // Validation rules
