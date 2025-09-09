@@ -10,7 +10,7 @@ async function loadPostsFromFirestore(type = "projects") {
     }
 
     container.innerHTML = ""; // clear old cards
-    showLoader();
+    showContentLoader();
 
     try {
         const profilePhotoUrl = await getProfilePhotoUrl();
@@ -352,7 +352,7 @@ async function loadPostsFromFirestore(type = "projects") {
         console.error(`Error loading ${type}:`, err);
         return [];
     } finally {
-        hideLoader();
+        hideContentLoader();
     }
 
 

@@ -114,18 +114,32 @@ async function showOccupationDetails() {
             <h1>Employment History</h1>
             <div class="add-new-form-btn" id="add-new-occupation">+</div>
         </div>
-        <div id="row-two-container"></div>
+        <div id="row-two-container" class="flex justify-center items-center min-h-[200px]"></div>
+        
     `;
 
     const container = document.getElementById('row-two-container');
     if (!container) return;
 
     try {
+        // 🔹 Show Tailwind skeleton loader
+        container.innerHTML = `
+            <div class="content-loader">
+                <div class="wrapper">
+                    <div class="circle"></div>
+                    <div class="line-1"></div>
+                    <div class="line-2"></div>
+                    <div class="line-3"></div>
+                    <div class="line-4"></div>
+                </div>
+            </div>
+        `;
+
         const snapshot = await db.collection("occupations")
             .orderBy("from", "desc")
             .get();
 
-        container.innerHTML = "";
+        container.innerHTML = ""; // clear loader
 
         snapshot.forEach(doc => {
             const data = doc.data();
@@ -217,6 +231,7 @@ async function showOccupationDetails() {
         container.innerHTML = `<p style="color:red;">Failed to load occupations.</p>`;
     }
 }
+
 
 
 // Expose globally so Add button can use it
