@@ -349,7 +349,6 @@ async function showEducationDetails() {
         `;
 
         const snapshot = await db.collection("education").get();
-
         container.innerHTML = ""; // clear loader
 
         // Group docs by education level
@@ -365,13 +364,19 @@ async function showEducationDetails() {
         const order = ["Doctorate", "Masters", "Tertiary", "Vocational", "Secondary", "Primary", "Other"];
 
         order.forEach(level => {
-            if (!groups[level]) return; // skip if no data
+            if (!groups[level]) return;
 
-            // Sort by "from" year (latest first)
+            // Sort entries by fromYear (desc), then toYear (desc)
             groups[level].sort((a, b) => {
-                const aFrom = a.from === "Present" ? new Date().getFullYear() : new Date(a.from).getFullYear();
-                const bFrom = b.from === "Present" ? new Date().getFullYear() : new Date(b.from).getFullYear();
-                return bFrom - aFrom;
+                const aFrom = a.from === "Present" ? new Date().getFullYear() : (a.from ? new Date(a.from).getFullYear() : 0);
+                const bFrom = b.from === "Present" ? new Date().getFullYear() : (b.from ? new Date(b.from).getFullYear() : 0);
+
+                if (bFrom !== aFrom) return bFrom - aFrom;
+
+                const aTo = a.to === "Present" ? new Date().getFullYear() : (a.to ? new Date(a.to).getFullYear() : 0);
+                const bTo = b.to === "Present" ? new Date().getFullYear() : (b.to ? new Date(b.to).getFullYear() : 0);
+
+                return bTo - aTo;
             });
 
             // Add section heading
@@ -383,12 +388,11 @@ async function showEducationDetails() {
             groups[level].forEach(item => {
                 const fromYear = item.from && item.from !== "Present"
                     ? new Date(item.from).getFullYear()
-                    : "";
+                    : "Present";
 
-                let toYear = "Present";
-                if (item.to && item.to !== "Present") {
-                    toYear = new Date(item.to).getFullYear();
-                }
+                const toYear = item.to && item.to !== "Present"
+                    ? new Date(item.to).getFullYear()
+                    : "Present";
 
                 const card = document.createElement("div");
                 card.classList.add("content-container");
@@ -415,7 +419,7 @@ async function showEducationDetails() {
                             6.75 15.75v-1.5"></path>
                     </svg>
                     <div class="text-container">
-                        <h3>Studied ${item.course ? item.course : ""} at ${item.school}</h3>
+                        <h3>Studied ${item.course || ""} at ${item.school || ""}</h3>
                         <p>
                             ${item.location || ""} <br>
                             ${fromYear} - ${toYear}
@@ -446,9 +450,9 @@ async function showEducationDetails() {
                     editBtn.addEventListener("click", () => {
                         showAddEducationForm({
                             id: item.id,
-                            school: item.school,
+                            school: item.school || "",
                             course: item.course || "",
-                            level: item.level,
+                            level: item.level || "",
                             from: item.from || "",
                             to: item.to || "",
                             location: item.location || ""
@@ -462,12 +466,18 @@ async function showEducationDetails() {
         console.error("❌ Error loading education:", err);
         container.innerHTML = `<p style="color:red;">Failed to load education details.</p>`;
     }
+
+    // 🔹 Re-bind the add button after rendering
+    const addBtn = document.getElementById("add-new-education");
+    if (addBtn) {
+        addBtn.addEventListener("click", () => showAddEducationForm());
+    }
 }
 
-// Expose globally so Add button can use it
+// Expose globally
 window.showEducationDetails = showEducationDetails;
 
-// Add click listener to the "Education" link
+// Add click listener to sidebar link
 const educationLink = document.querySelector('#row-one-container a[href="#Education"]');
 if (educationLink) {
     educationLink.addEventListener("click", function (event) {
@@ -475,6 +485,82 @@ if (educationLink) {
         showEducationDetails();
     });
 }
+
+// =============================================================
+// ✅ ADD SUBMIT/SAVE FOR EDUCATION FORM
+// =============================================================
+document.addEventListener("click", (e) => {
+    const saveBtn = e.target.closest("#education-post-btn");
+    if (saveBtn) {
+        try {
+            e.preventDefault();
+            saveEducation();
+        } catch (err) {
+            console.error("❌ Error saving education:", err);
+            alert(err.message || "Error saving education.");
+        } finally {
+            showEducationDetails();
+        }
+    }
+});
+
+async function saveEducation() {
+    const container = document.querySelector(".create-card-container-parent");
+    if (!container) return;
+
+    const schoolEl = document.getElementById("education-school");
+    const courseEl = document.getElementById("education-course");
+    const levelEl = document.getElementById("education-level");
+    const fromDateEl = document.getElementById("education-fromdate");
+    const toDateSelect = document.getElementById("education-todate");
+    const toDateCustom = document.getElementById("education-todate-custom");
+    const locationEl = document.getElementById("education-location");
+    const errorEl = container.querySelector("#form-warning");
+
+    // ✅ Validation
+    if (!schoolEl.value.trim() || !levelEl.value.trim() || !fromDateEl.value) {
+        if (errorEl) errorEl.style.display = "flex";
+        return;
+    } else if (errorEl) {
+        errorEl.style.display = "none";
+    }
+
+    // ✅ Handle toDate (default: Present)
+    let toDate = "Present";
+    if (toDateSelect.value === "custom" && toDateCustom.value) {
+        toDate = toDateCustom.value;
+    }
+
+    // ✅ Prepare payload
+    const payload = {
+        school: schoolEl.value.trim(),
+        course: courseEl.value.trim(),
+        level: levelEl.value.trim(),
+        from: fromDateEl.value,
+        to: toDate,
+        location: locationEl.value.trim(),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    try {
+        if (typeof showLoader === "function") showLoader();
+
+        await db.collection("education").add(payload);
+
+        console.log("✅ Education saved successfully");
+
+        container.style.display = "none";
+        container.innerHTML = "";
+
+    } catch (err) {
+        console.error("❌ Error saving education:", err);
+        alert(err.message || "Error saving education.");
+    } finally {
+        if (typeof hideLoader === "function") hideLoader();
+    }
+}
+
 
 
 // Function to change the content of row two when "Contact Info" link is clicked
