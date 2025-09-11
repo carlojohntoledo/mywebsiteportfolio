@@ -107,7 +107,7 @@ section.About {
 
 .abt-flex-container h1 {
     width: 100%;
-    font-size: var(--font-xl);
+    font-size: var(--font-lg);
     /* border: 1px solid; */
     margin: auto;
 }
@@ -208,6 +208,7 @@ section.About {
     display: flex;
 }
 
+.contact-info-group,
 .edu-details-group {
     display: grid;
     gap: 2rem;

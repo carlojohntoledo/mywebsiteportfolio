@@ -259,7 +259,7 @@ async function showEducationDetails() {
     // Header layout
     rowTwo.innerHTML = `
         <div class="abt-flex-container">
-            <h1>Education</h1>
+            <h1>Educational Background</h1>
             <div class="add-new-form-btn" id="add-new-education">+</div>
         </div>
         <div id="row-two-container" class="edu-details-group"></div>
@@ -456,139 +456,173 @@ if (educationLink) {
 
 
 // Function to change the content of row two when "Contact Info" link is clicked
-function showContactInfoDetails() {
-    var rowTwo = document.getElementById('row-two');
+// =============================================================
+// ✅ SHOW CONTACT DETAILS (Mirrored from Education)
+// =============================================================
+async function showContactInfoDetails() {
+    const rowTwo = document.getElementById("row-two");
+    if (!rowTwo) return;
+
+    // Header layout
     rowTwo.innerHTML = `
-    <div class="abt-flex-container">
-        <h1>Contact Info</h1>
-        <div class="add-new-form-btn" id="add-new-contact">+</div>
-    </div>
-    <div id="row-two-container">
-        <h1>Contact number</h1>
-        <div class="content-container">
-            <img class="icons" src="Assets/Images/Icons/phone.png" alt="phone">
-            <div class="text-container">
-                <h3>0997 899 4298</h3>
-                <p>
-                    Phone number
-                </p>
+        <div class="abt-flex-container">
+            <h1>Contact Information</h1>
+            <div class="add-new-form-btn" id="add-new-contact">+</div>
+        </div>
+        <div id="row-two-container" class="contact-details-group"></div>
+    `;
+
+    const container = rowTwo.querySelector("#row-two-container");
+
+    // 🔹 Show Tailwind skeleton loader while waiting
+    container.innerHTML = `
+        <div class="content-loader">
+            <div class="wrapper">
+                <div class="circle"></div>
+                <div class="line-1"></div>
+                <div class="line-2"></div>
+                <div class="line-3"></div>
+                <div class="line-4"></div>
             </div>
         </div>
-        <div class="content-container">
-            <img class="icons" src="Assets/Images/Icons/whatsapp.png" alt="whatsapp">
-            <div class="text-container">
-                <h3>0997 899 4298</h3>
-                <p>
-                    Whatsapp contact number
-                </p>
-            </div> 
-        </div>
-        <div class="content-container">
-            <img class="icons" src="Assets/Images/Icons/viber.png" alt="viber">
-            <div class="text-container">
-                <h3>0997 899 4298</h3>
-                <p>
-                    Viber contact number
-                </p>
-            </div> 
-        </div>
-    </div>
-    <div id="row-two-container">
-        <h1>Emails</h1>
-        <div class="content-container">
-            <img class="icons" src="Assets/Images/Icons/gmail.png" alt="gmail">
-            <div class="text-container">
-                <h3>toledocarlojohn@gmail.com</h3>
-                <p>
-                    Gmail Account
-                </p>
-            </div> 
-        </div>
-        <div class="content-container">
-            <img class="icons" src="Assets/Images/Icons/outlook.png" alt="outlook">
-            <div class="text-container">
-                <h3>toledocarlojohn@outlook.com</h3>
-                <p>
-                    Outlook Account
-                </p>
-            </div> 
-        </div>
-    </div>
-    <div id="row-two-container">
-        <h1>Social media accounts</h1>
-        <div class="content-container">
-            <img class="icons" src="Assets/Images/Icons/facebook.png" alt="facebook">
-            <div class="text-container">
-                <h3>facebook.com/carlo.toledo0105/</h3>
-                <p>
-                    Facebook account link
-                </p>
-            </div> 
-        </div>
-        <div class="content-container">
-        <img class="icons" src="Assets/Images/Icons/youtube.png" alt="youtube">
-        <div class="text-container">
-            <h3>youtube.com/@carlojohntoledo5971</h3>
-            <p>
-                Youtube account link
-            </p>
-        </div> 
-        </div>
-        <div class="content-container">
-            <img class="icons" src="Assets/Images/Icons/instagram.png" alt="instagram">
-            <div class="text-container">
-                <h3>instagram.com/koalomusic.ph</h3>
-                <p>
-                    Instagram account link
-                </p>
-            </div> 
-        </div>
-        <div class="content-container">
-            <img class="icons" src="Assets/Images/Icons/tiktok.png" alt="tiktok">
-            <div class="text-container">
-                <h3>tiktok.com/koalomusic.ph</h3>
-                <p>
-                    Tiktok account link
-                </p>
-            </div> 
-        </div>
-        <div class="content-container">
-            <img class="icons" src="Assets/Images/Icons/threads.png" alt="threads">
-            <div class="text-container">
-                <h3>threads.net/koalomusic.ph</h3>
-                <p>
-                    Threads account link
-                </p>
-            </div> 
-        </div>
-    </div>
-    <div id="row-two-container">
-        <h1>Links</h1>
-        <div class="content-container">
-            <img class="icons" src="Assets/Images/Icons/spotify.png" alt="spotify">
-            <div class="text-container">
-            <a text-decoration="none" href="https://open.spotify.com/artist/5XbyT2tunaCbetacxld6ZM?si=MSZkIPRFRa-bKmTrKhQ37w">
-                <h3>spotify/artist/Koalo</h3>
-                <p>
-                    Spotify account link
-                </p>
-            </a>
-            </div> 
-        </div>
-        <div class="content-container">
-            <img class="icons" src="Assets/Images/Icons/itchio.svg" alt="itch.io">
-            <div class="text-container">
-            <a text-decoration="none" href="https://carlojohntoledo.itch.io/">
-                <h3>carlojohntoledo.itch.io/Koalo</h3>
-                <p>
-                    Itch.io account link
-                </p>
-            </a>
-            </div> 
-        </div>
-    </div>
     `;
+
+    try {
+        const snapshot = await db.collection("contactInfo")
+            .orderBy("platform", "asc")
+            .get();
+
+        if (snapshot.empty) {
+            container.innerHTML = ``; // nothing if no contact info
+            return;
+        }
+
+        // Group by contact type
+        const groups = {
+            contactNumber: [],
+            emailAddress: [],
+            socialMedia: [],
+            websiteLinks: []
+        };
+
+        snapshot.forEach(doc => {
+            const data = { id: doc.id, ...doc.data() };
+            if (groups[data.contactType]) {
+                groups[data.contactType].push(data);
+            }
+        });
+
+        // Helper to render each section
+        function renderSection(typeKey, entries, label, defaultIcon) {
+            if (!entries.length) return null;
+
+            const section = document.createElement("div");
+            section.className = `${typeKey}-section`;
+
+            // Header
+            const header = document.createElement("h1");
+            header.className = `${typeKey}-header`;
+            header.textContent = label;
+            section.appendChild(header);
+
+            // Each contact entry
+            entries.forEach(info => {
+                const infoDiv = document.createElement("div");
+                infoDiv.className = "content-container";
+                infoDiv.style.position = "relative";
+
+                infoDiv.innerHTML = `
+                    <img class="icons" src="${info.icon || defaultIcon}" alt="${info.platform}">
+                    <div class="text-container">
+                        ${typeKey === "websiteLinks"
+                        ? `<a href="${info.value}" target="_blank"><h3>${info.value}</h3></a>`
+                        : `<h3>${info.value}</h3>`
+                    }
+                        <p>${info.platform}</p>
+                    </div>
+
+                    <!-- 🔹 Actions -->
+                    <div class="contact-actions">
+                        <button class="contact-edit">Edit</button>
+                        <button class="contact-delete">✖</button>
+                    </div>
+                `;
+
+                section.appendChild(infoDiv);
+
+                // =============================================================
+                // 🔹 DELETE Handler
+                // =============================================================
+                const delBtn = infoDiv.querySelector(".contact-delete");
+                delBtn.addEventListener("click", async () => {
+                    if (confirm("Delete this contact info?")) {
+                        try {
+                            showLoader();
+                            await db.collection("contactInfo").doc(info.id).delete();
+                            console.log("❌ Contact deleted:", info.id);
+                            await showContactInfoDetails(); // refresh
+                        } catch (err) {
+                            console.error("❌ Delete failed:", err);
+                        } finally {
+                            hideLoader();
+                        }
+                    }
+                });
+
+                // =============================================================
+                // 🔹 EDIT Handler
+                // =============================================================
+                const editBtn = infoDiv.querySelector(".contact-edit");
+                editBtn.addEventListener("click", async () => {
+                    try {
+                        showLoader();
+                        showContactInfoForm({
+                            id: info.id,
+                            contactType: info.contactType || "",
+                            platform: info.platform || "",
+                            value: info.value || "",
+                            icon: info.icon || ""
+                        });
+                    } catch (err) {
+                        console.error("❌ Edit failed:", err);
+                    } finally {
+                        hideLoader();
+                    }
+                });
+            });
+
+            return section;
+        }
+
+        // Render all groups in order
+        container.innerHTML = ""; // clear first
+        const order = [
+            ["contactNumber", "Contact Number", "Assets/Images/Icons/phone.png"],
+            ["emailAddress", "Emails", "Assets/Images/Icons/gmail.png"],
+            ["socialMedia", "Social Media Accounts", "Assets/Images/Icons/facebook.png"],
+            ["websiteLinks", "Website Links", "Assets/Images/Icons/link.png"]
+        ];
+
+        order.forEach(([key, label, icon]) => {
+            const section = renderSection(key, groups[key], label, icon);
+            if (section) container.appendChild(section);
+        });
+
+    } catch (err) {
+        console.error("❌ Error loading contact info:", err);
+        container.innerHTML = `<p class="error">Failed to load contact details.</p>`;
+    }
+
+    // 🔹 Wire the Add button
+    const addBtn = rowTwo.querySelector("#add-new-contact");
+    if (addBtn) {
+        addBtn.addEventListener("click", () => {
+            showContactInfoForm();
+        });
+    }
 }
+window.showContactInfoDetails = showContactInfoDetails;
+
 
 // Add an event listener to the "Contact info" link
 var contactinfoLink = document.querySelector('#row-one-container a[href="#ContactInfo"]');
@@ -607,7 +641,7 @@ function showAboutmeDetails() {
     rowTwo.innerHTML = `
     <div class="abt-flex-container">
         <h1>Personal Info</h1>
-        <div class="add-new-form-btn" id="add-new-aboutme">+</div>
+        <div class="add-new-form-btn" id="add-new-contact">+</div>
     </div>
     <div id="row-two-container">
         <h1>Biography</h1>

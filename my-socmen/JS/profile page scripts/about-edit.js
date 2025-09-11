@@ -6,17 +6,20 @@ document.addEventListener("click", (e) => {
         showAddOccupationForm(); // injects and opens form; prefill handled inside function
     }
 
-});
-
-document.addEventListener("click", (e) => {
-    // Wire up the main buttons that open the injected forms
     const addEducation = e.target.closest("#add-new-education");
     if (addEducation) {
         console.log("✅ Add Education button clicked");
         showAddEducationForm(); // injects and opens form; prefill handled inside function
     }
 
+    const addContact = e.target.closest("#add-new-contact");
+    if (addContact) {
+        console.log("✅ Add Education button clicked");
+        showAddContactInfoForm(); // injects and opens form; prefill handled inside function
+    }
+
 });
+
 
 
 function showAddOccupationForm(existingData = null) {
@@ -425,3 +428,199 @@ function showAddEducationForm(existingData = null) {
     });
 }
 
+
+
+function showAddContactInfoForm(existingData = null) {
+    const container = document.querySelector(".create-card-container-parent");
+    if (!container) {
+        console.error("❌ Contact form container not found");
+        return;
+    }
+
+    container.style.display = "grid";
+    const isEdit = !!existingData;
+
+    container.innerHTML = `
+        <div class="create-post-container">
+            <div class="create-profile-form-container">
+                <!-- Header -->
+                <div class="create-profile-header">
+                    <h1 class="card-title">Contact Info</h1>
+                    <span class="create-profile-button-container red-btn" id="cancel-btn">Cancel</span>
+                    <span class="create-profile-button-container green-btn" id="contact-save-btn">
+                        ${isEdit ? "Update" : "Save"}
+                    </span>
+                </div>
+
+                <!-- Error warning -->
+                <div class="error" id="form-warning" style="display:none;">
+                    <div class="form-warning-cont">Please fill-in required (*) details.</div>
+                </div>
+
+                <!-- Scrollable content -->
+                <div class="create-profile-form-viewport scroll-fade">
+                    <form id="contact-form">
+                        <h1>${isEdit ? "Edit Contact Info" : "New Contact Info"}</h1>
+
+                        <!-- Contact Type -->
+                        <div class="flex-container">
+                            <div class="create-profile-containers profile-label">
+                                <select class="input-profile-date" id="contact-type" required>
+                                    <option value="">Select Contact Type</option>
+                                    <option value="contactNumber" ${existingData?.type === "contactNumber" ? "selected" : ""}>Contact Number</option>
+                                    <option value="emailAddress" ${existingData?.type === "emailAddress" ? "selected" : ""}>Email Address</option>
+                                    <option value="socialMedia" ${existingData?.type === "socialMedia" ? "selected" : ""}>Social Media</option>
+                                    <option value="websiteLinks" ${existingData?.type === "websiteLinks" ? "selected" : ""}>Website Links</option>
+                                </select>
+                                <label>Contact Type*</label>
+                            </div>
+                        </div>
+
+                        <!-- 🔹 Contact Number -->
+                        <div class="contact-info-group" id="group-contactNumber" style="display:none;">
+                            <div class="flex-container">
+                                <div class="create-profile-containers profile-label">
+                                    <input class="input-profile-title" id="contact-num" type="number" 
+                                        value="${existingData?.contactNum || ''}">
+                                    <label>Contact Number*</label>
+                                </div>
+                            </div>
+                            <div class="flex-container">
+                                <div class="create-profile-containers profile-label">
+                                    <input class="input-profile-title" id="contact-num-platform" type="text" 
+                                        value="${existingData?.contactNumPlatform || ''}">
+                                    <label>Platform*</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 🔹 Email -->
+                        <div class="contact-info-group" id="group-emailAddress" style="display:none;">
+                            <div class="flex-container">
+                                <div class="create-profile-containers profile-label">
+                                    <input class="input-profile-title" id="contact-email" type="email" 
+                                        value="${existingData?.contactEmail || ''}">
+                                    <label>Email Address*</label>
+                                </div>
+                            </div>
+                            <div class="flex-container">
+                                <div class="create-profile-containers profile-label">
+                                    <input class="input-profile-title" id="contact-email-platform" type="text" 
+                                        value="${existingData?.contactEmailPlatform || ''}">
+                                    <label>Platform*</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 🔹 Social Media -->
+                        <div class="contact-info-group" id="group-socialMedia" style="display:none;">
+                            <div class="flex-container">
+                                <div class="create-profile-containers profile-label">
+                                    <input class="input-profile-title" id="contact-socmed" type="text" 
+                                        value="${existingData?.contactSocMed || ''}">
+                                    <label>Social Media*</label>
+                                </div>
+                            </div>
+                            <div class="flex-container">
+                                <div class="create-profile-containers profile-label">
+                                    <input class="input-profile-title" id="contact-socmed-platform" type="text" 
+                                        value="${existingData?.contactSocMedPlatform || ''}">
+                                    <label>Platform*</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 🔹 Website Links -->
+                        <div class="contact-info-group" id="group-websiteLinks" style="display:none;">
+                            <div class="flex-container">
+                                <div class="create-profile-containers profile-label">
+                                    <input class="input-profile-title" id="contact-link" type="text" 
+                                        value="${existingData?.contactLink || ''}">
+                                    <label>Website Link*</label>
+                                </div>
+                            </div>
+                            <div class="flex-container">
+                                <div class="create-profile-containers profile-label">
+                                    <input class="input-profile-title" id="contact-link-platform" type="text" 
+                                        value="${existingData?.contactLinkPlatform || ''}">
+                                    <label>Platform*</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Cancel button
+    const cancelBtn = container.querySelector("#cancel-btn");
+    cancelBtn.addEventListener("click", () => {
+        container.style.display = "none";
+        container.innerHTML = "";
+    });
+
+    // Toggle field groups
+    const typeSelect = container.querySelector("#contact-type");
+    const groups = container.querySelectorAll(".contact-info-group");
+
+    function toggleGroups() {
+        groups.forEach(g => g.style.display = "none");
+        const value = typeSelect.value;
+        if (value) {
+            const section = container.querySelector(`#group-${value}`);
+            if (section) section.style.display = "grid";
+        }
+    }
+    typeSelect.addEventListener("change", toggleGroups);
+    toggleGroups();
+
+    // Save/Update handler
+    const saveBtn = container.querySelector("#contact-save-btn");
+    saveBtn.addEventListener("click", async () => {
+        const type = typeSelect.value;
+        if (!type) {
+            container.querySelector("#form-warning").style.display = "flex";
+            return;
+        }
+
+        let payload = { type, updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
+
+        if (type === "contactNumber") {
+            payload.contactNum = document.getElementById("contact-num").value.trim();
+            payload.contactNumPlatform = document.getElementById("contact-num-platform").value.trim();
+        } else if (type === "emailAddress") {
+            payload.contactEmail = document.getElementById("contact-email").value.trim();
+            payload.contactEmailPlatform = document.getElementById("contact-email-platform").value.trim();
+        } else if (type === "socialMedia") {
+            payload.contactSocMed = document.getElementById("contact-socmed").value.trim();
+            payload.contactSocMedPlatform = document.getElementById("contact-socmed-platform").value.trim();
+        } else if (type === "websiteLinks") {
+            payload.contactLink = document.getElementById("contact-link").value.trim();
+            payload.contactLinkPlatform = document.getElementById("contact-link-platform").value.trim();
+        }
+
+        // Validate required fields
+        if (Object.values(payload).some(v => v === "")) {
+            container.querySelector("#form-warning").style.display = "flex";
+            return;
+        }
+
+        try {
+            if (isEdit) {
+                await db.collection("contacts").doc(existingData.id).update(payload);
+                console.log("✏️ Contact updated");
+            } else {
+                payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                await db.collection("contacts").add(payload);
+                console.log("✅ Contact saved");
+            }
+
+            container.style.display = "none";
+            container.innerHTML = "";
+            if (typeof showContactDetails === "function") showContactDetails();
+        } catch (err) {
+            console.error("❌ Error saving contact:", err);
+        }
+    });
+}

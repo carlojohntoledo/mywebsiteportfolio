@@ -419,7 +419,7 @@ function showMenuNav() {
         <div class="radio-inputs">
             <label class="menu-radio" data-href="index.html">
             <input name="radio" type="radio" ${bodyData === "activities" ? "checked" : ""}/>
-                <svg class="menu-icon" width="2rem" height="2rem" fill="#ffffff" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff">
+                <svg class="menu-icon" width="2rem" height="2rem" fill="#ffffff" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" >
                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                     <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
                     <g id="SVGRepo_iconCarrier">
@@ -430,7 +430,7 @@ function showMenuNav() {
             </label>
             <label class="menu-radio" data-href="profile.html">
                 <input name="radio" type="radio" ${bodyData === "profile" ? "checked" : ""}/>
-                <svg class="menu-icon" width="2rem" height="2rem" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" fill="#000000">
+                <svg class="menu-icon" width="2rem" height="2rem" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                     <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
                     <g id="SVGRepo_iconCarrier"> 
@@ -454,7 +454,7 @@ function showMenuNav() {
             </label>
             <label class="menu-radio" data-href="projects.html">
                 <input name="radio" type="radio" ${bodyData === "projects" ? "checked" : ""}/>
-                <svg class="menu-icon" width="2rem" height="2rem" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff">
+                <svg class="menu-icon" width="2rem" height="2rem" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                     <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
                     <g id="SVGRepo_iconCarrier">
