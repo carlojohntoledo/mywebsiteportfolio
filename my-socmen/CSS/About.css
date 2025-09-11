@@ -203,7 +203,8 @@ section.About {
     gap: 0.25rem;
 }
 
-.content-container:hover .occupation-actions {
+.content-container:hover .occupation-actions,
+.content-container:hover .education-actions {
     display: flex;
 }
 
@@ -241,6 +242,7 @@ section.About {
 
 }
 
-.occupation-edit:hover {
+.occupation-edit:hover,
+.education-edit:hover {
     background-color: #ffbd59;
 }
