@@ -192,7 +192,8 @@ section.About {
     display: grid;
 }
 
-.occupation-actions {
+.occupation-actions,
+.education-actions {
     display: none;
     position: absolute;
     top: 0;
@@ -207,7 +208,9 @@ section.About {
 }
 
 .occupation-delete,
-.occupation-edit {
+.education-delete,
+.occupation-edit,
+.education-edit {
     /* display: none; */
     border-radius: 100%;
     border: none;
@@ -221,12 +224,14 @@ section.About {
     justify-content: center;
 }
 
-.occupation-edit {
+.occupation-edit,
+.education-edit {
     border-radius: 0.2rem;
 }
 
 
-.occupation-delete:hover {
+.occupation-delete:hover,
+.education-delete:hover {
     background-color: #ff3131;
 
 }

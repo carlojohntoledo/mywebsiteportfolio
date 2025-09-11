@@ -246,35 +246,35 @@ if (occupationLink) {
     });
 }
 
-document.addEventListener("click", async (e) => {
-    const delBtn = e.target.closest(".occupation-delete");
-    if (!delBtn) return;
+// document.addEventListener("click", async (e) => {
+//     const delBtn = e.target.closest(".occupation-delete");
+//     if (!delBtn) return;
 
-    const card = delBtn.closest(".content-container");
-    const docId = card?.dataset.id;
-    if (!docId) return;
+//     const card = delBtn.closest(".content-container");
+//     const docId = card?.dataset.id;
+//     if (!docId) return;
 
-    if (!confirm("🗑️ Delete this occupation?")) return;
+//     if (!confirm("🗑️ Delete this occupation?")) return;
 
-    try {
-        if (typeof showLoader === "function") showLoader();
+//     try {
+//         if (typeof showLoader === "function") showLoader();
 
-        // Delete document from Firestore
-        await db.collection("occupations").doc(docId).delete();
+//         // Delete document from Firestore
+//         await db.collection("occupations").doc(docId).delete();
 
-        // Remove from UI immediately
-        card.remove();
+//         // Remove from UI immediately
+//         card.remove();
 
 
-        console.log(`✅ Deleted occupation ${docId}`);
-    } catch (err) {
-        console.error("❌ Error deleting occupation:", err);
-        alert(err.message || "Error deleting occupation.");
-    } finally {
-        if (typeof hideLoader === "function") hideLoader();
-        showOccupationDetails();
-    }
-});
+//         console.log(`✅ Deleted occupation ${docId}`);
+//     } catch (err) {
+//         console.error("❌ Error deleting occupation:", err);
+//         alert(err.message || "Error deleting occupation.");
+//     } finally {
+//         if (typeof hideLoader === "function") hideLoader();
+//         showOccupationDetails();
+//     }
+// });
 
 function loadOccupationsFromFirestore() {
     const container = document.getElementById("row-two-container");
@@ -348,36 +348,26 @@ async function showEducationDetails() {
             </div>
         `;
 
-        const snapshot = await db.collection("education").get();
+        const snapshot = await db.collection("education")
+            .orderBy("from", "desc")
+            .get();
+
         container.innerHTML = ""; // clear loader
 
         // Group docs by education level
         const groups = {};
         snapshot.forEach(doc => {
             const data = doc.data();
-            const level = data.level || "Other";
+            const level = data.level || "Other"; // expected: Tertiary, Vocational, Secondary, Primary
             if (!groups[level]) groups[level] = [];
             groups[level].push({ id: doc.id, ...data });
         });
 
-        // Define display order (highest first)
-        const order = ["Doctorate", "Masters", "Tertiary", "Vocational", "Secondary", "Primary", "Other"];
+        // Define display order
+        const order = ["Tertiary", "Vocational", "Secondary", "Primary", "Other"];
 
         order.forEach(level => {
-            if (!groups[level]) return;
-
-            // Sort entries by fromYear (desc), then toYear (desc)
-            groups[level].sort((a, b) => {
-                const aFrom = a.from === "Present" ? new Date().getFullYear() : (a.from ? new Date(a.from).getFullYear() : 0);
-                const bFrom = b.from === "Present" ? new Date().getFullYear() : (b.from ? new Date(b.from).getFullYear() : 0);
-
-                if (bFrom !== aFrom) return bFrom - aFrom;
-
-                const aTo = a.to === "Present" ? new Date().getFullYear() : (a.to ? new Date(a.to).getFullYear() : 0);
-                const bTo = b.to === "Present" ? new Date().getFullYear() : (b.to ? new Date(b.to).getFullYear() : 0);
-
-                return bTo - aTo;
-            });
+            if (!groups[level]) return; // skip if no data for this level
 
             // Add section heading
             const heading = document.createElement("h1");
@@ -386,13 +376,8 @@ async function showEducationDetails() {
 
             // Add each entry
             groups[level].forEach(item => {
-                const fromYear = item.from && item.from !== "Present"
-                    ? new Date(item.from).getFullYear()
-                    : "Present";
-
-                const toYear = item.to && item.to !== "Present"
-                    ? new Date(item.to).getFullYear()
-                    : "Present";
+                const fromDate = item.from ? new Date(item.from).toLocaleDateString() : "";
+                const toDate = item.to ? new Date(item.to).toLocaleDateString() : "";
 
                 const card = document.createElement("div");
                 card.classList.add("content-container");
@@ -419,10 +404,10 @@ async function showEducationDetails() {
                             6.75 15.75v-1.5"></path>
                     </svg>
                     <div class="text-container">
-                        <h3>Studied ${item.course || ""} at ${item.school || ""}</h3>
+                        <h3>Studied ${item.course ? item.course : ""} at ${item.school}</h3>
                         <p>
                             ${item.location || ""} <br>
-                            ${fromYear} - ${toYear}
+                            ${fromDate} - ${toDate}
                         </p>
                     </div>
                     <div class="education-actions">
@@ -450,9 +435,9 @@ async function showEducationDetails() {
                     editBtn.addEventListener("click", () => {
                         showAddEducationForm({
                             id: item.id,
-                            school: item.school || "",
+                            school: item.school,
                             course: item.course || "",
-                            level: item.level || "",
+                            level: item.level,
                             from: item.from || "",
                             to: item.to || "",
                             location: item.location || ""
@@ -466,18 +451,12 @@ async function showEducationDetails() {
         console.error("❌ Error loading education:", err);
         container.innerHTML = `<p style="color:red;">Failed to load education details.</p>`;
     }
-
-    // 🔹 Re-bind the add button after rendering
-    const addBtn = document.getElementById("add-new-education");
-    if (addBtn) {
-        addBtn.addEventListener("click", () => showAddEducationForm());
-    }
 }
 
-// Expose globally
+// Expose globally so Add button can use it
 window.showEducationDetails = showEducationDetails;
 
-// Add click listener to sidebar link
+// Add click listener to the "Education" link
 const educationLink = document.querySelector('#row-one-container a[href="#Education"]');
 if (educationLink) {
     educationLink.addEventListener("click", function (event) {
@@ -486,79 +465,182 @@ if (educationLink) {
     });
 }
 
-// =============================================================
-// ✅ ADD SUBMIT/SAVE FOR EDUCATION FORM
-// =============================================================
-document.addEventListener("click", (e) => {
-    const saveBtn = e.target.closest("#education-post-btn");
-    if (saveBtn) {
-        try {
-            e.preventDefault();
-            saveEducation();
-        } catch (err) {
-            console.error("❌ Error saving education:", err);
-            alert(err.message || "Error saving education.");
-        } finally {
-            showEducationDetails();
-        }
-    }
-});
 
-async function saveEducation() {
-    const container = document.querySelector(".create-card-container-parent");
+// =============================================================
+// ✅ LOAD EDUCATION FROM FIRESTORE (Real-time like Occupation)
+// =============================================================
+function loadEducationFromFirestore() {
+    const container = document.getElementById("row-two-container");
     if (!container) return;
 
-    const schoolEl = document.getElementById("education-school");
-    const courseEl = document.getElementById("education-course");
-    const levelEl = document.getElementById("education-level");
-    const fromDateEl = document.getElementById("education-fromdate");
-    const toDateSelect = document.getElementById("education-todate");
-    const toDateCustom = document.getElementById("education-todate-custom");
-    const locationEl = document.getElementById("education-location");
-    const errorEl = container.querySelector("#form-warning");
-
-    // ✅ Validation
-    if (!schoolEl.value.trim() || !levelEl.value.trim() || !fromDateEl.value) {
-        if (errorEl) errorEl.style.display = "flex";
-        return;
-    } else if (errorEl) {
-        errorEl.style.display = "none";
-    }
-
-    // ✅ Handle toDate (default: Present)
-    let toDate = "Present";
-    if (toDateSelect.value === "custom" && toDateCustom.value) {
-        toDate = toDateCustom.value;
-    }
-
-    // ✅ Prepare payload
-    const payload = {
-        school: schoolEl.value.trim(),
-        course: courseEl.value.trim(),
-        level: levelEl.value.trim(),
-        from: fromDateEl.value,
-        to: toDate,
-        location: locationEl.value.trim(),
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    // Education level order (lowest → highest)
+    const levelOrder = {
+        primary: 1,
+        secondary: 2,
+        vocational: 3,
+        tertiary: 4,
+        masters: 5,
+        doctorate: 6,
+        other: 99
     };
 
-    try {
-        if (typeof showLoader === "function") showLoader();
-
-        await db.collection("education").add(payload);
-
-        console.log("✅ Education saved successfully");
-
-        container.style.display = "none";
+    // Real-time snapshot listener
+    db.collection("education").onSnapshot(snapshot => {
         container.innerHTML = "";
 
-    } catch (err) {
-        console.error("❌ Error saving education:", err);
-        alert(err.message || "Error saving education.");
-    } finally {
-        if (typeof hideLoader === "function") hideLoader();
-    }
+        let educations = [];
+        snapshot.forEach(doc => {
+            educations.push({ id: doc.id, ...doc.data() });
+        });
+
+        // Sort by level first, then by from date (latest first)
+        educations.sort((a, b) => {
+            const levelDiff =
+                (levelOrder[a.level] || 99) - (levelOrder[b.level] || 99);
+            if (levelDiff !== 0) return levelDiff;
+
+            const aFrom =
+                a.from === "Present"
+                    ? new Date().getFullYear()
+                    : new Date(a.from).getFullYear();
+            const bFrom =
+                b.from === "Present"
+                    ? new Date().getFullYear()
+                    : new Date(b.from).getFullYear();
+            return bFrom - aFrom; // latest first
+        });
+
+        // Render each education card
+        educations.forEach(item => {
+            const fromYear =
+                item.from && item.from !== "Present"
+                    ? new Date(item.from).getFullYear()
+                    : "";
+            let toYear = "Present";
+            if (item.to && item.to !== "Present") {
+                toYear = new Date(item.to).getFullYear();
+            }
+
+            const eduDiv = document.createElement("div");
+            eduDiv.classList.add("content-container");
+            eduDiv.dataset.id = item.id;
+
+            eduDiv.innerHTML = `
+                <svg class="icons" xmlns="http://www.w3.org/2000/svg" fill="none" 
+                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M4.26 10.147a60.438 60.438 0 0 0-.491 
+                        6.347A48.62 48.62 0 0 1 12 20.904a48.62 
+                        48.62 0 0 1 8.232-4.41 60.46 60.46 0 
+                        0 0-.491-6.347m-15.482 0a50.636 
+                        50.636 0 0 0-2.658-.813A59.906 
+                        59.906 0 0 1 12 3.493a59.903 
+                        59.903 0 0 1 10.399 5.84c-.896.248
+                        -1.783.52-2.658.814m-15.482 
+                        0A50.717 50.717 0 0 1 12 
+                        13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 
+                        15a.75.75 0 1 0 0-1.5.75.75 
+                        0 0 0 0 1.5Zm0 0v-3.675A55.378 
+                        55.378 0 0 1 12 8.443m-7.007 
+                        11.55A5.981 5.981 0 0 0 
+                        6.75 15.75v-1.5"></path>
+                </svg>
+                <div class="text-container">
+                    <h3>
+                        ${item.level ? item.level.charAt(0).toUpperCase() + item.level.slice(1) : ""} - 
+                        ${item.course ? `Studied ${item.course} at ${item.school}` : `Studied at ${item.school}`}
+                    </h3>
+                    <p>
+                        ${item.address || ""} <br>
+                        ${fromYear} - ${toYear}
+                    </p>
+                </div>
+                <button class="education-delete">✖</button>
+            `;
+
+            container.appendChild(eduDiv);
+        });
+    });
+}
+
+
+// =============================================================
+// ✅ LOAD EDUCATION FROM FIRESTORE (Real-time like Occupation)
+// =============================================================
+function loadEducationFromFirestore() {
+    const container = document.getElementById("row-two-container");
+    if (!container) return;
+
+    db.collection("education")
+        .orderBy("from", "desc")
+        .onSnapshot(snapshot => {
+            container.innerHTML = "";
+
+            // Group entries by level
+            const groups = {};
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const level = data.level || "Other";
+                if (!groups[level]) groups[level] = [];
+                groups[level].push({ id: doc.id, ...data });
+            });
+
+            // Define display order
+            const order = ["Doctorate", "Masters", "Tertiary", "Vocational", "Secondary", "Primary", "Other"];
+
+            order.forEach(level => {
+                if (!groups[level]) return; // skip if no entries for this level
+
+                // Add level heading
+                const heading = document.createElement("h1");
+                heading.textContent = `${level} Education`;
+                container.appendChild(heading);
+
+                groups[level].forEach(item => {
+                    const fromDate = item.from ? new Date(item.from).toLocaleDateString() : "";
+                    const toDate = item.to ? new Date(item.to).toLocaleDateString() : "";
+
+                    const eduDiv = document.createElement("div");
+                    eduDiv.classList.add("content-container");
+                    eduDiv.dataset.id = item.id;
+
+                    eduDiv.innerHTML = `
+                        <svg class="icons" xmlns="http://www.w3.org/2000/svg" fill="none" 
+                             viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M4.26 10.147a60.438 60.438 0 0 0-.491 
+                                6.347A48.62 48.62 0 0 1 12 20.904a48.62 
+                                48.62 0 0 1 8.232-4.41 60.46 60.46 0 
+                                0 0-.491-6.347m-15.482 0a50.636 
+                                50.636 0 0 0-2.658-.813A59.906 
+                                59.906 0 0 1 12 3.493a59.903 
+                                59.903 0 0 1 10.399 5.84c-.896.248
+                                -1.783.52-2.658.814m-15.482 
+                                0A50.717 50.717 0 0 1 12 
+                                13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 
+                                15a.75.75 0 1 0 0-1.5.75.75 
+                                0 0 0 0 1.5Zm0 0v-3.675A55.378 
+                                55.378 0 0 1 12 8.443m-7.007 
+                                11.55A5.981 5.981 0 0 0 
+                                6.75 15.75v-1.5"></path>
+                        </svg>
+                        <div class="text-container">
+                            <h3>
+                                Studied 
+                                ${item.course ? item.course : ""} 
+                                at ${item.school}
+                            </h3>
+                            <p>
+                                ${item.address || ""} <br>
+                                ${fromDate} - ${toDate}
+                            </p>
+                        </div>
+                    `;
+
+                    container.appendChild(eduDiv);
+                });
+            });
+        });
 }
 
 
