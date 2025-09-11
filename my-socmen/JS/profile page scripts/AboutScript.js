@@ -455,9 +455,8 @@ if (educationLink) {
 }
 
 
-// Function to change the content of row two when "Contact Info" link is clicked
 // =============================================================
-// ✅ SHOW CONTACT DETAILS (Mirrored from Education)
+// ✅ SHOW CONTACT DETAILS (with proper SVG icons)
 // =============================================================
 async function showContactInfoDetails() {
     const rowTwo = document.getElementById("row-two");
@@ -474,7 +473,7 @@ async function showContactInfoDetails() {
 
     const container = rowTwo.querySelector("#row-two-container");
 
-    // 🔹 Show Tailwind skeleton loader while waiting
+    // Loader
     container.innerHTML = `
         <div class="content-loader">
             <div class="wrapper">
@@ -488,16 +487,16 @@ async function showContactInfoDetails() {
     `;
 
     try {
-        const snapshot = await db.collection("contactInfo")
-            .orderBy("platform", "asc")
+        const snapshot = await db.collection("contacts")
+            .orderBy("createdAt", "desc")
             .get();
 
         if (snapshot.empty) {
-            container.innerHTML = ``; // nothing if no contact info
+            container.innerHTML = `<p>No contact info yet.</p>`;
             return;
         }
 
-        // Group by contact type
+        // Group by type
         const groups = {
             contactNumber: [],
             emailAddress: [],
@@ -507,41 +506,53 @@ async function showContactInfoDetails() {
 
         snapshot.forEach(doc => {
             const data = { id: doc.id, ...doc.data() };
-            if (groups[data.contactType]) {
-                groups[data.contactType].push(data);
+            if (groups[data.type]) {
+                groups[data.type].push(data);
             }
         });
 
         // Helper to render each section
-        function renderSection(typeKey, entries, label, defaultIcon) {
+        function renderSection(typeKey, entries, label, svgIcon) {
             if (!entries.length) return null;
 
             const section = document.createElement("div");
             section.className = `${typeKey}-section`;
 
-            // Header
             const header = document.createElement("h1");
-            header.className = `${typeKey}-header`;
             header.textContent = label;
             section.appendChild(header);
 
-            // Each contact entry
             entries.forEach(info => {
                 const infoDiv = document.createElement("div");
                 infoDiv.className = "content-container";
                 infoDiv.style.position = "relative";
 
+                let value = "";
+                let platform = "";
+
+                if (typeKey === "contactNumber") {
+                    value = info.contactNum || "";
+                    platform = info.contactNumPlatform || "";
+                } else if (typeKey === "emailAddress") {
+                    value = info.contactEmail || "";
+                    platform = info.contactEmailPlatform || "";
+                } else if (typeKey === "socialMedia") {
+                    value = info.contactSocMed || "";
+                    platform = info.contactSocMedPlatform || "";
+                } else if (typeKey === "websiteLinks") {
+                    value = info.contactLink || "";
+                    platform = info.contactLinkPlatform || "";
+                }
+
                 infoDiv.innerHTML = `
-                    <img class="icons" src="${info.icon || defaultIcon}" alt="${info.platform}">
+                    <div class="icon">${svgIcon}</div>
                     <div class="text-container">
                         ${typeKey === "websiteLinks"
-                        ? `<a href="${info.value}" target="_blank"><h3>${info.value}</h3></a>`
-                        : `<h3>${info.value}</h3>`
-                    }
-                        <p>${info.platform}</p>
+                        ? `<a href="${value}" target="_blank"><h3>${value}</h3></a>`
+                        : `<h3>${value}</h3>`}
+                        <p>${platform}</p>
                     </div>
 
-                    <!-- 🔹 Actions -->
                     <div class="contact-actions">
                         <button class="contact-edit">Edit</button>
                         <button class="contact-delete">✖</button>
@@ -550,17 +561,15 @@ async function showContactInfoDetails() {
 
                 section.appendChild(infoDiv);
 
-                // =============================================================
-                // 🔹 DELETE Handler
-                // =============================================================
+                // Delete
                 const delBtn = infoDiv.querySelector(".contact-delete");
                 delBtn.addEventListener("click", async () => {
                     if (confirm("Delete this contact info?")) {
                         try {
                             showLoader();
-                            await db.collection("contactInfo").doc(info.id).delete();
+                            await db.collection("contacts").doc(info.id).delete();
                             console.log("❌ Contact deleted:", info.id);
-                            await showContactInfoDetails(); // refresh
+                            await showContactInfoDetails();
                         } catch (err) {
                             console.error("❌ Delete failed:", err);
                         } finally {
@@ -569,42 +578,27 @@ async function showContactInfoDetails() {
                     }
                 });
 
-                // =============================================================
-                // 🔹 EDIT Handler
-                // =============================================================
+                // Edit
                 const editBtn = infoDiv.querySelector(".contact-edit");
-                editBtn.addEventListener("click", async () => {
-                    try {
-                        showLoader();
-                        showContactInfoForm({
-                            id: info.id,
-                            contactType: info.contactType || "",
-                            platform: info.platform || "",
-                            value: info.value || "",
-                            icon: info.icon || ""
-                        });
-                    } catch (err) {
-                        console.error("❌ Edit failed:", err);
-                    } finally {
-                        hideLoader();
-                    }
+                editBtn.addEventListener("click", () => {
+                    showAddContactInfoForm(info);
                 });
             });
 
             return section;
         }
 
-        // Render all groups in order
-        container.innerHTML = ""; // clear first
+        // Render sections with SVGs
+        container.innerHTML = "";
         const order = [
-            ["contactNumber", "Contact Number", "Assets/Images/Icons/phone.png"],
-            ["emailAddress", "Emails", "Assets/Images/Icons/gmail.png"],
-            ["socialMedia", "Social Media Accounts", "Assets/Images/Icons/facebook.png"],
-            ["websiteLinks", "Website Links", "Assets/Images/Icons/link.png"]
+            ["contactNumber", "Contact Numbers", `<svg class="icons" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"></path></svg>`],
+            ["emailAddress", "Emails", `<svg class="icons" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 12C16 14.2091 14.2091 16 12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12ZM16 12V13.5C16 14.8807 17.1193 16 18.5 16V16C19.8807 16 21 14.8807 21 13.5V12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21H16" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>`],
+            ["socialMedia", "Social Media Accounts", `<svg class="icons" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M15.9 4.5C15.9 3 14.418 2 13.26 2c-.806 0-.869.612-.993 1.82-.055.53-.121 1.174-.267 1.93-.386 2.002-1.72 4.56-2.996 5.325V17C9 19.25 9.75 20 13 20h3.773c2.176 0 2.703-1.433 2.899-1.964l.013-.036c.114-.306.358-.547.638-.82.31-.306.664-.653.927-1.18.311-.623.27-1.177.233-1.67-.023-.299-.044-.575.017-.83.064-.27.146-.475.225-.671.143-.356.275-.686.275-1.329 0-1.5-.748-2.498-2.315-2.498H15.5S15.9 6 15.9 4.5zM5.5 10A1.5 1.5 0 0 0 4 11.5v7a1.5 1.5 0 0 0 3 0v-7A1.5 1.5 0 0 0 5.5 10z" fill="#ffffff"></path></svg>`],
+            ["websiteLinks", "Website Links", `<svg class="icons" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.63605 5.63605C7.19815 4.07395 9.73081 4.07395 11.2929 5.63605L14.1213 8.46448C15.6834 10.0266 15.6834 12.5592 14.1213 14.1213C13.7308 14.5119 13.0976 14.5119 12.7071 14.1213C12.3166 13.7308 12.3166 13.0976 12.7071 12.7071C13.4882 11.9261 13.4882 10.6597 12.7071 9.87869L9.87869 7.05026C9.09764 6.26922 7.83131 6.26922 7.05026 7.05026C6.26922 7.83131 6.26922 9.09764 7.05026 9.87869L7.75737 10.5858C8.1479 10.9763 8.14789 11.6095 7.75737 12C7.36685 12.3905 6.73368 12.3905 6.34316 12L5.63605 11.2929C4.07395 9.73081 4.07395 7.19815 5.63605 5.63605ZM11.2929 9.8787C11.6834 10.2692 11.6834 10.9024 11.2929 11.2929C10.5119 12.074 10.5119 13.3403 11.2929 14.1213L14.1213 16.9498C14.9024 17.7308 16.1687 17.7308 16.9498 16.9498C17.7308 16.1687 17.7308 14.9024 16.9498 14.1213L16.2427 13.4142C15.8521 13.0237 15.8521 12.3905 16.2427 12C16.6332 11.6095 17.2663 11.6095 17.6569 12L18.364 12.7071C19.9261 14.2692 19.9261 16.8019 18.364 18.364C16.8019 19.9261 14.2692 19.9261 12.7071 18.364L9.8787 15.5356C8.3166 13.9735 8.3166 11.4408 9.8787 9.8787C10.2692 9.48817 10.9024 9.48817 11.2929 9.8787Z" fill="#ffffff"></path></svg>`]
         ];
 
-        order.forEach(([key, label, icon]) => {
-            const section = renderSection(key, groups[key], label, icon);
+        order.forEach(([key, label, svg]) => {
+            const section = renderSection(key, groups[key], label, svg);
             if (section) container.appendChild(section);
         });
 
@@ -613,15 +607,17 @@ async function showContactInfoDetails() {
         container.innerHTML = `<p class="error">Failed to load contact details.</p>`;
     }
 
-    // 🔹 Wire the Add button
+    // Add button
     const addBtn = rowTwo.querySelector("#add-new-contact");
     if (addBtn) {
         addBtn.addEventListener("click", () => {
-            showContactInfoForm();
+            showAddContactInfoForm();
         });
     }
 }
 window.showContactInfoDetails = showContactInfoDetails;
+
+
 
 
 // Add an event listener to the "Contact info" link

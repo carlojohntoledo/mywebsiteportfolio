@@ -193,6 +193,7 @@ section.About {
 }
 
 .occupation-actions,
+.contact-actions,
 .education-actions {
     display: none;
     position: absolute;
@@ -204,6 +205,7 @@ section.About {
 }
 
 .content-container:hover .occupation-actions,
+.content-container:hover .contact-actions,
 .content-container:hover .education-actions {
     display: flex;
 }
@@ -216,6 +218,8 @@ section.About {
 
 .occupation-delete,
 .education-delete,
+.contact-delete,
+.contact-edit,
 .occupation-edit,
 .education-edit {
     /* display: none; */
@@ -232,18 +236,21 @@ section.About {
 }
 
 .occupation-edit,
+.contact-edit,
 .education-edit {
     border-radius: 0.2rem;
 }
 
 
 .occupation-delete:hover,
+.contact-delete:hover,
 .education-delete:hover {
     background-color: #ff3131;
 
 }
 
 .occupation-edit:hover,
+.contact-edit:hover,
 .education-edit:hover {
     background-color: #ffbd59;
 }

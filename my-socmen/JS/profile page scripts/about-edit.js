@@ -607,20 +607,30 @@ function showAddContactInfoForm(existingData = null) {
         }
 
         try {
+            showLoader();
+
             if (isEdit) {
                 await db.collection("contacts").doc(existingData.id).update(payload);
-                console.log("✏️ Contact updated");
+                console.log("✏️ Contact updated:", existingData.id);
             } else {
                 payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
                 await db.collection("contacts").add(payload);
-                console.log("✅ Contact saved");
+                console.log("✅ New contact added");
             }
 
+            // Close form
             container.style.display = "none";
             container.innerHTML = "";
-            if (typeof showContactDetails === "function") showContactDetails();
+
+            // 🔄 Refresh contact list
+            if (typeof showContactInfoDetails === "function") {
+                await showContactInfoDetails();
+            }
         } catch (err) {
             console.error("❌ Error saving contact:", err);
+        } finally {
+            hideLoader();
         }
     });
 }
+
