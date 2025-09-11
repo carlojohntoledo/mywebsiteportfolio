@@ -519,6 +519,7 @@ async function showContactInfoDetails() {
 
             const header = document.createElement("h1");
             header.textContent = label;
+            header.style.fontSize = "var(--font-lg)"
             section.appendChild(header);
 
             entries.forEach(info => {
