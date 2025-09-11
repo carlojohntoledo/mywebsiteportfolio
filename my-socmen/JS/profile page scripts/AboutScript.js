@@ -267,13 +267,26 @@ async function showEducationDetails() {
 
     const container = rowTwo.querySelector("#row-two-container");
 
+    // 🔹 Show Tailwind skeleton loader while waiting
+    container.innerHTML = `
+        <div class="content-loader">
+            <div class="wrapper">
+                <div class="circle"></div>
+                <div class="line-1"></div>
+                <div class="line-2"></div>
+                <div class="line-3"></div>
+                <div class="line-4"></div>
+            </div>
+        </div>
+    `;
+
     try {
         const snapshot = await db.collection("education")
             .orderBy("from", "desc")
             .get();
 
         if (snapshot.empty) {
-            container.innerHTML = ""; // nothing if no education
+            container.innerHTML = ``; // nothing if no education
             return;
         }
 
@@ -353,32 +366,46 @@ async function showEducationDetails() {
                 section.appendChild(eduDiv);
 
                 // =============================================================
-                // 🔹 DELETE Handler
+                // 🔹 DELETE Handler (with loader)
                 // =============================================================
                 const delBtn = eduDiv.querySelector(".education-delete");
                 delBtn.addEventListener("click", async () => {
                     if (confirm("Delete this education record?")) {
-                        await db.collection("education").doc(edu.id).delete();
-                        console.log("❌ Education deleted:", edu.id);
-                        showEducationDetails(); // refresh
+                        try {
+                            showLoader();
+                            await db.collection("education").doc(edu.id).delete();
+                            console.log("❌ Education deleted:", edu.id);
+                            await showEducationDetails(); // refresh
+                        } catch (err) {
+                            console.error("❌ Delete failed:", err);
+                        } finally {
+                            hideLoader();
+                        }
                     }
                 });
 
                 // =============================================================
-                // 🔹 EDIT Handler
+                // 🔹 EDIT Handler (with loader)
                 // =============================================================
                 const editBtn = eduDiv.querySelector(".education-edit");
-                editBtn.addEventListener("click", () => {
-                    showAddEducationForm({
-                        id: edu.id,
-                        level: edu.level || "",
-                        school: edu.school || "",
-                        address: edu.address || "",
-                        course: edu.course || "",
-                        status: edu.status || "",
-                        from: edu.from ? new Date(edu.from).toISOString().split("T")[0] : "",
-                        to: edu.to || "Present"
-                    });
+                editBtn.addEventListener("click", async () => {
+                    try {
+                        showLoader();
+                        showAddEducationForm({
+                            id: edu.id,
+                            level: edu.level || "",
+                            school: edu.school || "",
+                            address: edu.address || "",
+                            course: edu.course || "",
+                            status: edu.status || "",
+                            from: edu.from ? new Date(edu.from).toISOString().split("T")[0] : "",
+                            to: edu.to || "Present"
+                        });
+                    } catch (err) {
+                        console.error("❌ Edit failed:", err);
+                    } finally {
+                        hideLoader();
+                    }
                 });
             });
 
@@ -415,6 +442,7 @@ async function showEducationDetails() {
     }
 }
 window.showEducationDetails = showEducationDetails;
+
 
 
 // Add click listener to the "Education" link
