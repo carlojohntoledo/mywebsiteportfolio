@@ -230,17 +230,22 @@ async function saveOccupation() {
 // =============================================================
 function showAddEducationForm(existingData = null) {
     const addEducationCont = document.querySelector(".create-card-container-parent");
-    addEducationCont.style.display = "grid";
     if (!addEducationCont) {
         console.error("❌ Education form container not found");
         return;
     }
 
+    // Show form container
+    addEducationCont.style.display = "grid";
+
+    // Check if we're editing or creating new
     const isEdit = !!existingData;
 
+    // Render the form HTML
     addEducationCont.innerHTML = `
         <div class="create-post-container">
             <div class="create-profile-form-container">
+                <!-- Header -->
                 <div class="create-profile-header">
                     <h1 class="card-title">About Me</h1>
                     <span class="create-profile-button-container red-btn" id="cancel-btn">Cancel</span>
@@ -249,10 +254,12 @@ function showAddEducationForm(existingData = null) {
                     </span>
                 </div>
 
+                <!-- Error warning -->
                 <div class="error" id="form-warning" style="display:none;">
                     <div class="form-warning-cont">Please fill-in required (*) details.</div>
                 </div>
 
+                <!-- Scrollable content -->
                 <div class="create-profile-form-viewport scroll-fade">
                     <form id="create-profile-form">
                         <h1>${isEdit ? "Edit Educational Background" : "Educational Background"}</h1>
@@ -273,59 +280,62 @@ function showAddEducationForm(existingData = null) {
                             </div>
                         </div>
 
-                        <!-- School Name -->
-                        <div class="flex-container">
-                            <div class="create-profile-containers profile-label">
-                                <input class="input-profile-title" id="edu-schoolname" type="text" 
-                                    required value="${existingData?.school || ''}">
-                                <label>University/School Name*</label>
+                        <!-- Details section (hidden until a level is chosen) -->
+                        <div id="edu-details-section" class="edu-details-group" style="display:none;">
+                            <!-- School Name -->
+                            <div class="flex-container">
+                                <div class="create-profile-containers profile-label">
+                                    <input class="input-profile-title" id="edu-schoolname" type="text" 
+                                        required value="${existingData?.school || ''}">
+                                    <label>University/School Name*</label>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- School Address -->
-                        <div class="flex-container">
-                            <div class="create-profile-containers profile-label">
-                                <input class="input-profile-title" id="edu-schooladdress" type="text" 
-                                    required value="${existingData?.address || ''}">
-                                <label>University/School Address*</label>
+                            <!-- School Address -->
+                            <div class="flex-container">
+                                <div class="create-profile-containers profile-label">
+                                    <input class="input-profile-title" id="edu-schooladdress" type="text" 
+                                        required value="${existingData?.address || ''}">
+                                    <label>University/School Address*</label>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Course Title (conditionally required) -->
-                        <div class="flex-container" id="course-container" style="display:none;">
-                            <div class="create-profile-containers profile-label">
-                                <input class="input-profile-title" id="edu-course" type="text"
-                                    placeholder="Bachelor of Science in..." 
-                                    value="${existingData?.course || ''}">
-                                <label>Course Title*</label>
+                            <!-- Course Title (conditionally required) -->
+                            <div class="flex-container" id="course-container" style="display:none;">
+                                <div class="create-profile-containers profile-label">
+                                    <input class="input-profile-title" id="edu-course" type="text"
+                                        placeholder="Bachelor of Science in..." 
+                                        value="${existingData?.course || ''}">
+                                    <label>Course Title*</label>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Enrollment Status -->
-                        <div class="flex-container">
-                            <div class="create-profile-containers profile-label">
-                                <select class="input-profile-date" id="edu-status" required>
-                                    <option value="">Select Status</option>
-                                    <option value="Graduate" ${existingData?.status === "Graduate" ? "selected" : ""}>Graduate</option>
-                                    <option value="Under Graduate" ${existingData?.status === "Under Graduate" ? "selected" : ""}>Under Graduate</option>
-                                    <option value="Drop Out" ${existingData?.status === "Drop Out" ? "selected" : ""}>Drop Out</option>
-                                    <option value="On Leave" ${existingData?.status === "On Leave" ? "selected" : ""}>On Leave</option>
-                                </select>
-                                <label>Enrollment Status*</label>
+                            <!-- Enrollment Status -->
+                            <div class="flex-container">
+                                <div class="create-profile-containers profile-label">
+                                    <select class="input-profile-date" id="edu-status" required>
+                                        <option value="">Select Status</option>
+                                        <option value="Graduate" ${existingData?.status === "Graduate" ? "selected" : ""}>Graduate</option>
+                                        <option value="Under Graduate" ${existingData?.status === "Under Graduate" ? "selected" : ""}>Under Graduate</option>
+                                        <option value="Drop Out" ${existingData?.status === "Drop Out" ? "selected" : ""}>Drop Out</option>
+                                        <option value="On Leave" ${existingData?.status === "On Leave" ? "selected" : ""}>On Leave</option>
+                                    </select>
+                                    <label>Enrollment Status*</label>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Dates -->
-                        <div class="flex-container">
-                            <div class="create-profile-containers profile-label">
-                                <input class="input-profile-date" id="edu-from" type="date" 
-                                    required value="${existingData?.from || ''}">
-                                <label>From*</label>
-                            </div>
-                            <div class="create-profile-containers profile-label">
-                                <input class="input-profile-date" id="edu-to" type="date" 
-                                    required value="${existingData?.to || ''}">
-                                <label>To*</label>
+                            <!-- Dates -->
+                            <div class="flex-container">
+                                <div class="create-profile-containers profile-label">
+                                    <input class="input-profile-date" id="edu-from" type="date" 
+                                        required value="${existingData?.from || ''}">
+                                    <label>From*</label>
+                                </div>
+                                <div class="create-profile-containers profile-label">
+                                    <input class="input-profile-date" id="edu-to" type="date" 
+                                        required value="${existingData?.to || ''}">
+                                    <label>To*</label>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -334,7 +344,7 @@ function showAddEducationForm(existingData = null) {
         </div>
     `;
 
-    // cancel
+    // 🔴 Cancel button → hide and clear form
     const cancelBtn = addEducationCont.querySelector('#cancel-btn');
     if (cancelBtn) {
         cancelBtn.addEventListener('click', () => {
@@ -343,41 +353,50 @@ function showAddEducationForm(existingData = null) {
         });
     }
 
-    // toggle course title requirement
+    // ⚡ Handle field toggling
     const eduLevelSelect = addEducationCont.querySelector("#edu-level");
+    const detailsSection = addEducationCont.querySelector("#edu-details-section");
     const courseContainer = addEducationCont.querySelector("#course-container");
     const courseInput = addEducationCont.querySelector("#edu-course");
 
-    function toggleCourseField() {
+    function toggleEducationFields() {
         const level = eduLevelSelect.value;
+
+        // Show details only when a level is chosen
+        detailsSection.style.display = level ? "grid" : "none";
+
+        // Course field is required only for tertiary+ levels
         if (level === "primary" || level === "secondary") {
             courseContainer.style.display = "none";
             courseInput.required = false;
             courseInput.value = "";
-        } else {
+        } else if (level) {
             courseContainer.style.display = "flex";
             courseInput.required = true;
         }
     }
-    eduLevelSelect.addEventListener("change", toggleCourseField);
-    toggleCourseField(); // initialize on load
 
-    // save/update
+    eduLevelSelect.addEventListener("change", toggleEducationFields);
+    toggleEducationFields(); // initialize (important in edit mode)
+
+    // ✅ Save / Update button
     const saveBtn = addEducationCont.querySelector("#profile-post-btn");
     saveBtn.addEventListener("click", async (e) => {
         e.preventDefault();
+
+        // Collect payload
         const payload = {
             level: eduLevelSelect.value,
-            school: document.getElementById("edu-schoolname").value.trim(),
-            address: document.getElementById("edu-schooladdress").value.trim(),
-            course: courseInput.required ? courseInput.value.trim() : "",
-            status: document.getElementById("edu-status").value,
-            from: document.getElementById("edu-from").value,
-            to: document.getElementById("edu-to").value,
+            school: document.getElementById("edu-schoolname")?.value.trim() || "",
+            address: document.getElementById("edu-schooladdress")?.value.trim() || "",
+            course: courseInput.required ? (courseInput.value.trim() || "") : "",
+            status: document.getElementById("edu-status")?.value || "",
+            from: document.getElementById("edu-from")?.value || "",
+            to: document.getElementById("edu-to")?.value || "",
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        // validation
+        // Basic validation
         if (!payload.level || !payload.school || !payload.address || !payload.status || !payload.from || !payload.to || (courseInput.required && !payload.course)) {
             const errorEl = addEducationCont.querySelector("#form-warning");
             if (errorEl) errorEl.style.display = "flex";
@@ -386,16 +405,20 @@ function showAddEducationForm(existingData = null) {
 
         try {
             if (isEdit) {
+                // Update existing doc
                 await db.collection("education").doc(existingData.id).update(payload);
                 console.log("✏️ Education updated");
             } else {
+                // Add new doc
                 payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
                 await db.collection("education").add(payload);
                 console.log("✅ Education saved");
             }
+
+            // Close form and refresh list
             addEducationCont.style.display = "none";
             addEducationCont.innerHTML = "";
-            showEducationDetails(); // refresh list
+            showEducationDetails();
         } catch (err) {
             console.error("❌ Error saving education:", err);
         }
@@ -404,29 +427,13 @@ function showAddEducationForm(existingData = null) {
 
 
 // =============================================================
-// ✅ GLOBAL SAVE LISTENER
-// =============================================================
-document.addEventListener("click", async (e) => {
-    const saveBtn = e.target.closest("#education-post-btn");
-    if (!saveBtn) return;
-    e.preventDefault();
-
-    try {
-        await saveEducation();
-        showEducationDetails(); // call renderer (from about-js.js)
-    } catch (err) {
-        console.error("❌ Error saving education:", err);
-        alert(err.message || "Error saving education.");
-    }
-});
-
-// =============================================================
 // ✅ SAVE EDUCATION FUNCTION
 // =============================================================
 async function saveEducation() {
     const container = document.querySelector(".create-card-container-parent");
     if (!container) return;
 
+    // Collect form elements
     const levelEl = container.querySelector("#edu-level");
     const schoolEl = container.querySelector("#edu-schoolname");
     const addressEl = container.querySelector("#edu-schooladdress");
@@ -436,8 +443,12 @@ async function saveEducation() {
     const toEl = container.querySelector("#edu-to");
     const errorEl = container.querySelector("#form-warning");
 
+    // Check if Course is required (only tertiary+)
     const isPrimaryOrSecondary = levelEl.value === "primary" || levelEl.value === "secondary";
 
+    // =====================
+    // 🔎 VALIDATION
+    // =====================
     if (
         !levelEl.value ||
         !schoolEl.value.trim() ||
@@ -452,92 +463,12 @@ async function saveEducation() {
         errorEl.style.display = "none";
     }
 
-    let toDate = "Present";
-    if (toEl.value) {
-        toDate = toEl.value;
-    }
+    // "To" field (support Present)
+    const toDate = toEl.value ? toEl.value : "Present";
 
-    const payload = {
-        level: levelEl.value,
-        school: schoolEl.value.trim(),
-        address: addressEl.value.trim(),
-        course: isPrimaryOrSecondary ? "" : courseEl.value.trim(),
-        status: statusEl.value,
-        from: fromEl.value,
-        to: toDate,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    };
-
-    if (typeof showLoader === "function") showLoader();
-
-    try {
-        await db.collection("education").add(payload);
-        console.log("✅ Education saved successfully");
-
-        container.style.display = "none";
-        container.innerHTML = "";
-    } finally {
-        if (typeof hideLoader === "function") hideLoader();
-    }
-}
-
-
-// =============================================================
-// ✅ ADD SUBMIT/SAVE FOR EDUCATION FORM
-// =============================================================
-document.addEventListener("click", (e) => {
-    const saveBtn = e.target.closest("#education-post-btn");
-    if (saveBtn) {
-        try {
-            e.preventDefault();
-            saveEducation();
-        } catch (err) {
-            console.error("❌ Error saving education:", err);
-            alert(err.message || "Error saving education.");
-        } finally {
-            showEducationDetails();
-        }
-    }
-});
-
-async function saveEducation() {
-    const container = document.querySelector(".create-card-container-parent");
-    if (!container) return;
-
-    const levelEl = container.querySelector("#edu-level");
-    const schoolEl = container.querySelector("#edu-schoolname");
-    const addressEl = container.querySelector("#edu-schooladdress");
-    const courseEl = container.querySelector("#edu-course");
-    const statusEl = container.querySelector("#edu-status");
-    const fromEl = container.querySelector("#edu-from");
-    const toEl = container.querySelector("#edu-to");
-    const errorEl = container.querySelector("#form-warning");
-
-    // Validation rules
-    const isPrimaryOrSecondary = levelEl.value === "primary" || levelEl.value === "secondary";
-
-    if (
-        !levelEl.value ||
-        !schoolEl.value.trim() ||
-        !addressEl.value.trim() ||
-        (!isPrimaryOrSecondary && !courseEl.value.trim()) ||
-        !statusEl.value ||
-        !fromEl.value
-    ) {
-        if (errorEl) errorEl.style.display = "flex";
-        return;
-    } else if (errorEl) {
-        errorEl.style.display = "none";
-    }
-
-    // Handle toDate
-    let toDate = "Present";
-    if (toEl.value) {
-        toDate = toEl.value;
-    }
-
-    // Prepare payload
+    // =====================
+    // 📦 PAYLOAD
+    // =====================
     const payload = {
         level: levelEl.value,
         school: schoolEl.value.trim(),
@@ -553,13 +484,18 @@ async function saveEducation() {
     try {
         if (typeof showLoader === "function") showLoader();
 
+        // Save to Firestore
         await db.collection("education").add(payload);
-
         console.log("✅ Education saved successfully");
 
-        // Close and clear form
+        // Hide and reset form
         container.style.display = "none";
         container.innerHTML = "";
+
+        // Refresh the education list
+        if (typeof showEducationDetails === "function") {
+            showEducationDetails();
+        }
 
     } catch (err) {
         console.error("❌ Error saving education:", err);
@@ -568,3 +504,15 @@ async function saveEducation() {
         if (typeof hideLoader === "function") hideLoader();
     }
 }
+
+// =============================================================
+// ✅ ATTACH SAVE HANDLER TO SAVE BUTTON
+// =============================================================
+document.addEventListener("click", (e) => {
+    // Button should match ID from showAddEducationForm
+    const saveBtn = e.target.closest("#profile-post-btn");
+    if (saveBtn) {
+        e.preventDefault();
+        saveEducation();
+    }
+});

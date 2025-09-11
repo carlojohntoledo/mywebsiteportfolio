@@ -207,6 +207,11 @@ section.About {
     display: flex;
 }
 
+.edu-details-group {
+    display: grid;
+    gap: 2rem;
+}
+
 .occupation-delete,
 .education-delete,
 .occupation-edit,

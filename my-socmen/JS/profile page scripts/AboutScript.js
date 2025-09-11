@@ -99,219 +99,153 @@ if (overviewLink) {
     });
 }
 
-
-
 // =============================================================
-// ✅ SHOW OCCUPATION DETAILS FROM FIRESTORE
+// ✅ Unified Occupation Details (Real-time with full actions)
 // =============================================================
 async function showOccupationDetails() {
-    const rowTwo = document.getElementById('row-two');
+    const rowTwo = document.getElementById("row-two");
     if (!rowTwo) return;
 
-    // Header + Add button
+    // 🔹 Inject header + add button
     rowTwo.innerHTML = `
         <div class="abt-flex-container">
             <h1>Employment History</h1>
             <div class="add-new-form-btn" id="add-new-occupation">+</div>
         </div>
         <div id="row-two-container" class="flex justify-center items-center min-h-[200px]"></div>
-        
     `;
 
-    const container = document.getElementById('row-two-container');
-    if (!container) return;
-
-    try {
-        // 🔹 Show Tailwind skeleton loader
-        container.innerHTML = `
-            <div class="content-loader">
-                <div class="wrapper">
-                    <div class="circle"></div>
-                    <div class="line-1"></div>
-                    <div class="line-2"></div>
-                    <div class="line-3"></div>
-                    <div class="line-4"></div>
-                </div>
-            </div>
-        `;
-
-        const snapshot = await db.collection("occupations")
-            .orderBy("from", "desc")
-            .get();
-
-        container.innerHTML = ""; // clear loader
-
-        snapshot.forEach(doc => {
-            const data = doc.data();
-
-            const fromDate = data.from ? new Date(data.from).toISOString().split("T")[0] : "";
-            let toDate = "Present";
-            if (data.to && data.to !== "Present") {
-                toDate = new Date(data.to).toISOString().split("T")[0];
-            }
-
-            let displayToDate = data.to === "Present"
-                ? "Present"
-                : new Date(data.to).toLocaleDateString();
-
-            // Add "Former" if not present & ended before today
-            let jobTitle = data.jobTitle;
-            if (data.to && data.to !== "Present" && new Date(data.to) < new Date()) {
-                jobTitle = `Former ${data.jobTitle}`;
-            }
-
-            const occupationDiv = document.createElement("div");
-            occupationDiv.classList.add("content-container");
-            occupationDiv.dataset.id = doc.id;
-
-            occupationDiv.innerHTML = `
-                <svg class="icons" xmlns="http://www.w3.org/2000/svg" fill="none" 
-                     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" 
-                          d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18
-                             -2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42
-                             c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 
-                             0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081
-                             -.768-2.015-1.837-2.175a48.114 48.114 0 0 
-                             0-3.413-.387m4.5 8.006c-.194.165-.42.295
-                             -.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 
-                             0-5.195-.429-7.577-1.22a2.016 2.016 0 0 
-                             1-.673-.38m0 0A2.18 2.18 0 0 1 3 
-                             12.489V8.706c0-1.081.768-2.015 1.837-2.175
-                             a48.111 48.111 0 0 1 3.413-.387m7.5 
-                             0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 
-                             2.25 0 0 0-2.25 2.25v.894m7.5 
-                             0a48.667 48.667 0 0 0-7.5 0M12 
-                             12.75h.008v.008H12v-.008Z">
-                    </path>
-                </svg>
-                <div class="text-container">
-                    <h3>${jobTitle} at ${data.company}</h3>
-                    <p>${new Date(data.from).toLocaleDateString()} - ${displayToDate} <br><br>
-                    ${data.description || ''}</p>
-                </div>
-                <div class="occupation-actions">
-                    <button class="occupation-edit">Edit</button>
-                    <button class="occupation-delete">✖</button>
-                </div>
-            `;
-
-            container.appendChild(occupationDiv);
-
-            // ✅ DELETE
-            const delBtn = occupationDiv.querySelector(".occupation-delete");
-            if (delBtn) {
-                delBtn.addEventListener("click", async () => {
-                    if (confirm("Delete this occupation?")) {
-                        await db.collection("occupations").doc(doc.id).delete();
-                        occupationDiv.remove();
-                        console.log("❌ Occupation deleted:", doc.id);
-                    }
-                });
-            }
-
-            // ✅ EDIT
-            const editBtn = occupationDiv.querySelector(".occupation-edit");
-            if (editBtn) {
-                editBtn.addEventListener("click", () => {
-                    showAddOccupationForm({
-                        id: doc.id,
-                        company: data.company,
-                        jobTitle: data.jobTitle,
-                        from: fromDate,
-                        to: data.to || "Present",
-                        description: data.description || ""
-                    });
-                });
-            }
-        });
-
-    } catch (err) {
-        console.error("❌ Error loading occupations:", err);
-        container.innerHTML = `<p style="color:red;">Failed to load occupations.</p>`;
-    }
-}
-
-
-
-// Expose globally so Add button can use it
-window.showOccupationDetails = showOccupationDetails;
-
-// Add click listener to the "Occupation" link
-const occupationLink = document.querySelector('#row-one-container a[href="#Occupation"]');
-if (occupationLink) {
-    occupationLink.addEventListener('click', function (event) {
-        event.preventDefault();
-        showOccupationDetails();
-    });
-}
-
-// document.addEventListener("click", async (e) => {
-//     const delBtn = e.target.closest(".occupation-delete");
-//     if (!delBtn) return;
-
-//     const card = delBtn.closest(".content-container");
-//     const docId = card?.dataset.id;
-//     if (!docId) return;
-
-//     if (!confirm("🗑️ Delete this occupation?")) return;
-
-//     try {
-//         if (typeof showLoader === "function") showLoader();
-
-//         // Delete document from Firestore
-//         await db.collection("occupations").doc(docId).delete();
-
-//         // Remove from UI immediately
-//         card.remove();
-
-
-//         console.log(`✅ Deleted occupation ${docId}`);
-//     } catch (err) {
-//         console.error("❌ Error deleting occupation:", err);
-//         alert(err.message || "Error deleting occupation.");
-//     } finally {
-//         if (typeof hideLoader === "function") hideLoader();
-//         showOccupationDetails();
-//     }
-// });
-
-function loadOccupationsFromFirestore() {
     const container = document.getElementById("row-two-container");
     if (!container) return;
 
-    // Real-time snapshot listener
+    // 🔹 Show Tailwind skeleton loader while waiting
+    container.innerHTML = `
+        <div class="content-loader">
+            <div class="wrapper">
+                <div class="circle"></div>
+                <div class="line-1"></div>
+                <div class="line-2"></div>
+                <div class="line-3"></div>
+                <div class="line-4"></div>
+            </div>
+        </div>
+    `;
+
+    // =============================================================
+    // 🔹 Real-time Firestore snapshot listener
+    // =============================================================
     db.collection("occupations")
-        .orderBy("from", "desc") // latest start date first
+        .orderBy("from", "desc") // newest job first
         .onSnapshot(snapshot => {
-            container.innerHTML = "";
+            container.innerHTML = ""; // clear loader + old content
+
+            if (snapshot.empty) {
+                container.innerHTML = `<p>No occupations found.</p>`;
+                return;
+            }
 
             snapshot.forEach(doc => {
                 const data = doc.data();
-                const fromDate = new Date(data.from).toLocaleDateString();
-                let toDate = data.to === "Present" ? "Present" : new Date(data.to).toLocaleDateString();
 
-                // Add "Former" prefix if job already ended
-                const today = new Date();
-                const isFormer = data.to !== "Present" && new Date(data.to) < today;
-                const jobTitle = isFormer ? `Former ${data.jobTitle}` : data.jobTitle;
+                // 🔹 Date formatting
+                const fromDate = data.from ? new Date(data.from).toLocaleDateString() : "";
+                let displayToDate = "Present";
+                if (data.to && data.to !== "Present") {
+                    displayToDate = new Date(data.to).toLocaleDateString();
+                }
 
+                // 🔹 Add "Former" if ended before today
+                let jobTitle = data.jobTitle || "Untitled Job";
+                if (data.to && data.to !== "Present" && new Date(data.to) < new Date()) {
+                    jobTitle = `Former ${data.jobTitle}`;
+                }
+
+                // 🔹 Build occupation card
                 const occupationDiv = document.createElement("div");
                 occupationDiv.classList.add("content-container");
                 occupationDiv.dataset.id = doc.id;
 
                 occupationDiv.innerHTML = `
-                <img class="companies" src="${data.companyLogo || 'Assets/Images/itc logo.png'}" alt="${data.company}">
-                <div class="text-container">
-                    <h3>${jobTitle} at ${data.company}</h3>
-                    <p>${fromDate} - ${toDate} <br><br>${data.description || ''}</p>
-                </div>
-                <button class="occupation-delete">✖</button>
-            `;
+                    <svg class="icons" xmlns="http://www.w3.org/2000/svg" fill="none" 
+                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" 
+                              d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18
+                                 -2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42
+                                 c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 
+                                 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081
+                                 -.768-2.015-1.837-2.175a48.114 48.114 0 0 
+                                 0-3.413-.387m4.5 8.006c-.194.165-.42.295
+                                 -.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 
+                                 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 
+                                 1-.673-.38m0 0A2.18 2.18 0 0 1 3 
+                                 12.489V8.706c0-1.081.768-2.015 1.837-2.175
+                                 a48.111 48.111 0 0 1 3.413-.387m7.5 
+                                 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 
+                                 2.25 0 0 0-2.25 2.25v.894m7.5 
+                                 0a48.667 48.667 0 0 0-7.5 0M12 
+                                 12.75h.008v.008H12v-.008Z">
+                        </path>
+                    </svg>
+                    <div class="text-container">
+                        <h3>${jobTitle} at ${data.company || "Unknown Company"}</h3>
+                        <p>${fromDate} - ${displayToDate} <br><br>
+                        ${data.description || ""}</p>
+                    </div>
+                    <div class="occupation-actions">
+                        <button class="occupation-edit">Edit</button>
+                        <button class="occupation-delete">✖</button>
+                    </div>
+                `;
 
                 container.appendChild(occupationDiv);
+
+                // =============================================================
+                // 🔹 DELETE Handler
+                // =============================================================
+                const delBtn = occupationDiv.querySelector(".occupation-delete");
+                if (delBtn) {
+                    delBtn.addEventListener("click", async () => {
+                        if (confirm("Delete this occupation?")) {
+                            await db.collection("occupations").doc(doc.id).delete();
+                            console.log("❌ Occupation deleted:", doc.id);
+                        }
+                    });
+                }
+
+                // =============================================================
+                // 🔹 EDIT Handler
+                // =============================================================
+                const editBtn = occupationDiv.querySelector(".occupation-edit");
+                if (editBtn) {
+                    editBtn.addEventListener("click", () => {
+                        showAddOccupationForm({
+                            id: doc.id,
+                            company: data.company || "",
+                            jobTitle: data.jobTitle || "",
+                            from: data.from ? new Date(data.from).toISOString().split("T")[0] : "",
+                            to: data.to || "Present",
+                            description: data.description || ""
+                        });
+                    });
+                }
             });
+        }, err => {
+            console.error("❌ Error loading occupations:", err);
+            container.innerHTML = `<p style="color:red;">Failed to load occupations.</p>`;
         });
+}
+
+// =============================================================
+// ✅ Expose globally + link handler
+// =============================================================
+window.showOccupationDetails = showOccupationDetails;
+
+const occupationLink = document.querySelector('#row-one-container a[href="#Occupation"]');
+if (occupationLink) {
+    occupationLink.addEventListener("click", function (event) {
+        event.preventDefault();
+        showOccupationDetails();
+    });
 }
 
 
@@ -563,48 +497,61 @@ function loadEducationFromFirestore() {
     });
 }
 
-
 // =============================================================
-// ✅ LOAD EDUCATION FROM FIRESTORE (Real-time like Occupation)
 // =============================================================
-function loadEducationFromFirestore() {
-    const container = document.getElementById("row-two-container");
-    if (!container) return;
+// ✅ SHOW EDUCATION DETAILS
+// =============================================================
+async function showEducationDetails() {
+    const rowTwo = document.getElementById("row-two");
+    if (!rowTwo) return;
 
-    db.collection("education")
-        .orderBy("from", "desc")
-        .onSnapshot(snapshot => {
-            container.innerHTML = "";
+    // Header layout
+    rowTwo.innerHTML = `
+        <div class="abt-flex-container">
+            <h1>Education</h1>
+            <div class="add-new-form-btn" id="add-new-education">+</div>
+        </div>
+        <div id="row-two-container" class="flex flex-col gap-6"></div>
+    `;
 
-            // Group entries by level
-            const groups = {};
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                const level = data.level || "Other";
-                if (!groups[level]) groups[level] = [];
-                groups[level].push({ id: doc.id, ...data });
-            });
+    const container = rowTwo.querySelector("#row-two-container");
 
-            // Define display order
-            const order = ["Doctorate", "Masters", "Tertiary", "Vocational", "Secondary", "Primary", "Other"];
+    try {
+        const snapshot = await db.collection("education")
+            .orderBy("from", "desc")
+            .get();
 
-            order.forEach(level => {
-                if (!groups[level]) return; // skip if no entries for this level
+        if (snapshot.empty) {
+            container.innerHTML = ""; // nothing if no education
+            return;
+        }
 
-                // Add level heading
-                const heading = document.createElement("h1");
-                heading.textContent = `${level} Education`;
-                container.appendChild(heading);
+        // Group by education level
+        const groups = {
+            tertiary: [],
+            secondary: [],
+            primary: [],
+            vocational: [],
+            masters: [],
+            doctorate: []
+        };
 
-                groups[level].forEach(item => {
-                    const fromDate = item.from ? new Date(item.from).toLocaleDateString() : "";
-                    const toDate = item.to ? new Date(item.to).toLocaleDateString() : "";
+        snapshot.forEach(doc => {
+            const data = { id: doc.id, ...doc.data() };
+            if (groups[data.level]) {
+                groups[data.level].push(data);
+            }
+        });
 
-                    const eduDiv = document.createElement("div");
-                    eduDiv.classList.add("content-container");
-                    eduDiv.dataset.id = item.id;
+        // Helper to render each section
+        function renderSection(levelName, entries, label) {
+            if (!entries.length) return "";
 
-                    eduDiv.innerHTML = `
+            let sectionHTML = `<h1 class="${levelName}-school">${label}</h1>`;
+
+            entries.forEach(edu => {
+                sectionHTML += `
+                    <div class="content-container">
                         <svg class="icons" xmlns="http://www.w3.org/2000/svg" fill="none" 
                              viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -626,23 +573,42 @@ function loadEducationFromFirestore() {
                         </svg>
                         <div class="text-container">
                             <h3>
-                                Studied 
-                                ${item.course ? item.course : ""} 
-                                at ${item.school}
+                                ${edu.course ? `Studied ${edu.course} at ${edu.school}` : `Studied at ${edu.school}`}
                             </h3>
                             <p>
-                                ${item.address || ""} <br>
-                                ${fromDate} - ${toDate}
+                                ${edu.address} <br>
+                                Class of ${edu.from} - ${edu.to}
                             </p>
                         </div>
-                    `;
-
-                    container.appendChild(eduDiv);
-                });
+                    </div>
+                `;
             });
-        });
-}
 
+            return sectionHTML;
+        }
+
+        // Render all sections in order
+        container.innerHTML =
+            renderSection("tertiary", groups.tertiary, "Tertiary Education") +
+            renderSection("secondary", groups.secondary, "Secondary School") +
+            renderSection("primary", groups.primary, "Primary School") +
+            renderSection("vocational", groups.vocational, "Vocational") +
+            renderSection("masters", groups.masters, "Masters") +
+            renderSection("doctorate", groups.doctorate, "Doctorate");
+
+    } catch (err) {
+        console.error("❌ Error loading education:", err);
+        container.innerHTML = `<p class="error">Failed to load education details.</p>`;
+    }
+
+    // 🔹 Wire the Add button
+    const addBtn = rowTwo.querySelector("#add-new-education");
+    if (addBtn) {
+        addBtn.addEventListener("click", () => {
+            showAddEducationForm();
+        });
+    }
+}
 
 
 // Function to change the content of row two when "Contact Info" link is clicked
