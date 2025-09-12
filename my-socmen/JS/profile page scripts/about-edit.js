@@ -765,16 +765,16 @@ function showAddPersonalInfoForm(existingData = null) {
         e.preventDefault();
 
         const payload = {
-            personalSummary: document.getElementById("personal-summary").value.trim(),
-            personalAddress: document.getElementById("personal-address").value.trim(),
-            personalGender: document.getElementById("personal-gender").value || "",
-            personalLanguage: document.getElementById("personal-language").value || "",
-            personalCitizenship: document.getElementById("personal-citizenship").value.trim(),
-            personalStatus: document.getElementById("personal-status").value.trim(),
-            personalReligion: document.getElementById("personal-religion").value.trim(),
-            personalWeight: document.getElementById("personal-weight").value.trim(),
-            personalHeight: document.getElementById("personal-height").value.trim(),
-            personalBirthdate: document.getElementById("personal-birthdate").value || "",
+            personalSummary: document.getElementById("personal-summary")?.value.trim() || "",
+            personalAddress: document.getElementById("personal-address")?.value.trim() || "",
+            personalGender: document.getElementById("personal-gender")?.value || "",
+            personalLanguage: document.getElementById("personal-language")?.value || "",
+            personalCitizenship: document.getElementById("personal-citizenship")?.value.trim() || "",
+            personalStatus: document.getElementById("personal-status")?.value.trim() || "",
+            personalReligion: document.getElementById("personal-religion")?.value.trim() || "",
+            personalWeight: document.getElementById("personal-weight")?.value.trim() || "",
+            personalHeight: document.getElementById("personal-height")?.value.trim() || "",
+            personalBirthdate: document.getElementById("personal-birthdate")?.value || "",
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
