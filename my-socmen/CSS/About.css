@@ -252,5 +252,5 @@ section.About {
 .occupation-edit:hover,
 .contact-edit:hover,
 .education-edit:hover {
-    background-color: #ffbd59;
+    background-color: var(--accent-color);
 }

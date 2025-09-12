@@ -18,9 +18,9 @@ document.addEventListener("click", (e) => {
         showAddContactInfoForm(); // injects and opens form; prefill handled inside function
     }
 
-    const addPersonal = e.target.closest("#add-new-personal");
+    const addPersonal = e.target.closest("#edit-personal-details");
     if (addPersonal) {
-        console.log("✅ Add Personal Info button clicked");
+        console.log("✅ Edit Personal Info button clicked");
         showAddPersonalInfoForm(); // injects and opens form; prefill handled inside function
     }
 
@@ -678,7 +678,7 @@ function showAddPersonalInfoForm(existingData = null) {
 
                     <div class="flex-container">
                         <div class="create-profile-containers profile-label">
-                            <textarea class="input-profile-description" id="profile-desc">${existingData?.personalSummary || ''}</textarea>
+                            <textarea class="input-profile-description" id="personal-summary">${existingData?.personalSummary || ''}</textarea>
                             <label>Professional Summary</label>
                         </div>
                     </div>

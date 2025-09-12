@@ -249,6 +249,9 @@ if (occupationLink) {
 }
 
 
+
+
+
 // =============================================================
 // ✅ SHOW EDUCATION DETAILS
 // =============================================================
@@ -443,8 +446,6 @@ async function showEducationDetails() {
 }
 window.showEducationDetails = showEducationDetails;
 
-
-
 // Add click listener to the "Education" link
 const educationLink = document.querySelector('#row-one-container a[href="#Education"]');
 if (educationLink) {
@@ -617,9 +618,6 @@ async function showContactInfoDetails() {
 }
 window.showContactInfoDetails = showContactInfoDetails;
 
-
-
-
 // Add an event listener to the "Contact info" link
 var contactinfoLink = document.querySelector('#row-one-container a[href="#ContactInfo"]');
 if (contactinfoLink) {
@@ -634,79 +632,134 @@ if (contactinfoLink) {
 // Function to change the content of row two when "Education" link is clicked
 function showPersonalInfoDetails() {
     var rowTwo = document.getElementById('row-two');
+    if (!rowTwo) return;
+
     rowTwo.innerHTML = `
-    <div class="abt-flex-container">
-        <h1>Personal Info</h1>
-        <div class="add-new-form-btn" id="add-new-personal">+</div>
-    </div>
-    <div id="row-two-container">
-        <h1>Biography</h1>
-        <div class="biography-content-container">
-            <div class="biography-text-container">
-                <p>
-                <strong>Carlo John Toledo Pabien</strong>, born on May 12, 1999, in Bacoor City, Cavite, came into this world as the third of four siblings,
-                raised by his parents Dynna Pabien and Jovito Pabien. His early years were shaped by the vibrant atmosphere of Imus Cavite, 
-                where he developed a curiosity and eagerness to explore.
-                </p>
+        <div class="abt-flex-container">
+            <h1>Personal Details</h1>
+            <div class="add-new-form-btn" id="edit-personal-details">✎</div>
+        </div>
+        <div id="row-two-container" class="flex justify-center items-center min-h-[200px]"></div>
+    `;
+
+    const container = document.getElementById("row-two-container");
+    if (!container) return;
+
+    // 🔹 Show Tailwind skeleton loader while waiting
+    container.innerHTML = `
+        <div class="content-loader">
+            <div class="wrapper">
+                <div class="circle"></div>
+                <div class="line-1"></div>
+                <div class="line-2"></div>
+                <div class="line-3"></div>
+                <div class="line-4"></div>
             </div>
         </div>
-        <h1>Basic info</h1>
-        <div class="content-container">
-            <img class="icons" src="Assets/Images/Icons/user.png" alt="user">
-            <div class="text-container">
-                <h3>Male</h3>
-                <p>
-                    Gender
-                </p>
-            </div> 
-        </div>
-        <div class="content-container">
-            <img class="icons" src="Assets/Images/Icons/information-button.png" alt="info">
-            <div class="text-container">
-                <h3>English - Filipino</h3>
-                <p>
-                    Language
-                </p>
-            </div> 
-        </div>
-        <div class="content-container">
-            <img class="icons" src="Assets/Images/Icons/location.png" alt="location">
-            <div class="text-container">
-                <h3>Trece Martires City, Cavite</h3>
-                <p>
-                    Location
-                </p>
-            </div> 
-        </div>
-        <div class="content-container">
-            <img class="icons" src="Assets/Images/Icons/internet.png" alt="citizen">
-            <div class="text-container">
-                <h3>Filipino</h3>
-                <p>
-                    Citizenship
-                </p>
-            </div> 
-        </div>
-        <div class="content-container">
-            <img class="icons" src="Assets/Images/Icons/height.png" alt="height">
-            <div class="text-container">
-                <h3>160cm</h3>
-                <p>
-                    Height
-                </p>
-            </div> 
-        </div>
-        <div class="content-container">
-            <img class="icons" src="Assets/Images/Icons/weight-scale.png" alt="weight">
-            <div class="text-container">
-                <h3>50kg</h3>
-                <p>
-                    Weight
-                </p>
-            </div> 
-        </div>
-    </div>`;
-}
+    `;
+
+    db.collection("personal_details")
+        .orderBy("from", "desc") // newest job first
+        .onSnapshot(snapshot => {
+            container.innerHTML = "";
+
+            if (snapshot.empty) {
+                container.innerHTML = `<p>No personal details found.</p>`;
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                const data = doc.data();
+
+                // 🔹 Build occupation card
+                const personalCont = document.createElement("div");
+                personalCont.classList.add("content-container");
+                personalCont.dataset.id = doc.id;
+
+                personalCont.innerHTML = `
+                    <div id="row-two-container">
+                        <h1>Biography</h1>
+                        <div class="biography-content-container">
+                            <div class="biography-text-container">
+                                <p>
+                                ${data.personalSummary || "Nothing to show yet."}
+                                </p>
+                            </div>
+                        </div>
+                        <h1>Basic info</h1>
+                        <div class="content-container">
+                            <img class="icons" src="Assets/Images/Icons/user.png" alt="user">
+                            <div class="text-container">
+                                <h3>${data.personalGender || "--"}</h3>
+                                <p>
+                                    Gender
+                                </p>
+                            </div> 
+                        </div>
+                        <div class="content-container">
+                            <img class="icons" src="Assets/Images/Icons/information-button.png" alt="info">
+                            <div class="text-container">
+                                <h3>${data.personalLanguage || "--"}</h3>
+                                <p>
+                                    Language
+                                </p>
+                            </div> 
+                        </div>
+                        <div class="content-container">
+                            <img class="icons" src="Assets/Images/Icons/location.png" alt="location">
+                            <div class="text-container">
+                                <h3>${data.personalAddress || "--"}</h3>
+                                <p>
+                                    Location
+                                </p>
+                            </div> 
+                        </div>
+                        <div class="content-container">
+                            <img class="icons" src="Assets/Images/Icons/internet.png" alt="citizen">
+                            <div class="text-container">
+                                <h3>${data.personalCitizenship || "--"}</h3>
+                                <p>
+                                    Citizenship
+                                </p>
+                            </div> 
+                        </div>
+                        <div class="content-container">
+                            <img class="icons" src="Assets/Images/Icons/height.png" alt="height">
+                            <div class="text-container">
+                                <h3>${data.personalHeight || "--"}</h3>
+                                <p>
+                                    Height
+                                </p>
+                            </div> 
+                        </div>
+                        <div class="content-container">
+                            <img class="icons" src="Assets/Images/Icons/weight-scale.png" alt="weight">
+                            <div class="text-container">
+                                <h3>${data.personalWeight || "--"}</h3>
+                                <p>
+                                    Weight
+                                </p>
+                            </div> 
+                        </div>
+                        <div class="content-container">
+                            <img class="icons" src="Assets/Images/Icons/weight-scale.png" alt="weight">
+                            <div class="text-container">
+                                <h3>${data.personalBirthdate || "--"}</h3>
+                                <p>
+                                    Birthday
+                                </p>
+                            </div> 
+                        </div>
+                    </div>
+                `;
+
+            });
+
+        }, err => {
+            console.error("❌ Error loading occupations:", err);
+            container.innerHTML = `<p style="color:red;">Failed to load occupations.</p>`;
+        });
+} window.showPersonalInfoDetails = showPersonalInfoDetails;
 
 // Add an event listener to the "Aboutme" link
 var aboutmeLink = document.querySelector('#row-one-container a[href="#Aboutme"]');
