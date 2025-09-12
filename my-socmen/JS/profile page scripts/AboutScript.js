@@ -632,12 +632,12 @@ if (contactinfoLink) {
 
 
 // Function to change the content of row two when "Education" link is clicked
-function showAboutmeDetails() {
+function showPersonalInfoDetails() {
     var rowTwo = document.getElementById('row-two');
     rowTwo.innerHTML = `
     <div class="abt-flex-container">
         <h1>Personal Info</h1>
-        <div class="add-new-form-btn" id="add-new-contact">+</div>
+        <div class="add-new-form-btn" id="add-new-personal">+</div>
     </div>
     <div id="row-two-container">
         <h1>Biography</h1>
@@ -713,6 +713,6 @@ var aboutmeLink = document.querySelector('#row-one-container a[href="#Aboutme"]'
 if (aboutmeLink) {
     aboutmeLink.addEventListener('click', function (event) {
         event.preventDefault(); // Prevent default link behavior
-        showAboutmeDetails(); // Call the function to show Aboutme details
+        showPersonalInfoDetails(); // Call the function to show Aboutme details
     });
 }

@@ -14,8 +14,14 @@ document.addEventListener("click", (e) => {
 
     const addContact = e.target.closest("#add-new-contact");
     if (addContact) {
-        console.log("✅ Add Education button clicked");
+        console.log("✅ Add Contact Info button clicked");
         showAddContactInfoForm(); // injects and opens form; prefill handled inside function
+    }
+
+    const addPersonal = e.target.closest("#add-new-personal");
+    if (addPersonal) {
+        console.log("✅ Add Personal Info button clicked");
+        showAddPersonalInfoForm(); // injects and opens form; prefill handled inside function
     }
 
 });
@@ -634,3 +640,159 @@ function showAddContactInfoForm(existingData = null) {
     });
 }
 
+function showAddPersonalInfoForm(existingData = null) {
+    const addPersonalInfo = document.querySelector(".create-card-container-parent");
+    if (!addPersonalInfo) {
+        console.error("❌ Contact form addPersonalInfo not found");
+        return;
+    }
+    addPersonalInfo.style.display = "grid";
+    const isEdit = !!existingData;
+
+    addPersonalInfo.innerHTML = `
+        <div class="create-post-container">
+            <div class="create-profile-form-container">
+                <!-- Header -->
+                <div class="create-profile-header">
+                    <h1 class="card-title">Personal Info</h1>
+                    <span class="create-profile-button-container red-btn" id="cancel-btn">Cancel</span>
+                    <span class="create-profile-button-container green-btn" id="personal-save-btn">
+                        ${isEdit ? "Update" : "Save"}
+                    </span>
+                </div>
+
+                <!-- Error warning -->
+                <div class="error" id="form-warning" style="display:none;">
+                    <div class="form-warning-cont">Please fill-in required (*) details.</div>
+                </div>
+
+                <!-- Scrollable content -->
+                <div class="create-profile-form-viewport scroll-fade">
+                    <form id="contact-form">
+                        <h1>${isEdit ? "Edit Personal Info" : "New Personal Info"}</h1>
+
+                    <div class="flex-container">
+                        <div class="create-profile-containers profile-label">
+                            <textarea class="input-profile-description" id="profile-desc">${existingData?.personalSummary || ''}</textarea>
+                            <label>Professional Summary</label>
+                        </div>
+                    </div>
+
+                    <div class="flex-container">
+                        <div class="create-profile-containers profile-label">
+                            <input class="input-profile-title" id="personal-address" type="text" 
+                                value="${existingData?.personalAddress || ''}">
+                            <label>Address</label>
+                        </div>
+                    </div>
+
+                    <div class="flex-container">
+                        <div class="create-profile-containers profile-label">
+                            <select class="input-profile-date" id="personal-gender">
+                                <option value="">Choose Gender</option>
+                                <option value="male" ${existingData?.personalGender === "male" ? "selected" : ""}>Male</option>
+                                <option value="female" ${existingData?.personalGender === "female" ? "selected" : ""}>Female</option>
+                                <option value="skip" ${existingData?.personalGender === "skip" ? "selected" : ""}>Rather Not Say</option>
+                            </select>
+                            <label>Gender</label>
+                        </div>
+                        
+                        <div class="create-profile-containers profile-label">
+                            <select class="input-profile-date" id="personal-language">
+                                <option value="">Choose Language</option>
+                                <option value="filipino" ${existingData?.personalLanguage === "filipino" ? "selected" : ""}>Filipino</option>
+                                <option value="english" ${existingData?.personalLanguage === "english" ? "selected" : ""}>English</option>
+                                <option value="english-filipino" ${existingData?.personalLanguage === "english-filipino" ? "selected" : ""}>English - Filipino</option>
+                                <option value="japanese" ${existingData?.personalLanguage === "japanese" ? "selected" : ""}>Japanese</option>
+                                <option value="chinese" ${existingData?.personalLanguage === "chinese" ? "selected" : ""}>Chinese</option>
+                                <option value="korean" ${existingData?.personalLanguage === "korean" ? "selected" : ""}>Korean</option>
+                                <option value="indonesian" ${existingData?.personalLanguage === "indonesian" ? "selected" : ""}>Indonesian</option>
+                                <option value="malaysian" ${existingData?.personalLanguage === "malaysian" ? "selected" : ""}>Malaysian</option>
+                                <option value="other" ${existingData?.personalLanguage === "other" ? "selected" : ""}>Other</option>
+                                </select>
+                            <label>Language</label>
+                        </div>
+                    </div>
+
+                    <div class="flex-container">
+                        <div class="create-profile-containers profile-label">
+                            <input class="input-profile-title" id="personal-citizenship" type="text" 
+                                value="${existingData?.personalCitizenship || ''}">
+                            <label>Citizenship</label>
+                        </div>
+                        <div class="create-profile-containers profile-label">
+                            <input class="input-profile-title" id="personal-status" type="text" 
+                                value="${existingData?.personalStatus || ''}">
+                            <label>Marital Status</label>
+                        </div>
+                        <div class="create-profile-containers profile-label">
+                            <input class="input-profile-title" id="personal-religion" type="text" 
+                                value="${existingData?.personalReligion || ''}">
+                            <label>Religion</label>
+                        </div>
+                    </div>
+
+                    <div class="flex-container">
+                        <div class="create-profile-containers profile-label">
+                            <input class="input-profile-title" id="personal-weight" type="text" 
+                                value="${existingData?.personalWeight || ''}">
+                            <label>Weight</label>
+                        </div>
+                        <div class="create-profile-containers profile-label">
+                            <input class="input-profile-title" id="personal-height" type="text" 
+                                value="${existingData?.personalHeight || ''}">
+                            <label>Height</label>
+                        </div>
+                        <div class="create-profile-containers profile-label">
+                            <input class="input-profile-date" id="personal-birthdate" type="date" 
+                                required value="${existingData?.personalBirthdate || ''}">
+                            <label>Birthday</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    const cancelBtn = addPersonalInfo.querySelector("#cancel-btn");
+    cancelBtn.addEventListener("click", () => {
+        addPersonalInfo.style.display = "none";
+        addPersonalInfo.innerHTML = "";
+    });
+
+    const saveBtn = addEducationCont.querySelector("#profile-post-btn");
+    saveBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+
+        const payload = {
+            personalSummary: document.getElementById("personal-summary").value.trim(),
+            personalAddress: document.getElementById("personal-address").value.trim(),
+            personalGender: document.getElementById("personal-gender").value || "",
+            personalLanguage: document.getElementById("personal-language").value || "",
+            personalCitizenship: document.getElementById("personal-citizenship").value.trim(),
+            personalStatus: document.getElementById("personal-status").value.trim(),
+            personalReligion: document.getElementById("personal-religion").value.trim(),
+            personalWeight: document.getElementById("personal-weight").value.trim(),
+            personalHeight: document.getElementById("personal-height").value.trim(),
+            personalBirthdate: document.getElementById("personal-birthdate").value || "",
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        try {
+            if (isEdit) {
+                await db.collection("personal_details").doc(existingData.id).update(payload);
+                console.log("✏️ Personal Details updated");
+            } else {
+                payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                await db.collection("personal_details").add(payload);
+                console.log("✅ Personal Details saved");
+            }
+
+            addPersonalInfo.style.display = "none";
+            addPersonalInfo.innerHTML = "";
+            showPersonalInfoDetails();
+        } catch (err) {
+            console.error("❌ Error saving personal details:", err);
+        }
+    });
+}
