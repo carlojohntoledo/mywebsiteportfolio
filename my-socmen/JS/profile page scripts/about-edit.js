@@ -413,6 +413,8 @@ function showAddEducationForm(existingData = null) {
         }
 
         try {
+
+            showLoader();
             if (isEdit) {
                 // Update existing doc
                 await db.collection("education").doc(existingData.id).update(payload);
@@ -430,6 +432,9 @@ function showAddEducationForm(existingData = null) {
             showEducationDetails();
         } catch (err) {
             console.error("❌ Error saving education:", err);
+        } finally {
+            hideLoader();
+
         }
     });
 }
