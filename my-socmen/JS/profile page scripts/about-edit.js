@@ -656,7 +656,7 @@ function showAddPersonalInfoForm(existingData = null) {
                 <div class="create-profile-header">
                     <h1 class="card-title">Personal Info</h1>
                     <span class="create-profile-button-container red-btn" id="cancel-btn">Cancel</span>
-                    <span class="create-profile-button-container green-btn" id="personal-save-btn">
+                    <span class="create-profile-button-container green-btn" id="profile-post-btn">
                         ${isEdit ? "Update" : "Save"}
                     </span>
                 </div>
