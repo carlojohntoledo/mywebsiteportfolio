@@ -414,7 +414,7 @@
 }
 
 
-.skill-card-remove {
+/* .skill-card-remove {
     position: absolute;
     display: grid;
     align-items: center;
@@ -434,7 +434,7 @@
 
 .skill-card-remove:hover {
     background: rgba(255, 0, 0, 0.705);
-}
+} */
 
 @media (max-width: 768px) {
 

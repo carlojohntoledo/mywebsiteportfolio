@@ -197,6 +197,7 @@ section.About {
 }
 
 .occupation-actions,
+.skill-actions,
 .contact-actions,
 .education-actions {
     display: none;
@@ -210,7 +211,8 @@ section.About {
 
 .content-container:hover .occupation-actions,
 .content-container:hover .contact-actions,
-.content-container:hover .education-actions {
+.content-container:hover .education-actions,
+.skill-card:hover .skill-actions {
     display: flex;
 }
 
@@ -221,6 +223,8 @@ section.About {
 }
 
 .occupation-delete,
+.skill-card-remove,
+.skill-card-edit,
 .education-delete,
 .contact-delete,
 .contact-edit,
@@ -237,9 +241,11 @@ section.About {
     display: grid;
     align-items: center;
     justify-content: center;
+    padding: 0.25rem 0.5rem;
 }
 
 .occupation-edit,
+.skill-card-edit,
 .contact-edit,
 .education-edit {
     border-radius: 0.2rem;
@@ -247,6 +253,7 @@ section.About {
 
 
 .occupation-delete:hover,
+.skill-card-remove:hover,
 .contact-delete:hover,
 .education-delete:hover {
     background-color: #ff3131;
@@ -254,6 +261,7 @@ section.About {
 }
 
 .occupation-edit:hover,
+.skill-card-edit:hover,
 .contact-edit:hover,
 .education-edit:hover {
     background-color: var(--accent-color);

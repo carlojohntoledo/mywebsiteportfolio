@@ -155,8 +155,10 @@ async function loadSkillsFromFirestore(selectedCategory = "All") {
                                 <img src="${s.logoUrl}" alt="${s.name}">
                             </div>
                             <div class="skill-name">${s.name}</div>
-                            <div class="skill-card-remove" title="Remove skill">✖</div>
-                            <div class="skill-card-edit" title="Edit skill">✏️</div>
+                            <div class="skill-actions">
+                                <div class="skill-card-edit" title="Edit skill">Edit</div>
+                                <div class="skill-card-remove" title="Remove skill">x</div>
+                            </div>
                         </div>
                     `;
                     container.insertAdjacentHTML("beforeend", cardHtml);
