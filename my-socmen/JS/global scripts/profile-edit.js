@@ -92,46 +92,135 @@ function showMessage(msg) {
 // =============================================================
 // ================= Load Skills & Render ======================
 // =============================================================
-/**
- * loadSkillsFromFirestore()
- * Loads skills from Firestore and renders them into .skills-card-container (#skills-content)
- * Renders markup to match your example skill-card design:
- * <div class="skill-card" data-id="docId" data-public-id="publicId"> ... </div>
- */
-async function loadSkillsFromFirestore() {
+async function loadSkillsFromFirestore(selectedCategory = "All") {
     const container = document.getElementById("skills-content");
-    if (!container) return console.warn("⚠️ #skills-content container not found");
+    const menuContainer = document.querySelector(".skills-menu");
+
+    if (!container || !menuContainer) return console.warn("⚠️ Skills container not found");
 
     try {
         showLoader();
-        container.innerHTML = ""; // clear
+        container.innerHTML = "";
+        menuContainer.innerHTML = "";
 
         const snapshot = await db.collection(SKILLS_COLLECTION).orderBy("createdAt", "asc").get();
+
+        const categories = new Set();
+        const skills = [];
+
         snapshot.forEach(doc => {
             const s = doc.data();
             const docId = doc.id;
-            // fallback fields
-            const name = s.name || "Untitled";
-            const imgUrl = s.logoUrl || "Assets/Images/placeholder.svg";
-            const publicId = s.logoPublicId || "";
 
-            const cardHtml = `
-                <div class="skill-card" data-id="${docId}" data-public-id="${publicId}">
-                    <div class="skill-img">
-                        <img src="${imgUrl}" alt="${name}">
-                    </div>
-                    <div class="skill-name">${name}</div>
-                    <div class="skill-card-remove" title="Remove skill">X</div>
-                </div>
-            `;
-            container.insertAdjacentHTML("beforeend", cardHtml);
+            const skill = {
+                id: docId,
+                name: s.name || "Untitled",
+                category: s.category || "Other",
+                logoUrl: s.logoUrl || "Assets/Images/placeholder.svg",
+                logoPublicId: s.logoPublicId || ""
+            };
+
+            skills.push(skill);
+            categories.add(skill.category);
         });
+
+        // ✅ Always start with an "All" option
+        menuContainer.insertAdjacentHTML("beforeend", `
+            <label>
+                <input type="radio" name="skills-category" value="All" ${selectedCategory === "All" ? "checked" : ""}>
+                <span>All</span>
+            </label>
+        `);
+
+        // Build menu dynamically from categories
+        categories.forEach(cat => {
+            const labelHtml = `
+                <label>
+                    <input type="radio" name="skills-category" value="${cat}" ${selectedCategory === cat ? "checked" : ""}>
+                    <span>${cat}</span>
+                </label>
+            `;
+            menuContainer.insertAdjacentHTML("beforeend", labelHtml);
+        });
+
+        // Render function
+        function renderSkills(category) {
+            container.innerHTML = "";
+            skills
+                .filter(s => category === "All" || s.category === category)
+                .forEach(s => {
+                    const cardHtml = `
+                        <div class="skill-card" data-id="${s.id}" data-public-id="${s.logoPublicId}">
+                            <div class="skill-img">
+                                <img src="${s.logoUrl}" alt="${s.name}">
+                            </div>
+                            <div class="skill-name">${s.name}</div>
+                            <div class="skill-card-remove" title="Remove skill">✖</div>
+                            <div class="skill-card-edit" title="Edit skill">✏️</div>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML("beforeend", cardHtml);
+                });
+
+            // Hook edit & delete events for all rendered cards
+            const cards = container.querySelectorAll(".skill-card");
+            cards.forEach(card => {
+                const id = card.dataset.id;
+                const publicId = card.dataset.publicId;
+
+                // Edit
+                card.querySelector(".skill-card-edit").addEventListener("click", async () => {
+                    const doc = await db.collection(SKILLS_COLLECTION).doc(id).get();
+                    if (doc.exists) {
+                        showAddSkillForm({ id: doc.id, ...doc.data() });
+                    }
+                });
+
+                // Delete
+                card.querySelector(".skill-card-remove").addEventListener("click", async () => {
+                    if (!confirm("Are you sure you want to delete this skill?")) return;
+                    try {
+                        await db.collection(SKILLS_COLLECTION).doc(id).delete();
+                        if (publicId) {
+                            await deleteFromCloudinary(publicId); // optional cleanup
+                        }
+                        showMessage("🗑️ Skill deleted");
+                        await loadSkillsFromFirestore(category); // reload same category
+                    } catch (err) {
+                        console.error("❌ Error deleting skill:", err);
+                    }
+                });
+            });
+        }
+
+        // ✅ Initial render
+        renderSkills(selectedCategory);
+
+        // Handle menu switching
+        menuContainer.querySelectorAll("input[name='skills-category']").forEach(input => {
+            input.addEventListener("change", e => {
+                renderSkills(e.target.value);
+            });
+        });
+
     } catch (err) {
         console.error("❌ Error loading skills:", err);
     } finally {
         hideLoader();
     }
 }
+
+
+
+// Example edit function
+function editSkill(docId) {
+    db.collection(SKILLS_COLLECTION).doc(docId).get().then(doc => {
+        if (doc.exists) {
+            showAddSkillForm({ id: doc.id, ...doc.data() });
+        }
+    });
+}
+
 
 // =============================================================
 // ================= Load Certificates & Render ===============
@@ -259,54 +348,47 @@ async function handleCertificateRemove(e) {
 // =============================================================
 
 // ---------- showAddSkillForm (kept your original injected markup) ----------
-function showAddSkillForm() {
+function showAddSkillForm(existingData = null) {
     const editSkillContainer = document.querySelector(".create-card-container-parent");
     if (!editSkillContainer) {
         console.error("❌ Edit form container not found");
         return;
     }
+
+    const isEdit = !!existingData;
+
     editSkillContainer.innerHTML = `
         <!-- SKILLS -->
         <div class="create-post-container">
             <div class="create-profile-form-container">
                 <div class="create-profile-header">
-                    <h1 class="card-title">Add New Skill</h1>
+                    <h1 class="card-title">${isEdit ? "Edit Skill" : "Add New Skill"}</h1>
                     <span class="create-profile-button-container red-btn" id="cancel-btn">Cancel</span>
-                    <span class="create-profile-button-container green-btn"
-                        id="profile-post-btn">Save</span>
+                    <span class="create-profile-button-container green-btn" id="profile-post-btn">
+                        ${isEdit ? "Update" : "Save"}
+                    </span>
                 </div>
 
-                <div class="error" id="form-warning">
+                <div class="error" id="form-warning" style="display:none;">
                     <div class="form-warning-cont">
-                        <div class="error__icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 24 24"
-                                height="24" fill="none">
-                                <path fill="#393a37"
-                                    d="m13 13h-2v-6h2zm0 4h-2v-2h2zm-1-15c-1.3132 0-2.61358.25866-3.82683.7612-1.21326.50255-2.31565 1.23915-3.24424 2.16773-1.87536 1.87537-2.92893 4.41891-2.92893 7.07107 0 2.6522 1.05357 5.1957 2.92893 7.0711.92859.9286 2.03098 1.6651 3.24424 2.1677 1.21325.5025 2.51363.7612 3.82683.7612 2.6522 0 5.1957-1.0536 7.0711-2.9289 1.8753-1.8754 2.9289-4.4189 2.9289-7.0711 0-1.3132-.2587-2.61358-.7612-3.82683-.5026-1.21326-1.2391-2.31565-2.1677-3.24424-.9286-.92858-2.031-1.66518-3.2443-2.16773-1.2132-.50254-2.5136-.7612-3.8268-.7612z">
-                                </path>
-                            </svg>
-                        </div>
+                        <div class="error__icon">⚠️</div>
                         <div class="error__title">Please fill-in required (*) details.</div>
-                        <div class="error__close" id="close-error"><svg xmlns="http://www.w3.org/2000/svg"
-                                width="20" viewBox="0 0 20 20" height="20">
-                                <path fill="#393a37"
-                                    d="m15.8333 5.34166-1.175-1.175-4.6583 4.65834-4.65833-4.65834-1.175 1.175 4.65833 4.65834-4.65833 4.6583 1.175 1.175 4.65833-4.6583 4.6583 4.6583 1.175-1.175-4.6583-4.6583z">
-                                </path>
-                            </svg>
-                        </div>
                     </div>
                 </div>
+
                 <div class="create-profile-form-viewport scroll-fade">
                     <form id="create-profile-form">
                         <div class="profile-group-form">
                             <div class="skill-group-separator">
                                 <div class="flex-container">
                                     <div class="create-profile-containers profile-label">
-                                        <input class="input-profile-title" id="skill-name" type="text" required>
+                                        <input class="input-profile-title" id="skill-name" type="text" 
+                                            value="${existingData?.name || ""}" required>
                                         <label>Skill Name*</label>
                                     </div>
                                     <div class="create-profile-containers profile-label">
-                                        <input class="input-profile-title" id="skill-category" type="text" required>
+                                        <input class="input-profile-title" id="skill-category" type="text" 
+                                            value="${existingData?.category || ""}" required>
                                         <label>Skill Category*</label>
                                     </div>
                                 </div>
@@ -314,8 +396,13 @@ function showAddSkillForm() {
                                     <div class="create-profile-image-container">
                                         <p style="color: var(--text-color);">Upload Skill Photo</p>
                                         <div class="file-upload-form">
-                                                    <input style="height: 2rem; align-content: center; padding: 0rem 1rem;" id="skill-photo" type="file" multiple accept="image/*" />
+                                            <input id="skill-photo" type="file" 
+                                                accept="image/*" style="height:2rem;width:90%;padding:0 1rem;" />
                                         </div>
+                                        ${existingData?.logoUrl
+            ? `<div class="current-img"><img src="${existingData.logoUrl}" alt="${existingData.name}" style="max-height:80px; margin-top:8px;"></div>`
+            : ""
+        }
                                     </div>
                                 </div>
                             </div>
@@ -326,74 +413,80 @@ function showAddSkillForm() {
         </div>
         <!-- SKILLS END -->
     `;
-    editSkillContainer.style.display = "grid"; // Show the form container
+    editSkillContainer.style.display = "grid";
 
-    // hook cancel button
-    const cancelBtn = editSkillContainer.querySelector('#cancel-btn');
-    if (cancelBtn) {
-        cancelBtn.addEventListener('click', () => {
+    // Cancel button
+    const cancelBtn = editSkillContainer.querySelector("#cancel-btn");
+    cancelBtn?.addEventListener("click", () => {
+        editSkillContainer.style.display = "none";
+        editSkillContainer.innerHTML = "";
+    });
+
+    // Save / Update button
+    const saveBtn = editSkillContainer.querySelector("#profile-post-btn");
+    saveBtn?.addEventListener("click", async () => {
+        const nameInput = document.getElementById("skill-name");
+        const categoryInput = document.getElementById("skill-category");
+        const fileInput = document.getElementById("skill-photo");
+
+        const name = (nameInput?.value || "").trim();
+        const category = (categoryInput?.value || "").trim();
+
+        if (!name || !category) {
+            document.getElementById("form-warning").style.display = "block";
+            return;
+        }
+
+        showLoader();
+        try {
+            let logoUrl = existingData?.logoUrl || "";
+            let logoPublicId = existingData?.logoPublicId || "";
+
+            // If a new file is selected, upload to Cloudinary
+            if (fileInput && fileInput.files.length > 0) {
+                const uploaded = await uploadToCloudinary(
+                    fileInput.files[0],
+                    "profile",
+                    "mysocmed/profile/skills-logo"
+                );
+                logoUrl = uploaded.imageUrl || logoUrl;
+                logoPublicId = uploaded.publicId || logoPublicId;
+            }
+
+            const payload = {
+                name,
+                category,
+                logoUrl,
+                logoPublicId,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            if (isEdit && existingData.id) {
+                // 🔹 Update existing
+                await db.collection(SKILLS_COLLECTION).doc(existingData.id).update(payload);
+                showMessage("✏️ Skill updated!");
+            } else {
+                // 🔹 Add new
+                payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                await db.collection(SKILLS_COLLECTION).add(payload);
+                showMessage("✅ Skill added!");
+            }
+
+            await loadSkillsFromFirestore();
+
+            // Close form
             editSkillContainer.style.display = "none";
             editSkillContainer.innerHTML = "";
-        });
-    } else {
-        console.warn("⚠️ Cancel button not found in injected skill form.");
-    }
-
-    // Hook Save button for skills (profile-post-btn inside injected template)
-    const saveBtn = editSkillContainer.querySelector('#profile-post-btn');
-    if (saveBtn) {
-        saveBtn.addEventListener('click', async () => {
-            // Save skill: upload file (if present) then add Firestore doc
-            const nameInput = editSkillContainer.querySelector('#skill-name');
-            const categoryInput = editSkillContainer.querySelector('#skill-category');
-            const fileInput = editSkillContainer.querySelector('#skill-photo');
-
-            const name = (nameInput?.value || "").trim();
-            const category = (categoryInput?.value || "").trim();
-
-            if (!name || !category) {
-                showMessage("Please enter skill name and category.");
-                return;
-            }
-
-            showLoader();
-            try {
-                let logoUrl = "";
-                let logoPublicId = "";
-
-                if (fileInput && fileInput.files && fileInput.files.length > 0) {
-                    // upload to Cloudinary under profile/skills-logo
-                    const uploaded = await uploadToCloudinary(fileInput.files[0], "profile", "mysocmed/profile/skills-logo");
-                    logoUrl = uploaded.imageUrl || "";
-                    logoPublicId = uploaded.publicId || "";
-                }
-
-                // Save to Firestore
-                await db.collection(SKILLS_COLLECTION).add({
-                    name,
-                    category,
-                    logoUrl,
-                    logoPublicId,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                showMessage("✅ Skill added!");
-                // refresh UI
-                await loadSkillsFromFirestore();
-                // close injected form
-                editSkillContainer.style.display = "none";
-                editSkillContainer.innerHTML = "";
-            } catch (err) {
-                console.error("❌ Error adding skill:", err);
-                showMessage("Failed to add skill. Check console for details.");
-            } finally {
-                hideLoader();
-            }
-        });
-    } else {
-        console.warn("⚠️ Save button not found in injected skill form.");
-    }
+        } catch (err) {
+            console.error("❌ Error saving skill:", err);
+            showMessage("Failed to save skill. Check console for details.");
+        } finally {
+            hideLoader();
+        }
+    });
 }
+
+
 
 // ---------- showCertificateEditForm (kept your original injected markup) ----------
 function showCertificateEditForm() {

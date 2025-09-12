@@ -149,6 +149,10 @@ section.About {
     fill: none;
 }
 
+.no-outline {
+    stroke-width: 0;
+}
+
 #row-two-container .content-container .companies {
     width: 1rem;
     height: 1rem;

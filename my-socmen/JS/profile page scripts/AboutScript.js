@@ -595,7 +595,7 @@ async function showContactInfoDetails() {
             ["contactNumber", "Contact Numbers", `<svg class="icons" xmlns="http://www.w3.org/2000/svg" fill="#ffffff" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"></path></svg>`],
             ["emailAddress", "Emails", `<svg class="icons" viewBox="0 0 24 24" fill="#ffffff" xmlns="http://www.w3.org/2000/svg"><path d="M16 12C16 14.2091 14.2091 16 12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12ZM16 12V13.5C16 14.8807 17.1193 16 18.5 16V16C19.8807 16 21 14.8807 21 13.5V12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21H16" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>`],
             ["socialMedia", "Social Media Accounts", `<svg class="icons" viewBox="0 0 24 24" fill="#ffffff" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M15.9 4.5C15.9 3 14.418 2 13.26 2c-.806 0-.869.612-.993 1.82-.055.53-.121 1.174-.267 1.93-.386 2.002-1.72 4.56-2.996 5.325V17C9 19.25 9.75 20 13 20h3.773c2.176 0 2.703-1.433 2.899-1.964l.013-.036c.114-.306.358-.547.638-.82.31-.306.664-.653.927-1.18.311-.623.27-1.177.233-1.67-.023-.299-.044-.575.017-.83.064-.27.146-.475.225-.671.143-.356.275-.686.275-1.329 0-1.5-.748-2.498-2.315-2.498H15.5S15.9 6 15.9 4.5zM5.5 10A1.5 1.5 0 0 0 4 11.5v7a1.5 1.5 0 0 0 3 0v-7A1.5 1.5 0 0 0 5.5 10z"></path></svg>`],
-            ["websiteLinks", "Website Links", `<svg class="icons" viewBox="0 0 24 24" fill="#ffffff" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.63605 5.63605C7.19815 4.07395 9.73081 4.07395 11.2929 5.63605L14.1213 8.46448C15.6834 10.0266 15.6834 12.5592 14.1213 14.1213C13.7308 14.5119 13.0976 14.5119 12.7071 14.1213C12.3166 13.7308 12.3166 13.0976 12.7071 12.7071C13.4882 11.9261 13.4882 10.6597 12.7071 9.87869L9.87869 7.05026C9.09764 6.26922 7.83131 6.26922 7.05026 7.05026C6.26922 7.83131 6.26922 9.09764 7.05026 9.87869L7.75737 10.5858C8.1479 10.9763 8.14789 11.6095 7.75737 12C7.36685 12.3905 6.73368 12.3905 6.34316 12L5.63605 11.2929C4.07395 9.73081 4.07395 7.19815 5.63605 5.63605ZM11.2929 9.8787C11.6834 10.2692 11.6834 10.9024 11.2929 11.2929C10.5119 12.074 10.5119 13.3403 11.2929 14.1213L14.1213 16.9498C14.9024 17.7308 16.1687 17.7308 16.9498 16.9498C17.7308 16.1687 17.7308 14.9024 16.9498 14.1213L16.2427 13.4142C15.8521 13.0237 15.8521 12.3905 16.2427 12C16.6332 11.6095 17.2663 11.6095 17.6569 12L18.364 12.7071C19.9261 14.2692 19.9261 16.8019 18.364 18.364C16.8019 19.9261 14.2692 19.9261 12.7071 18.364L9.8787 15.5356C8.3166 13.9735 8.3166 11.4408 9.8787 9.8787C10.2692 9.48817 10.9024 9.48817 11.2929 9.8787Z" ></path></svg>`]
+            ["websiteLinks", "Website Links", `<svg class="icons no-outline" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#ffffff" fill-rule="evenodd" clip-rule="evenodd" d="M5.63605 5.63605C7.19815 4.07395 9.73081 4.07395 11.2929 5.63605L14.1213 8.46448C15.6834 10.0266 15.6834 12.5592 14.1213 14.1213C13.7308 14.5119 13.0976 14.5119 12.7071 14.1213C12.3166 13.7308 12.3166 13.0976 12.7071 12.7071C13.4882 11.9261 13.4882 10.6597 12.7071 9.87869L9.87869 7.05026C9.09764 6.26922 7.83131 6.26922 7.05026 7.05026C6.26922 7.83131 6.26922 9.09764 7.05026 9.87869L7.75737 10.5858C8.1479 10.9763 8.14789 11.6095 7.75737 12C7.36685 12.3905 6.73368 12.3905 6.34316 12L5.63605 11.2929C4.07395 9.73081 4.07395 7.19815 5.63605 5.63605ZM11.2929 9.8787C11.6834 10.2692 11.6834 10.9024 11.2929 11.2929C10.5119 12.074 10.5119 13.3403 11.2929 14.1213L14.1213 16.9498C14.9024 17.7308 16.1687 17.7308 16.9498 16.9498C17.7308 16.1687 17.7308 14.9024 16.9498 14.1213L16.2427 13.4142C15.8521 13.0237 15.8521 12.3905 16.2427 12C16.6332 11.6095 17.2663 11.6095 17.6569 12L18.364 12.7071C19.9261 14.2692 19.9261 16.8019 18.364 18.364C16.8019 19.9261 14.2692 19.9261 12.7071 18.364L9.8787 15.5356C8.3166 13.9735 8.3166 11.4408 9.8787 9.8787C10.2692 9.48817 10.9024 9.48817 11.2929 9.8787Z" ></path></svg>`]
         ];
 
         order.forEach(([key, label, svg]) => {
@@ -659,7 +659,7 @@ function showPersonalInfoDetails() {
     `;
 
     db.collection("personal_details")
-        .orderBy("from", "desc") // newest job first
+        .orderBy("createdAt", "desc") // newest job first
         .onSnapshot(snapshot => {
             container.innerHTML = "";
 
@@ -671,13 +671,7 @@ function showPersonalInfoDetails() {
             snapshot.forEach(doc => {
                 const data = doc.data();
 
-                // 🔹 Build occupation card
-                const personalCont = document.createElement("div");
-                personalCont.classList.add("content-container");
-                personalCont.dataset.id = doc.id;
-
-                personalCont.innerHTML = `
-                    <div id="row-two-container">
+                container.innerHTML = `
                         <h1>Biography</h1>
                         <div class="biography-content-container">
                             <div class="biography-text-container">
@@ -688,7 +682,7 @@ function showPersonalInfoDetails() {
                         </div>
                         <h1>Basic info</h1>
                         <div class="content-container">
-                            <img class="icons" src="Assets/Images/Icons/user.png" alt="user">
+                            <svg class="icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1025" fill="#ffffff"><path fill="#ffffff" d="M1009 512L864 961q-14 26-40 44.5t-58 19.5q-28-1-56-20.5T672 961L527 512q-23-58-9.5-93t49.5-35h402q36 0 49.5 35t-9.5 93zm-246 513h6h-6zM576 192q0-80 56.5-136t136-56T904 56t56 136t-56 136t-135.5 56t-136-56T576 192zm-119 833H54q-35 0-48.5-35t8.5-93l176-525q-56-21-91.5-70T63 192q0-80 56.5-136t136-56t136 56T448 192q0 62-36.5 111.5T318 373l179 524q23 58 9 93t-49 35z"/></svg>
                             <div class="text-container">
                                 <h3>${data.personalGender || "--"}</h3>
                                 <p>
@@ -697,7 +691,7 @@ function showPersonalInfoDetails() {
                             </div> 
                         </div>
                         <div class="content-container">
-                            <img class="icons" src="Assets/Images/Icons/information-button.png" alt="info">
+                            <svg class="icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ffffff"><g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M4 5h7M9 3v2c0 4.418-2.239 8-5 8"/><path d="M5 9c0 2.144 2.952 3.908 6.7 4m.3 7l4-9l4 9m-.9-2h-6.2"/></g></svg>
                             <div class="text-container">
                                 <h3>${data.personalLanguage || "--"}</h3>
                                 <p>
@@ -706,7 +700,7 @@ function showPersonalInfoDetails() {
                             </div> 
                         </div>
                         <div class="content-container">
-                            <img class="icons" src="Assets/Images/Icons/location.png" alt="location">
+                            <svg class="icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 20S3 10.87 3 7a7 7 0 1 1 14 0c0 3.87-7 13-7 13zm0-11a2 2 0 1 0 0-4a2 2 0 0 0 0 4z"/></svg>
                             <div class="text-container">
                                 <h3>${data.personalAddress || "--"}</h3>
                                 <p>
@@ -715,7 +709,7 @@ function showPersonalInfoDetails() {
                             </div> 
                         </div>
                         <div class="content-container">
-                            <img class="icons" src="Assets/Images/Icons/internet.png" alt="citizen">
+                            <svg class="icons no-outline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" ><path fill="#ffffff" d="M4 2c0-1.1-.9-2-2-2S0 .9 0 2c0 .7.4 1.4 1 1.7V16h2V3.7c.6-.3 1-1 1-1.7zm0 2s1-3 3.6-3c2.7 0 2.3 1 4.4 1c2.4 0 4-1 4-1v8s-.7 2-4 2c-2.2 0-2.3-1-5-1c-2.3 0-3 2-3 2V4z"/></svg>
                             <div class="text-container">
                                 <h3>${data.personalCitizenship || "--"}</h3>
                                 <p>
@@ -724,40 +718,39 @@ function showPersonalInfoDetails() {
                             </div> 
                         </div>
                         <div class="content-container">
-                            <img class="icons" src="Assets/Images/Icons/height.png" alt="height">
+                            <svg class="icons no-outline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 17 16"><path fill="#ffffff" fill-rule="evenodd" d="M5 0v16h8V0H5zm1 2h2v1H6V2zm0 6h2v1H6V8zm2 7H6v-1h2v1zm1-3H6v-1h3v1zm0-6H6V5h3v1z"/></svg>
                             <div class="text-container">
                                 <h3>${data.personalHeight || "--"}</h3>
                                 <p>
-                                    Height
+                                    Height (cm)
                                 </p>
                             </div> 
                         </div>
                         <div class="content-container">
-                            <img class="icons" src="Assets/Images/Icons/weight-scale.png" alt="weight">
+                            <svg class="icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ffffff" d="M368 32H144A112.12 112.12 0 0 0 32 144v224a112.12 112.12 0 0 0 112 112h224a112.12 112.12 0 0 0 112-112V144A112.12 112.12 0 0 0 368 32m36.21 178l-33.32 39.21A41.76 41.76 0 0 1 339 264.05a42.3 42.3 0 0 1-22.29-6.38c-14.22-8.78-36.3-19.25-60.69-19.25s-46.47 10.47-60.69 19.25a41.86 41.86 0 0 1-54.2-8.46L107.79 210a50.48 50.48 0 0 1 4.49-70.27c27.84-25.35 75.37-55.57 143.72-55.57s115.88 30.22 143.72 55.57a50.48 50.48 0 0 1 4.49 70.27"/></svg>
                             <div class="text-container">
                                 <h3>${data.personalWeight || "--"}</h3>
                                 <p>
-                                    Weight
+                                    Weight (kg)
                                 </p>
                             </div> 
                         </div>
                         <div class="content-container">
-                            <img class="icons" src="Assets/Images/Icons/weight-scale.png" alt="weight">
+                            <svg class="icons no-outline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 26" ><path fill="#ffffff" d="M7 0c-.551 0-1 .449-1 1v3c0 .551.449 1 1 1c.551 0 1-.449 1-1V1c0-.551-.449-1-1-1zm12 0c-.551 0-1 .449-1 1v3c0 .551.449 1 1 1c.551 0 1-.449 1-1V1c0-.551-.449-1-1-1zM3 2C1.344 2 0 3.344 0 5v18c0 1.656 1.344 3 3 3h20c1.656 0 3-1.344 3-3V5c0-1.656-1.344-3-3-3h-2v2a2 2 0 0 1-4 0V2H9v2a2 2 0 0 1-4 0V2H3zM2 9h22v14c0 .551-.449 1-1 1H3c-.551 0-1-.449-1-1V9zm7 3v2.313h4.813l-3.782 7.656H13.5l3.469-8.438V12H9z"/></svg>
                             <div class="text-container">
                                 <h3>${data.personalBirthdate || "--"}</h3>
                                 <p>
-                                    Birthday
+                                    Birthday (yyyy/mm/dd)
                                 </p>
                             </div> 
                         </div>
-                    </div>
                 `;
 
             });
 
         }, err => {
-            console.error("❌ Error loading occupations:", err);
-            container.innerHTML = `<p style="color:red;">Failed to load occupations.</p>`;
+            console.error("❌ Error loading personal details:", err);
+            container.innerHTML = `<p style="color:red;">Failed to load personal details.</p>`;
         });
 } window.showPersonalInfoDetails = showPersonalInfoDetails;
 

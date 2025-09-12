@@ -645,24 +645,35 @@ function showAddContactInfoForm(existingData = null) {
     });
 }
 
-function showAddPersonalInfoForm(existingData = null) {
+async function showAddPersonalInfoForm(existingData = null) {
     const addPersonalInfo = document.querySelector(".create-card-container-parent");
     if (!addPersonalInfo) {
         console.error("❌ Contact form addPersonalInfo not found");
         return;
     }
     addPersonalInfo.style.display = "grid";
-    const isEdit = !!existingData;
 
-    addPersonalInfo.innerHTML = `
+    try {
+        // 🔹 Fetch the one and only personal details doc
+        const snapshot = await db.collection("personal_details").limit(1).get();
+        let existingData = null;
+        let docId = null;
+
+        if (!snapshot.empty) {
+            const doc = snapshot.docs[0];
+            docId = doc.id;
+            existingData = { id: doc.id, ...doc.data() };
+        }
+
+        addPersonalInfo.innerHTML = `
         <div class="create-post-container">
             <div class="create-profile-form-container">
                 <!-- Header -->
                 <div class="create-profile-header">
-                    <h1 class="card-title">Personal Info</h1>
+                    <h1 class="card-title">Personal Details</h1>
                     <span class="create-profile-button-container red-btn" id="cancel-btn">Cancel</span>
                     <span class="create-profile-button-container green-btn" id="profile-post-btn">
-                        ${isEdit ? "Update" : "Save"}
+                        Update
                     </span>
                 </div>
 
@@ -674,7 +685,7 @@ function showAddPersonalInfoForm(existingData = null) {
                 <!-- Scrollable content -->
                 <div class="create-profile-form-viewport scroll-fade">
                     <form id="contact-form">
-                        <h1>${isEdit ? "Edit Personal Info" : "New Personal Info"}</h1>
+                        <h1>Edit Personal Details</h1>
 
                     <div class="flex-container">
                         <div class="create-profile-containers profile-label">
@@ -695,9 +706,9 @@ function showAddPersonalInfoForm(existingData = null) {
                         <div class="create-profile-containers profile-label">
                             <select class="input-profile-date" id="personal-gender">
                                 <option value="">Choose Gender</option>
-                                <option value="male" ${existingData?.personalGender === "male" ? "selected" : ""}>Male</option>
-                                <option value="female" ${existingData?.personalGender === "female" ? "selected" : ""}>Female</option>
-                                <option value="skip" ${existingData?.personalGender === "skip" ? "selected" : ""}>Rather Not Say</option>
+                                <option value="Male" ${existingData?.personalGender === "male" ? "selected" : ""}>Male</option>
+                                <option value="Female" ${existingData?.personalGender === "female" ? "selected" : ""}>Female</option>
+                                <option value="Rather not say" ${existingData?.personalGender === "Rather not say" ? "selected" : ""}>Rather Not Say</option>
                             </select>
                             <label>Gender</label>
                         </div>
@@ -705,15 +716,15 @@ function showAddPersonalInfoForm(existingData = null) {
                         <div class="create-profile-containers profile-label">
                             <select class="input-profile-date" id="personal-language">
                                 <option value="">Choose Language</option>
-                                <option value="filipino" ${existingData?.personalLanguage === "filipino" ? "selected" : ""}>Filipino</option>
-                                <option value="english" ${existingData?.personalLanguage === "english" ? "selected" : ""}>English</option>
-                                <option value="english-filipino" ${existingData?.personalLanguage === "english-filipino" ? "selected" : ""}>English - Filipino</option>
-                                <option value="japanese" ${existingData?.personalLanguage === "japanese" ? "selected" : ""}>Japanese</option>
-                                <option value="chinese" ${existingData?.personalLanguage === "chinese" ? "selected" : ""}>Chinese</option>
-                                <option value="korean" ${existingData?.personalLanguage === "korean" ? "selected" : ""}>Korean</option>
-                                <option value="indonesian" ${existingData?.personalLanguage === "indonesian" ? "selected" : ""}>Indonesian</option>
-                                <option value="malaysian" ${existingData?.personalLanguage === "malaysian" ? "selected" : ""}>Malaysian</option>
-                                <option value="other" ${existingData?.personalLanguage === "other" ? "selected" : ""}>Other</option>
+                                <option value="Filipino" ${existingData?.personalLanguage === "filipino" ? "selected" : ""}>Filipino</option>
+                                <option value="English" ${existingData?.personalLanguage === "english" ? "selected" : ""}>English</option>
+                                <option value="English-Filipino" ${existingData?.personalLanguage === "English-Filipino" ? "selected" : ""}>English - Filipino</option>
+                                <option value="Japanese" ${existingData?.personalLanguage === "japanese" ? "selected" : ""}>Japanese</option>
+                                <option value="Chinese" ${existingData?.personalLanguage === "chinese" ? "selected" : ""}>Chinese</option>
+                                <option value="Korean" ${existingData?.personalLanguage === "korean" ? "selected" : ""}>Korean</option>
+                                <option value="Indonesian" ${existingData?.personalLanguage === "indonesian" ? "selected" : ""}>Indonesian</option>
+                                <option value="Malaysian" ${existingData?.personalLanguage === "malaysian" ? "selected" : ""}>Malaysian</option>
+                                <option value="Other" ${existingData?.personalLanguage === "other" ? "selected" : ""}>Other</option>
                                 </select>
                             <label>Language</label>
                         </div>
@@ -739,12 +750,12 @@ function showAddPersonalInfoForm(existingData = null) {
 
                     <div class="flex-container">
                         <div class="create-profile-containers profile-label">
-                            <input class="input-profile-title" id="personal-weight" type="text" 
+                            <input class="input-profile-title" id="personal-weight" type="number" placeholder="kg"
                                 value="${existingData?.personalWeight || ''}">
                             <label>Weight</label>
                         </div>
                         <div class="create-profile-containers profile-label">
-                            <input class="input-profile-title" id="personal-height" type="text" 
+                            <input class="input-profile-title" id="personal-height" type="number" placeholder="cm"
                                 value="${existingData?.personalHeight || ''}">
                             <label>Height</label>
                         </div>
@@ -759,45 +770,47 @@ function showAddPersonalInfoForm(existingData = null) {
         </div>
     `;
 
-    const cancelBtn = addPersonalInfo.querySelector("#cancel-btn");
-    cancelBtn.addEventListener("click", () => {
-        addPersonalInfo.style.display = "none";
-        addPersonalInfo.innerHTML = "";
-    });
-
-    const saveBtn = addPersonalInfo.querySelector("#profile-post-btn");
-    saveBtn.addEventListener("click", async (e) => {
-        e.preventDefault();
-
-        const payload = {
-            personalSummary: document.getElementById("personal-summary")?.value.trim() || "",
-            personalAddress: document.getElementById("personal-address")?.value.trim() || "",
-            personalGender: document.getElementById("personal-gender")?.value || "",
-            personalLanguage: document.getElementById("personal-language")?.value || "",
-            personalCitizenship: document.getElementById("personal-citizenship")?.value.trim() || "",
-            personalStatus: document.getElementById("personal-status")?.value.trim() || "",
-            personalReligion: document.getElementById("personal-religion")?.value.trim() || "",
-            personalWeight: document.getElementById("personal-weight")?.value.trim() || "",
-            personalHeight: document.getElementById("personal-height")?.value.trim() || "",
-            personalBirthdate: document.getElementById("personal-birthdate")?.value || "",
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        };
-
-        try {
-            if (isEdit) {
-                await db.collection("personal_details").doc(existingData.id).update(payload);
-                console.log("✏️ Personal Details updated");
-            } else {
-                payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-                await db.collection("personal_details").add(payload);
-                console.log("✅ Personal Details saved");
-            }
-
+        // Cancel button
+        addPersonalInfo.querySelector("#cancel-btn").addEventListener("click", () => {
             addPersonalInfo.style.display = "none";
             addPersonalInfo.innerHTML = "";
-            showPersonalInfoDetails();
-        } catch (err) {
-            console.error("❌ Error saving personal details:", err);
-        }
-    });
+        });
+
+        // Save/Update button
+        addPersonalInfo.querySelector("#profile-post-btn").addEventListener("click", async (e) => {
+            e.preventDefault();
+
+            const payload = {
+                personalSummary: document.getElementById("personal-summary")?.value.trim() || "",
+                personalAddress: document.getElementById("personal-address")?.value.trim() || "",
+                personalGender: document.getElementById("personal-gender")?.value || "",
+                personalLanguage: document.getElementById("personal-language")?.value || "",
+                personalCitizenship: document.getElementById("personal-citizenship")?.value.trim() || "",
+                personalStatus: document.getElementById("personal-status")?.value.trim() || "",
+                personalReligion: document.getElementById("personal-religion")?.value.trim() || "",
+                personalWeight: document.getElementById("personal-weight")?.value.trim() || "",
+                personalHeight: document.getElementById("personal-height")?.value.trim() || "",
+                personalBirthdate: document.getElementById("personal-birthdate")?.value || "",
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                if (!existingData?.id) {
+                    console.error("❌ No document ID found for update.");
+                    return;
+                }
+
+                await db.collection("personal_details").doc(existingData.id).update(payload);
+                console.log("✏️ Personal Details updated");
+
+                addPersonalInfo.style.display = "none";
+                addPersonalInfo.innerHTML = "";
+                showPersonalInfoDetails();
+            } catch (err) {
+                console.error("❌ Error updating personal details:", err);
+            }
+        });
+    } catch (err) {
+        console.error("❌ Error fetching personal details:", err);
+    }
 }
