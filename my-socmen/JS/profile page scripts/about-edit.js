@@ -760,7 +760,7 @@ function showAddPersonalInfoForm(existingData = null) {
         addPersonalInfo.innerHTML = "";
     });
 
-    const saveBtn = addEducationCont.querySelector("#profile-post-btn");
+    const saveBtn = addPersonalInfo.querySelector("#profile-post-btn");
     saveBtn.addEventListener("click", async (e) => {
         e.preventDefault();
 
