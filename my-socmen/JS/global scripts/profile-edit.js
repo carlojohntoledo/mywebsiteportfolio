@@ -233,15 +233,42 @@ function editSkill(docId) {
  * Each certificate-card will include data-id and data-public-id for deletion
  * We will mimic the card structure to fit your CSS and visual design.
  */
-async function loadCertificatesFromFirestore() {
+
+document.querySelectorAll('input[name="certificates-filter"]').forEach(radio => {
+    radio.addEventListener("change", () => {
+        const sort = document.querySelector('input[name="certificates-filter"]:checked').value;
+        loadCertificatesFromFirestore(sort);
+    });
+});
+
+async function loadCertificatesFromFirestore(sort = "default") {
     const container = document.getElementById("certificates-content");
     if (!container) return console.warn("⚠️ #certificates-content container not found");
 
     try {
-        showLoader();
-        container.innerHTML = ""; // clear
+        container.innerHTML = `<div class="content-loader">
+            <div class="wrapper">
+                <div class="circle"></div>
+                <div class="line-1"></div>
+                <div class="line-2"></div>
+                <div class="line-3"></div>
+                <div class="line-4"></div>
+            </div>
+        </div>`; // clear
 
-        const snapshot = await db.collection(CERTS_COLLECTION).orderBy("createdAt", "desc").get();
+        let query = db.collection(CERTS_COLLECTION);
+
+        // 🔹 Apply sorting based on filter
+        if (sort === "bydate") {
+            query = query.orderBy("certDate", "desc"); // user-inputted cert date
+        } else if (sort === "alphabetical") {
+            query = query.orderBy("title", "asc"); // alphabetical by title
+        } else {
+            query = query.orderBy("createdAt", "desc"); // default: newest first
+        }
+
+        const snapshot = await query.get();
+
         snapshot.forEach(doc => {
             const c = doc.data();
             const docId = doc.id;
@@ -251,38 +278,15 @@ async function loadCertificatesFromFirestore() {
             const imgUrl = c.fileUrl || "Assets/Images/placeholder.svg";
             const publicId = c.filePublicId || "";
 
-            // 🔹 your original cardHtml preserved
             const cardHtml = `
                 <div class="certificate-card" data-id="${docId}" data-public-id="${publicId}">
-                
-                    <div class="certificate-card-remove" title="Remove certificate">X</div>
+                    <div class="certificate-actions">
+                        <div class="certificate-card-edit" title="Edit certificate">Edit</div>
+                        <div class="certificate-card-remove" title="Remove certificate">x</div>
+                    </div>
                     <div class="certificate-container noselect">
                         <div class="canvas">
-                            <div class="tracker tr-1"></div>
-                            <div class="tracker tr-2"></div>
-                            <div class="tracker tr-3"></div>
-                            <div class="tracker tr-4"></div>
-                            <div class="tracker tr-5"></div>
-                            <div class="tracker tr-6"></div>
-                            <div class="tracker tr-7"></div>
-                            <div class="tracker tr-8"></div>
-                            <div class="tracker tr-9"></div>
-                            <div class="tracker tr-10"></div>
-                            <div class="tracker tr-11"></div>
-                            <div class="tracker tr-12"></div>
-                            <div class="tracker tr-13"></div>
-                            <div class="tracker tr-14"></div>
-                            <div class="tracker tr-15"></div>
-                            <div class="tracker tr-16"></div>
-                            <div class="tracker tr-17"></div>
-                            <div class="tracker tr-18"></div>
-                            <div class="tracker tr-19"></div>
-                            <div class="tracker tr-20"></div>
-                            <div class="tracker tr-21"></div>
-                            <div class="tracker tr-22"></div>
-                            <div class="tracker tr-23"></div>
-                            <div class="tracker tr-24"></div>
-                            <div class="tracker tr-25"></div>
+                            ${[...Array(25).keys()].map(i => `<div class="tracker tr-${i + 1}"></div>`).join("")}
                             <div class="certificate-card-inner" id="card">
                                 <div class="prompt-container">
                                     <img class="cert-background" src="${imgUrl}" alt="${title}" />
@@ -298,12 +302,37 @@ async function loadCertificatesFromFirestore() {
             `;
             container.insertAdjacentHTML("beforeend", cardHtml);
         });
+
+        // attach edit handler AFTER cards are added
+        container.querySelectorAll(".certificate-card-edit").forEach(btn => {
+            btn.addEventListener("click", async e => {
+                e.stopPropagation();
+                const certCard = e.target.closest(".certificate-card");
+                const docId = certCard.dataset.id;
+
+                try {
+                    const doc = await db.collection(CERTS_COLLECTION).doc(docId).get();
+                    if (doc.exists) {
+                        const cert = doc.data();
+                        showCertificateEditForm(docId, cert);
+                    }
+                } catch (err) {
+                    console.error("❌ Error fetching certificate for edit:", err);
+                }
+            });
+        });
+
+        // attach remove handler
+        container.querySelectorAll(".certificate-card-remove").forEach(btn => {
+            btn.addEventListener("click", handleCertificateRemove);
+        });
+
     } catch (err) {
         console.error("❌ Error loading certificates:", err);
-    } finally {
-        hideLoader();
     }
 }
+
+
 
 // ================= REMOVE CERTIFICATE BUTTON =================
 // =============================================================
@@ -491,7 +520,7 @@ function showAddSkillForm(existingData = null) {
 
 
 // ---------- showCertificateEditForm (kept your original injected markup) ----------
-function showCertificateEditForm() {
+function showCertificateEditForm(docId = null, cert = {}) {
     const editCertificateContainer = document.querySelector(".create-card-container-parent");
     if (!editCertificateContainer) {
         console.error("❌ Edit form container not found");
@@ -503,30 +532,16 @@ function showCertificateEditForm() {
         <div class="create-post-container">
             <div class="create-profile-form-container">
                 <div class="create-profile-header">
-                    <h1 class="card-title">Add New Certificate</h1>
+                    <h1 class="card-title">${docId ? "Edit Certificate" : "Add New Certificate"}</h1>
                     <span class="create-profile-button-container red-btn" id="cancel-btn">Cancel</span>
-                    <span class="create-profile-button-container green-btn"
-                        id="profile-post-btn">Save</span>
+                    <span class="create-profile-button-container green-btn" id="profile-post-btn">Save</span>
                 </div>
 
                 <div class="error" id="form-warning">
                     <div class="form-warning-cont">
-                        <div class="error__icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 24 24"
-                                height="24" fill="none">
-                                <path fill="#393a37"
-                                    d="m13 13h-2v-6h2zm0 4h-2v-2h2zm-1-15c-1.3132 0-2.61358.25866-3.82683.7612-1.21326.50255-2.31565 1.23915-3.24424 2.16773-1.87536 1.87537-2.92893 4.41891-2.92893 7.07107 0 2.6522 1.05357 5.1957 2.92893 7.0711.92859.9286 2.03098 1.6651 3.24424 2.1677 1.21325.5025 2.51363.7612 3.82683.7612 2.6522 0 5.1957-1.0536 7.0711-2.9289 1.8753-1.8754 2.9289-4.4189 2.9289-7.0711 0-1.3132-.2587-2.61358-.7612-3.82683-.5026-1.21326-1.2391-2.31565-2.1677-3.24424-.9286-.92858-2.031-1.66518-3.2443-2.16773-1.2132-.50254-2.5136-.7612-3.8268-.7612z">
-                                </path>
-                            </svg>
-                        </div>
+                        <div class="error__icon">⚠️</div>
                         <div class="error__title">Please fill-in required (*) details.</div>
-                        <div class="error__close" id="close-error"><svg xmlns="http://www.w3.org/2000/svg"
-                                width="20" viewBox="0 0 20 20" height="20">
-                                <path fill="#393a37"
-                                    d="m15.8333 5.34166-1.175-1.175-4.6583 4.65834-4.65833-4.65834-1.175 1.175 4.65833 4.65834-4.65833 4.6583 1.175 1.175 4.65833-4.6583 4.6583 4.6583 1.175-1.175-4.6583-4.6583z">
-                                </path>
-                            </svg>
-                        </div>
+                        <div class="error__close" id="close-error">✖</div>
                     </div>
                 </div>
 
@@ -536,17 +551,17 @@ function showCertificateEditForm() {
                             <div class="certificate-group-separator">
                                 <div class="flex-container">
                                     <div class="create-profile-containers profile-label">
-                                        <input class="input-certificate-title" id="certificate-title" type="text">
+                                        <input class="input-certificate-title" id="certificate-title" type="text" value="${cert.title || ""}">
                                         <label>Certificate Title</label>
                                     </div>
                                     <div class="create-profile-containers profile-label">
-                                        <input class="input-certificate-date" id="certificate-date" type="date">
+                                        <input class="input-certificate-date" id="certificate-date" type="date" value="${cert.certDate || ""}">
                                         <label>Certificate Date</label>
                                     </div>
                                 </div>
 
                                 <div class="create-profile-containers profile-label">
-                                    <textarea class="input-certificate-description" id="certificate-description"></textarea>
+                                    <textarea class="input-certificate-description" id="certificate-description">${cert.description || ""}</textarea>
                                     <label>Certificate Description</label>
                                 </div>
 
@@ -554,8 +569,10 @@ function showCertificateEditForm() {
                                     <div class="create-profile-image-container">
                                         <p style="color: var(--text-color);">Upload Certificate Photo</p>
                                         <div class="file-upload-form">
-                                            <input style="height: 2rem; align-content: center; padding: 0rem 1rem;" id="certificate-photo" type="file" multiple accept="image/*" />
+                                            <input style="height: 2rem; align-content: center; padding: 0rem 1rem;" 
+                                                id="certificate-photo" type="file" accept="image/*" />
                                         </div>
+                                        ${cert.fileUrl ? `<img src="${cert.fileUrl}" alt="Certificate" style="max-width:100px;margin-top:8px;border-radius:6px;">` : ""}
                                     </div>
                                 </div>
                             </div>
@@ -567,29 +584,28 @@ function showCertificateEditForm() {
     `;
     editCertificateContainer.style.display = "grid"; // Show the form container
 
-    // hook cancel button
+    // Cancel button
     const cancelBtn = editCertificateContainer.querySelector('#cancel-btn');
     if (cancelBtn) {
         cancelBtn.addEventListener('click', () => {
             editCertificateContainer.style.display = "none";
             editCertificateContainer.innerHTML = "";
         });
-    } else {
-        console.warn("⚠️ Cancel button not found in injected certificate form.");
     }
 
-    // Hook Save button for certificate
+    // Get inputs
     const saveBtn = editCertificateContainer.querySelector('#profile-post-btn');
+    const titleInput = editCertificateContainer.querySelector('#certificate-title');
+    const dateInput = editCertificateContainer.querySelector('#certificate-date');
+    const descInput = editCertificateContainer.querySelector('#certificate-description');
+    const fileInput = editCertificateContainer.querySelector('#certificate-photo');
+
+    // Save handler
     if (saveBtn) {
         saveBtn.addEventListener('click', async () => {
-            const titleInput = editCertificateContainer.querySelector('#certificate-title');
-            const dateInput = editCertificateContainer.querySelector('#certificate-date');
-            const descInput = editCertificateContainer.querySelector('#certificate-description');
-            const fileInput = editCertificateContainer.querySelector('#certificate-photo');
-
-            const title = (titleInput?.value || "").trim();
-            const certDate = (dateInput?.value || "").trim();
-            const description = (descInput?.value || "").trim();
+            const title = titleInput.value.trim();
+            const certDate = dateInput.value.trim();
+            const description = descInput.value.trim();
 
             if (!title) {
                 showMessage("Please enter certificate title.");
@@ -598,39 +614,56 @@ function showCertificateEditForm() {
 
             showLoader();
             try {
-                let fileUrl = "";
-                let filePublicId = "";
+                let fileUrl = cert.fileUrl || "";
+                let filePublicId = cert.filePublicId || "";
 
-                if (fileInput && fileInput.files && fileInput.files.length > 0) {
-                    const uploaded = await uploadToCloudinary(fileInput.files[0], "profile", "mysocmed/profile/certificates");
-                    fileUrl = uploaded.imageUrl || "";
-                    filePublicId = uploaded.publicId || "";
+                if (fileInput.files.length > 0) {
+                    const uploaded = await uploadToCloudinary(
+                        fileInput.files[0],
+                        "profile",
+                        "mysocmed/profile/certificates"
+                    );
+                    fileUrl = uploaded.imageUrl;
+                    filePublicId = uploaded.publicId;
                 }
 
-                await db.collection(CERTS_COLLECTION).add({
-                    title,
-                    certDate,
-                    description,
-                    fileUrl,
-                    filePublicId,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
+                if (docId) {
+                    // Update existing
+                    await db.collection(CERTS_COLLECTION).doc(docId).set({
+                        title,
+                        certDate,
+                        description,
+                        fileUrl,
+                        filePublicId,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true });
+                    showMessage("✅ Certificate updated!");
+                } else {
+                    // Add new
+                    await db.collection(CERTS_COLLECTION).add({
+                        title,
+                        certDate,
+                        description,
+                        fileUrl,
+                        filePublicId,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    showMessage("✅ Certificate added!");
+                }
 
-                showMessage("✅ Certificate added!");
                 await loadCertificatesFromFirestore();
                 editCertificateContainer.style.display = "none";
                 editCertificateContainer.innerHTML = "";
             } catch (err) {
-                console.error("❌ Error adding certificate:", err);
-                showMessage("Failed to add certificate. Check console.");
+                console.error("❌ Error saving certificate:", err);
+                showMessage("Failed to save certificate.");
             } finally {
                 hideLoader();
             }
         });
-    } else {
-        console.warn("⚠️ Save button not found in injected certificate form.");
     }
 }
+
 
 // ---------- showProfileEditForm (kept your original injected markup but enhanced to prefill and save) ----------
 function showProfileEditForm() {

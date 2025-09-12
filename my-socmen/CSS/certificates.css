@@ -27,12 +27,12 @@ section.certificates-section {
     margin: 0rem 1rem;
     /*border: 1px solid red;*/
     display: flex;
-  justify-content: start;
+    justify-content: start;
 }
 
 .certificates-title-container h1 {
     font-size: var(--font-xl);
-    width: 80%;
+    width: 90%;
     font-weight: bold;
     color: var(--text-color);
 }
@@ -110,6 +110,7 @@ section.certificates-section {
     width: 100%;
     /* border: 1px solid; */
     aspect-ratio: 16/9;
+    position: relative;
 }
 
 .certificate-container {
@@ -219,7 +220,7 @@ section.certificates-section {
     opacity: 0.5;
 }
 
-.certificate-card-remove {
+/* .certificate-card-remove {
     position: absolute;
     display: grid;
     align-items: center;
@@ -236,7 +237,7 @@ section.certificates-section {
     z-index: 201;
     width: 1.5rem;
     aspect-ratio: 1/1;
-}
+} */
 
 .tracker {
     position: absolute;

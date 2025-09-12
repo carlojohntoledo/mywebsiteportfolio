@@ -198,6 +198,7 @@ section.About {
 
 .occupation-actions,
 .skill-actions,
+.certificate-actions,
 .contact-actions,
 .education-actions {
     display: none;
@@ -207,12 +208,16 @@ section.About {
     align-items: end;
     justify-content: center;
     gap: 0.25rem;
+    z-index: 201;
+    /* border: 1px solid; */
+    margin: 0;
 }
 
 .content-container:hover .occupation-actions,
 .content-container:hover .contact-actions,
 .content-container:hover .education-actions,
-.skill-card:hover .skill-actions {
+.skill-card:hover .skill-actions,
+.certificate-card:hover .certificate-actions {
     display: flex;
 }
 
@@ -225,6 +230,8 @@ section.About {
 .occupation-delete,
 .skill-card-remove,
 .skill-card-edit,
+.certificate-card-remove,
+.certificate-card-edit,
 .education-delete,
 .contact-delete,
 .contact-edit,
@@ -246,6 +253,7 @@ section.About {
 
 .occupation-edit,
 .skill-card-edit,
+.certificate-card-edit,
 .contact-edit,
 .education-edit {
     border-radius: 0.2rem;
@@ -254,6 +262,7 @@ section.About {
 
 .occupation-delete:hover,
 .skill-card-remove:hover,
+.certificate-card-remove:hover,
 .contact-delete:hover,
 .education-delete:hover {
     background-color: #ff3131;
@@ -262,6 +271,7 @@ section.About {
 
 .occupation-edit:hover,
 .skill-card-edit:hover,
+.certificate-card-edit:hover,
 .contact-edit:hover,
 .education-edit:hover {
     background-color: var(--accent-color);

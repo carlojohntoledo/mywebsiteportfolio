@@ -343,10 +343,13 @@
 
 .add-new-form {
     margin: auto;
-    border: 0.15rem solid var(--primary-color);
-    padding: 0.5rem 0.75rem;
-    width: max-content;
+    /* border: 0.15rem solid var(--primary-color); */
+    font-size: var(--font-xl);
+    color: var(--text-color);
+    background-color: transparent;
+    padding: 0.25rem 0.75rem;
     cursor: pointer;
+    box-shadow: none;
 }
 
 .add-new-form:hover {
