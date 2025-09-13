@@ -430,9 +430,9 @@ function showAddSkillForm(existingData = null) {
                                             <input id="skill-photo" type="file" 
                                                 accept="image/*" style="height:2rem;width:90%;padding:0 1rem;" />
                                         </div>
-                                        ${existingData?.logoUrl
-            ? `<div class="current-img"><img src="${existingData.logoUrl}" alt="${existingData.name}" style="max-height:80px; margin-top:8px;"></div>`
+                                        ${existingData?.logoUrl ? `<div class="current-img"><img src="${existingData.logoUrl}" alt="${existingData.name}" style="max-width:100%; margin-top:1rem; width: 100%"></div>`
             : ""
+
         }
                                     </div>
                                 </div>
@@ -572,7 +572,7 @@ function showCertificateEditForm(docId = null, cert = {}) {
                                             <input style="height: 2rem; align-content: center; padding: 0rem 1rem;" 
                                                 id="certificate-photo" type="file" accept="image/*" />
                                         </div>
-                                        ${cert.fileUrl ? `<img src="${cert.fileUrl}" alt="Certificate" style="max-width:100px;margin-top:8px;border-radius:6px;">` : ""}
+                                        ${cert.fileUrl ? `<img src="${cert.fileUrl}" alt="Certificate" style="max-width:100%;margin-top:8px;border-radius:6px;">` : ""}
                                     </div>
                                 </div>
                             </div>
@@ -724,7 +724,7 @@ function showProfileEditForm() {
                                             </div>
                                         </div>
                                         <span class="browse-button">Upload Photo</span>
-                                        <input id="profile-photo" type="file" multiple accept="image/*" />
+                                        <input id="profile-photo" type="file" accept="image/*" />
                                     </div>
                                 </label>
                             </div>
@@ -746,7 +746,7 @@ function showProfileEditForm() {
                                             </div>
                                         </div>
                                         <span class="browse-button">Upload Photo</span>
-                                        <input id="cover-photo" type="file" multiple accept="image/*" />
+                                        <input id="cover-photo" type="file" accept="image/*" />
                                     </div>
                                 </label>
                             </div>

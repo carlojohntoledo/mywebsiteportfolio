@@ -82,7 +82,7 @@ section.certificates-section {
 .certificates-content-container {
     position: relative;
     width: 90%;
-    height: max-content;
+    min-height: max-content;
     margin: auto;
     overflow-x: auto;
     overflow-y: hidden;
@@ -118,7 +118,6 @@ section.certificates-section {
     width: calc(100% * 1vw);
     height: 100%;
     transition: 200ms;
-    /* border: 1px solid red; */
 }
 
 .certificate-container {
@@ -169,7 +168,7 @@ section.certificates-section {
     max-width: 70%;
 }
 
-#prompt-title {
+.prompt-title {
     text-align: center;
     z-index: 20;
     font-size: var(--font-xl);
@@ -180,7 +179,7 @@ section.certificates-section {
     /* border: 1px solid red; */
 }
 
-#prompt-description {
+.prompt-description {
     text-align: center;
     z-index: 20;
     font-size: var(--font-md);
@@ -257,7 +256,6 @@ section.certificates-section {
 
 .tracker:hover~#card {
     transition: 300ms;
-    filter: brightness(1.1);
 }
 
 .certificate-container:hover #card::before {

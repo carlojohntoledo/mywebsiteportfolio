@@ -10,7 +10,6 @@ async function compressImage(file, maxMB = 2, quality = 0.7) {
             const canvas = document.createElement("canvas");
             const ctx = canvas.getContext("2d");
 
-            // Scale image down if too large (target max width/height ~2000px)
             const MAX_SIZE = 2000;
             let { width, height } = img;
             if (width > height && width > MAX_SIZE) {
@@ -24,18 +23,20 @@ async function compressImage(file, maxMB = 2, quality = 0.7) {
             canvas.height = height;
             ctx.drawImage(img, 0, 0, width, height);
 
+            // Preserve original format (PNG keeps transparency)
+            let mimeType = file.type === "image/png" ? "image/png" : "image/jpeg";
+
             canvas.toBlob(
                 (blob) => {
                     if (!blob) return reject(new Error("Compression failed"));
-                    // Force JPEG output
                     const compressedFile = new File(
                         [blob],
-                        file.name.replace(/\.[^/.]+$/, ".jpg"),
-                        { type: "image/jpeg" }
+                        file.name.replace(/\.[^/.]+$/, mimeType === "image/png" ? ".png" : ".jpg"),
+                        { type: mimeType }
                     );
                     resolve(compressedFile);
                 },
-                "image/jpeg",
+                mimeType,
                 quality
             );
         };
@@ -43,6 +44,7 @@ async function compressImage(file, maxMB = 2, quality = 0.7) {
         img.src = URL.createObjectURL(file);
     });
 }
+
 
 // =============================================================
 // ✅ Upload a single file to Cloudinary
@@ -71,7 +73,7 @@ async function uploadToCloudinary(file, type = "projects", folder = "") {
 
     // ✅ Optional: send folder for better organization
     if (folder) {
-        formData.append("folder", folder); 
+        formData.append("folder", folder);
         // Example: "mysocmed/profile/profile-pictures"
     }
 
