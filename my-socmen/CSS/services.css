@@ -286,15 +286,14 @@
     position: relative;
 }
 
-.desc-text {
+.services-desc-container .desc-text {
     display: -webkit-box;
     -webkit-line-clamp: 5;
-    text-align: justify;
+    text-align: left;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
     transition: max-height 0.3s ease;
-    max-height: 6em;
     white-space: pre-wrap;
     /* fallback for browsers not supporting line-clamp */
 }

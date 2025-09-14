@@ -11,6 +11,7 @@ async function loadPostsFromFirestore(type = "projects") {
 
     container.innerHTML = ""; // clear old cards
     showContentLoader();
+    adjustFontSize();
 
     try {
         const profilePhotoUrl = await getProfilePhotoUrl();
@@ -232,7 +233,7 @@ async function loadPostsFromFirestore(type = "projects") {
                                         </p>
                                     </div>
                                     <div class="${type}-status-container">
-                                        <p class="${type}-date">${data.date || ''}</p>
+                                        <p class="${type}-date">Created at ${data.date || ''}</p>
                                     </div>
                                 </div>
                             </div>
@@ -270,6 +271,18 @@ async function loadPostsFromFirestore(type = "projects") {
             containerDiv.innerHTML = cardInnerHTML;
 
             // Expand/Collapse description toggle
+            document.querySelectorAll(".desc-text").forEach(text => {
+                const container = text.closest(`.${type}-desc-container`);
+                const toggleBtn = container.querySelector(".toggle-desc");
+
+                // Check if text overflows
+                if (text.scrollHeight > text.clientHeight) {
+                    toggleBtn.style.display = "grid";
+                } else {
+                    toggleBtn.style.display = "none";
+                }
+            });
+
             containerDiv.addEventListener("click", function (e) {
                 if (e.target.classList.contains("toggle-desc")) {
                     const descContainer = e.target.closest(`.${type}-desc-container`);
@@ -284,6 +297,7 @@ async function loadPostsFromFirestore(type = "projects") {
                         : "See More";
                 }
             });
+
 
 
             // Random pastel tags
@@ -346,6 +360,7 @@ async function loadPostsFromFirestore(type = "projects") {
 
         // ✅ Sort cards: pinned first, newest date next
         postSorter(type);
+        adjustFontSize();
 
         return postsArray;
     } catch (err) {
@@ -426,4 +441,30 @@ function postSorter(page, posts) {
 // =============================================================
 function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+
+function adjustFontSize() {
+    const el = document.querySelector(".activities-description");
+    if (!el) return;
+
+    const textLength = el.textContent.trim().length;
+
+    if (textLength < 50) {
+        el.style.fontSize = "var(--font-xxl)";
+    } else if (textLength < 150) {
+        el.style.fontSize = "var(--font-lg)";
+    } else {
+        el.style.fontSize = "var(--font-xs)";
+    }
+}
+
+// Run once on page load
+adjustFontSize();
+
+// Optional: re-run whenever text changes dynamically
+const observer = new MutationObserver(adjustFontSize);
+const target = document.querySelector(".activities-description");
+if (target) {
+    observer.observe(target, { childList: true, characterData: true, subtree: true });
 }

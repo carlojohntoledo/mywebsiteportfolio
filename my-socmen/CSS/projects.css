@@ -315,7 +315,7 @@
 
 .projects-details-container {
     display: grid;
-    grid-template-columns: 1fr minmax(15%, 20%);
+    grid-template-columns: 1fr auto;
     grid-template-rows: auto;
     align-items: center;
     /* border: 1px solid red; */
@@ -343,7 +343,6 @@
     font-size: var(--font-xs);
     color: var(--text-color-sub);
     text-align: right;
-    /* border: 1px solid; */
 }
 
 .projects-status-container p {
@@ -392,22 +391,20 @@
     position: relative;
 }
 
-.desc-text {
+.projects-desc-container .desc-text {
     display: -webkit-box;
     -webkit-line-clamp: 5;
-    text-align: justify;
+    text-align: left;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
     transition: max-height 0.3s ease;
-    max-height: 6em;
     white-space: pre-wrap;
     /* fallback for browsers not supporting line-clamp */
 }
 
 .desc-text.expanded {
     -webkit-line-clamp: unset;
-    max-height: none;
 }
 
 .toggle-desc {
