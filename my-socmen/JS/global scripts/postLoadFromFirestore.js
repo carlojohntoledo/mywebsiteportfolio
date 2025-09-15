@@ -107,12 +107,13 @@ async function loadPostsFromFirestore(type = "projects") {
                                 </div>
                             </div>
 
-                            <!-- Image + Indicators -->
+                            <div class="activities-post-indicators">
+                                <h1 class="srv">${capitalize(type)}</h1>
+                                <h1 class="srv" id="pinned-post-indicator" style="${data.pinned ? 'display:block' : 'display:none'};">Pinned</h1>
+                            </div>
+
+                            <!-- Images -->
                             <div class="${type}-image-container">
-                                <div class="post-indicators">
-                                    <h1 class="srv">${capitalize(type)}</h1>
-                                    <h1 class="srv" id="pinned-post-indicator" style="${data.pinned ? 'display:block' : 'display:none'};">Pinned</h1>
-                                </div>
                                 ${renderActivityImages(data.images)}
                             </div>
                             <!-- Tags -->
@@ -323,6 +324,7 @@ async function loadPostsFromFirestore(type = "projects") {
                 showLoader();
                 await db.collection(type).doc(uid).update({ pinned: !data.pinned });
                 await loadPostsFromFirestore(type);
+                await renderPinnedProjects();
                 hideLoader();
             });
 
@@ -340,6 +342,8 @@ async function loadPostsFromFirestore(type = "projects") {
                         }
                         await db.collection(type).doc(uid).delete();
                         await loadPostsFromFirestore(type);
+
+
                     } catch (err) {
                         console.error(err);
                         alert(`Error deleting ${type}.`);
@@ -385,11 +389,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             clearInterval(interval);
             if (document.querySelector(".projects-container-parent")) {
                 await loadPostsFromFirestore("projects");
+                await renderPinnedProjects();
+                await renderRecentProjects();
             } else if (document.querySelector(".services-container-parent")) {
                 await loadPostsFromFirestore("services");
+                await renderPinnedServices();
+                await renderRecentServices();
             } else if (document.querySelector(".activities-container-parent")) {
                 await loadPostsFromFirestore("activities");
+                await renderPinnedActivities();
+                await renderRecentActivities();
             }
+
         }
         attempts++;
     }, 100);
@@ -445,19 +456,31 @@ function capitalize(str) {
 
 
 function adjustFontSize() {
-    const el = document.querySelector(".activities-description");
-    if (!el) return;
+    document.querySelectorAll(".activities-description").forEach(el => {
+        const activityCard = el.closest(".activities-card");
+        if (!activityCard) return;
 
-    const textLength = el.textContent.trim().length;
+        // ✅ Skip font adjustment if post has images
+        const hasImages = activityCard.querySelector(".activity-images");
+        if (hasImages) {
+            el.style.fontSize = ""; // fallback to default CSS
+            return;
+        }
 
-    if (textLength < 50) {
-        el.style.fontSize = "var(--font-xxl)";
-    } else if (textLength < 150) {
-        el.style.fontSize = "var(--font-lg)";
-    } else {
-        el.style.fontSize = "var(--font-xs)";
-    }
+        // ✅ Adjust font size only if no images
+        const textLength = el.textContent.trim().length;
+
+        if (textLength < 100) {
+            el.style.fontSize = "var(--font-xxl)";
+        } else if (textLength < 250) {
+            el.style.fontSize = "var(--font-lg)";
+        } else {
+            el.style.fontSize = "var(--font-sm)";
+        }
+    });
 }
+
+
 
 // Run once on page load
 adjustFontSize();
@@ -468,3 +491,5 @@ const target = document.querySelector(".activities-description");
 if (target) {
     observer.observe(target, { childList: true, characterData: true, subtree: true });
 }
+
+

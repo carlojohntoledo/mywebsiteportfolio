@@ -41,19 +41,9 @@
 
 .activities-content {
     overflow: hidden;
-    /* position: relative; */
-}
-
-
-.activities-image-container {
-    /* border: 1px solid red; */
     position: relative;
-    width: 100%;
-    align-items: center;
-    margin: auto;
-    background-color: var(--background-color);
-    overflow: hidden;
 }
+
 
 .activities-logo-container {
     border-bottom-right-radius: 5rem;
@@ -115,14 +105,14 @@
     }
 }
 
-.post-indicators {
+.activities-post-indicators {
     display: flex;
     /* border: 1px solid; */
     height: max-content;
     position: absolute;
-    bottom: 0;
-    right: 0;
-    justify-content: end;
+    top: -1rem;
+    left: 0;
+    justify-content: start;
     gap: 0.5rem;
     margin: 1rem;
     z-index: 3;
@@ -147,51 +137,22 @@
     background-color: var(--pastel-blue);
 }
 
-.activities-image-container::before,
-.activities-image-container::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 2;
-}
-
-.activities-image {
-    min-width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    background-repeat: no-repeat;
-    /* border-radius: 0.5rem; */
-    position: absolute;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    transform: translate(-50%, -50%);
-    background-color: black;
-    opacity: 1;
-    transform: scale(1);
-}
 
 .activities-title-container {
     /* border: 1px solid; */
-    padding: 0.5rem 0rem 1rem 1rem;
     margin-top: 2.5rem;
     border-top: 0.1rem solid var(--primary-color);
     display: grid;
-    grid-template-rows: auto auto;
-    align-items: start;
     /* height: fit-content; */
 }
 
 
 .activities-details-container {
     display: grid;
-    width: 100%;
-    margin: auto;
-    grid-template-columns: auto 1fr 1fr;
+    margin: 0rem 0.5rem;
+    grid-template-columns: auto auto auto;
     grid-template-rows: auto;
-    align-items: center;
+    align-items: start;
     -webkit-line-clamp: 1;
     text-wrap: nowrap;
     /* border: 1px solid red; */
@@ -261,14 +222,19 @@
 }
 
 .activities-desc-container {
-    margin: 1rem;
+    margin: 0.5rem;
     font-size: var(--font-sm);
-    color: var(--text-color-sub);
+    color: var(--text-color);
     position: relative;
+    /* border: 1px solid; */
+    display: grid;
+    justify-content: start;
+    align-items: start;
 }
 
 .activities-desc-container .desc-text {
     display: -webkit-box;
+    margin: 0;
     -webkit-line-clamp: 5;
     text-align: left;
     -webkit-box-orient: vertical;
@@ -276,6 +242,7 @@
     text-overflow: ellipsis;
     transition: max-height 0.3s ease;
     white-space: pre-wrap;
+    /* border: 1px solid red; */
     /* fallback for browsers not supporting -webkit-line-clamp */
 }
 
