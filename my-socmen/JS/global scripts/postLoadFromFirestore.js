@@ -394,7 +394,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             } else if (document.querySelector(".services-container-parent")) {
                 await loadPostsFromFirestore("services");
                 await renderPinnedServices();
-                await renderRecentServices();
             } else if (document.querySelector(".activities-container-parent")) {
                 await loadPostsFromFirestore("activities");
                 await renderPinnedActivities();
