@@ -380,6 +380,7 @@ async function renderShortcutsSection() {
 
     // Base HTML
     shortcutsSection.innerHTML = `
+        <div class="background-container"></div>
         <div class="search-section red-bordered">
             <div class="search-container">
                 <svg class="search_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" alt="search icon">
