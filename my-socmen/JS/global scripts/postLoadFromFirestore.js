@@ -2,7 +2,7 @@
 // =============================================================
 // ✅ MAIN FUNCTION → Load posts (Projects, Services, Activities)
 // =============================================================
-async function loadPostsFromFirestore(type = "projects") {
+async function loadPostsFromFirestore(type) {
     const container = document.querySelector(`.${type}-container-parent`);
     if (!container) {
         console.warn(`⚠️ .${type}-container-parent not found. Skipping render.`);
@@ -325,6 +325,8 @@ async function loadPostsFromFirestore(type = "projects") {
                 await db.collection(type).doc(uid).update({ pinned: !data.pinned });
                 await loadPostsFromFirestore(type);
                 await renderPinnedProjects();
+                await renderPinnedActivities();
+                await renderPinnedServices();
                 hideLoader();
             });
 
