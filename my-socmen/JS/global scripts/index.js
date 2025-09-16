@@ -417,7 +417,7 @@ function showMenuNav() {
     </div>
     <div class="menu-btn-panel blue-bordered">
         <div class="radio-inputs">
-            <label class="menu-radio" data-href="index.html">
+            <label class="menu-radio" data-href="activities.html">
             <input name="radio" type="radio" ${bodyData === "activities" ? "checked" : ""}/>
                 <svg class="menu-icon" width="2rem" height="2rem" fill="#ffffff" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" >
                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>

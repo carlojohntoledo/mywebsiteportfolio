@@ -2,6 +2,8 @@
 // =============================================================
 // ✅ MAIN FUNCTION → Load posts (Projects, Services, Activities)
 // =============================================================
+
+let allPosts = []
 async function loadPostsFromFirestore(type) {
     const container = document.querySelector(`.${type}-container-parent`);
     if (!container) {
@@ -28,6 +30,15 @@ async function loadPostsFromFirestore(type) {
             const uid = doc.id;
             const data = doc.data();
             const firstImage = getFirstImage(data.images);
+
+            allPosts.push({
+                id: uid,
+                type, // "projects", "services", "activities"
+                title: data.title || "",
+                description: data.description || "",
+                tags: data.tags || [],
+                link: `${type}.html#${uid}`
+            });
 
             postsArray.push({ id: uid, ...data });
 
@@ -60,6 +71,8 @@ async function loadPostsFromFirestore(type) {
                     typeof img === "string" ? img : (img.imageUrl || img.url || img.secure_url)
                 ));
             }
+
+
 
 
 

@@ -134,7 +134,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const pageMap = {
         "projects.html": loadPostsFromFirestore,
         "services.html": loadPostsFromFirestore,
-        "index.html": loadPostsFromFirestore
+        "activities.html": loadPostsFromFirestore
     };
 
     // Find current page's loader
@@ -156,8 +156,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                     // highlight briefly
                     target.style.transition = "background 0.5s";
-                    target.style.backgroundColor = "rgba(255,255,0,0.3)";
-                    setTimeout(() => target.style.backgroundColor = "", 1500);
+                    target.style.backgroundColor = "var(--accent-color)";
+                    setTimeout(() => target.style.backgroundColor = "", 500);
 
                     if (typeof hideLoader === "function") hideLoader();
                     return true;
@@ -277,10 +277,10 @@ async function renderPinnedActivities() {
             const link = document.createElement("a");
 
             // if on activities page → hash; else → full URL
-            if (window.location.pathname.endsWith("index.html")) {
+            if (window.location.pathname.endsWith("activities.html")) {
                 link.href = `#${uid}`;
             } else {
-                link.href = `index.html#${uid}`;
+                link.href = `activities.html#${uid}`;
             }
 
             const li = document.createElement("li");
@@ -290,7 +290,7 @@ async function renderPinnedActivities() {
 
             // smooth scroll if already on activities page
             link.addEventListener("click", e => {
-                if (link.hash && window.location.pathname.endsWith("index.html")) {
+                if (link.hash && window.location.pathname.endsWith("activities.html")) {
                     e.preventDefault();
                     const target = document.querySelector(link.hash);
                     if (target) {
@@ -330,10 +330,10 @@ async function renderRecentActivities() {
 
             const link = document.createElement("a");
 
-            if (window.location.pathname.endsWith("index.html")) {
+            if (window.location.pathname.endsWith("activities.html")) {
                 link.href = `#${uid}`;
             } else {
-                link.href = `index.html#${uid}`;
+                link.href = `activities.html#${uid}`;
             }
 
             const li = document.createElement("li");
@@ -342,7 +342,7 @@ async function renderRecentActivities() {
             recentList.appendChild(link);
 
             link.addEventListener("click", e => {
-                if (link.hash && window.location.pathname.endsWith("index.html")) {
+                if (link.hash && window.location.pathname.endsWith("activities.html")) {
                     e.preventDefault();
                     const target = document.querySelector(link.hash);
                     if (target) {
@@ -386,8 +386,9 @@ async function renderShortcutsSection() {
                 <svg class="search_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" alt="search icon">
                     <path d="M46.599 46.599a4.498 4.498 0 0 1-6.363 0l-7.941-7.941C29.028 40.749 25.167 42 21 42 9.402 42 0 32.598 0 21S9.402 0 21 0s21 9.402 21 21c0 4.167-1.251 8.028-3.342 11.295l7.941 7.941a4.498 4.498 0 0 1 0 6.363zM21 6C12.717 6 6 12.714 6 21s6.717 15 15 15c8.286 0 15-6.714 15-15S29.286 6 21 6z"></path>
                 </svg>
-                <input class="inputBox" id="inputBox" type="text" placeholder="Search">
+                <input class="inputBox" id="shortcuts-search-input" type="text" placeholder="Search">
             </div>
+            <div id="shortcuts-search-results" class="search-results-popup"></div>
         </div>
 
         <div class="pinned-section red-bordered">
@@ -448,4 +449,80 @@ document.addEventListener("DOMContentLoaded", async () => {
     await renderPinnedActivities();
     await renderRecentActivities();
     await renderPinnedServices();
+});
+
+async function loadAllPosts() {
+    allPosts = []; // reset before loading
+
+    const types = ["activities", "projects", "services"];
+    for (const type of types) {
+        const snapshot = await db.collection(type)
+            .orderBy("pinned", "desc")
+            .orderBy("createdAt", "desc")
+            .get();
+
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            allPosts.push({
+                id: doc.id,
+                type,
+                title: data.title || "",
+                description: data.description || "",
+                tags: data.tags || [],
+                link: `${type}.html#${doc.id}`,
+                createdAt: data.createdAt || null
+            });
+        });
+    }
+
+    console.log("✅ All posts loaded for search:", allPosts.length);
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+    await loadAllPosts(); // load everything for searching
+});
+
+function searchPosts(query) {
+    query = query.toLowerCase().trim();
+    if (!query) return [];
+
+    return allPosts.filter(post => {
+        const inTags = post.tags.some(tag => tag.toLowerCase().includes(query));
+        const inTitle = post.title.toLowerCase().includes(query);
+        const inDesc = post.description.toLowerCase().includes(query);
+        return inTags || inTitle || inDesc;
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("shortcuts-search-input");
+    const resultsContainer = document.getElementById("shortcuts-search-results");
+
+    searchInput.addEventListener("input", () => {
+        const query = searchInput.value;
+        const results = searchPosts(query);
+
+        resultsContainer.innerHTML = `<h1 class="serach-label" style="margin: 0 0.5rem; position: sticky;">Search Results</h1>`;
+        if (!query || results.length === 0) {
+            resultsContainer.style.display = "none";
+            return;
+        }
+
+        const ul = document.createElement("ul");
+        results.forEach(post => {
+            const li = document.createElement("li");
+            li.innerHTML = `
+        <strong>${post.title || "(No Title)"}</strong>
+        <small>(${post.type})</small><br>
+        <span>${post.description.substring(0, 60)}...</span>
+      `;
+            li.addEventListener("click", () => {
+                window.location.href = post.link;
+            });
+            ul.appendChild(li);
+        });
+
+        resultsContainer.appendChild(ul);
+        resultsContainer.style.display = "block";
+    });
 });

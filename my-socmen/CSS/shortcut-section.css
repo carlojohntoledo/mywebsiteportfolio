@@ -10,7 +10,7 @@
         "recent-section";
     grid-area: shortcuts-section;
 
-    position: sticky;
+    position: relative;
     height: 100%;
     overflow-y: auto;
 }
@@ -60,6 +60,7 @@ a {
     background-color: var(--primary-color);
     border-radius: 0.8em;
     overflow: hidden;
+    position: relative;
 }
 
 /* === Search box hover styling === */
@@ -92,6 +93,38 @@ a {
 ::placeholder {
     color: #abb2bf;
 }
+
+.search-results-popup {
+    height: 20rem;
+    width: max-content;
+    top: 8rem;
+    position: fixed;
+    padding: 1rem 0;
+    transform: translate(0, 0);
+    background: var(--background-color);
+    border: 0.25rem solid var(--accent-color);
+    border-radius: 1rem;
+    max-height: max-content;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+}
+
+.search-results-popup ul {
+    list-style: none;
+    margin: 0.5rem 0;
+}
+
+.search-results-popup li {
+    padding: 1rem;
+    cursor: pointer;
+    width: 100%;
+}
+
+.search-results-popup li:hover {
+    background: var(--accent-color);
+}
+
 
 /* === PINNED SECTION === */
 .pinned-section {
