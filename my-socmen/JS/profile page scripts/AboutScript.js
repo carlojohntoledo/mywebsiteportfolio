@@ -110,7 +110,7 @@ async function showOccupationDetails() {
     rowTwo.innerHTML = `
         <div class="abt-flex-container">
             <h1>Employment History</h1>
-            <div class="add-new-form-btn" id="add-new-occupation">+</div>
+            <div class="add-new-form-btn admin-only" id="add-new-occupation">+</div>
         </div>
         <div id="row-two-container" class="flex justify-center items-center min-h-[200px]"></div>
     `;
@@ -192,8 +192,8 @@ async function showOccupationDetails() {
                         ${data.description || ""}</p>
                     </div>
                     <div class="occupation-actions">
-                        <button class="occupation-edit">Edit</button>
-                        <button class="occupation-delete">✖</button>
+                        <button class="occupation-edit admin-only">Edit</button>
+                        <button class="occupation-delete admin-only">✖</button>
                     </div>
                 `;
 
@@ -263,7 +263,7 @@ async function showEducationDetails() {
     rowTwo.innerHTML = `
         <div class="abt-flex-container">
             <h1>Educational Background</h1>
-            <div class="add-new-form-btn" id="add-new-education">+</div>
+            <div class="add-new-form-btn admin-only" id="add-new-education">+</div>
         </div>
         <div id="row-two-container" class="edu-details-group"></div>
     `;
@@ -361,8 +361,8 @@ async function showEducationDetails() {
 
                     <!-- 🔹 Actions -->
                     <div class="education-actions">
-                        <button class="education-edit">Edit</button>
-                        <button class="education-delete">✖</button>
+                        <button class="education-edit admin-only">Edit</button>
+                        <button class="education-delete admin-only">✖</button>
                     </div>
                 `;
 
@@ -466,7 +466,7 @@ async function showContactInfoDetails() {
     rowTwo.innerHTML = `
         <div class="abt-flex-container">
             <h1>Contact Information</h1>
-            <div class="add-new-form-btn" id="add-new-contact">+</div>
+            <div class="add-new-form-btn admin-only" id="add-new-contact">+</div>
         </div>
         <div id="row-two-container" class="contact-details-group"></div>
     `;
@@ -555,8 +555,8 @@ async function showContactInfoDetails() {
                     </div>
 
                     <div class="contact-actions">
-                        <button class="contact-edit">Edit</button>
-                        <button class="contact-delete">✖</button>
+                        <button class="contact-edit admin-only">Edit</button>
+                        <button class="contact-delete admin-only">✖</button>
                     </div>
                 `;
 
@@ -637,7 +637,7 @@ function showPersonalInfoDetails() {
     rowTwo.innerHTML = `
         <div class="abt-flex-container">
             <h1>Personal Details</h1>
-            <div class="add-new-form-btn" id="edit-personal-details">✎</div>
+            <div class="add-new-form-btn admin-only" id="edit-personal-details">✎</div>
         </div>
         <div id="row-two-container" class="flex justify-center items-center min-h-[200px]"></div>
     `;

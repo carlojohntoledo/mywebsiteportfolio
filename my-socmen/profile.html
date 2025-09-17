@@ -142,7 +142,7 @@
                                 <p>Download my Resume</p>
                             </div>
                         </a>
-                        <div class="edit-profile-button" id="edit-profile-button">
+                        <div class="edit-profile-button admin-only" id="edit-profile-button">
                             <div class="profile-button"
                                 style="display: flex; justify-content: space-around; gap: 0.25rem; align-items: center; width: fit-content; padding: 0rem 0.5rem;">
                                 <p style="margin: auto;">Edit Profile</p>
@@ -265,7 +265,7 @@
                 <div class="skills-container">
                     <div class="skills-title-container">
                         <h1>My Skills</h1>
-                        <div class="add-new-form" id="add-new-skill">+</div>
+                        <div class="add-new-form admin-only" id="add-new-skill">+</div>
                     </div>
 
                     <div class="skills-menu-container">
@@ -292,7 +292,7 @@
                 <div class="certificates-container">
                     <div class="certificates-title-container">
                         <h1>My Certificates</h1>
-                        <div class="add-new-form" id="add-new-certificate">+</div>
+                        <div class="add-new-form admin-only" id="add-new-certificate">+</div>
                     </div>
                     <div class="certificates-menu-container">
                         <label>
@@ -355,8 +355,6 @@
 
     <script src="JS/profile page scripts/about-edit.js"></script>
 
-    <script src="JS/profile page scripts/SkillsScript.js"></script>
-
     <script src="JS/global scripts/getImageUrl.js"></script>
 
     <script src="JS/global scripts/startCarousel.js"></script>
@@ -367,11 +365,9 @@
 
     <script src="JS/global scripts/postLoadFromFirestore.js"></script>
 
-    <!-- <script src="JS/global scripts/edit-profile.js"></script> -->
-
     <script src="JS/global scripts/profile-edit.js"></script>
 
-
+    <script src="JS/account scripts/login.js"></script>
 
 </body>
 
