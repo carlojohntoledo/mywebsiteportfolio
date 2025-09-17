@@ -43,6 +43,16 @@
     --pastel-green: #91f291;
 }
 
+a {
+    text-decoration: none;
+    color: var(--text-color);
+    cursor: pointer;
+}
+
+a:hover {
+    color: var(--accent-color);
+}
+
 /* Light Theme */
 .light-theme {
     --primary-color: #D6D9DD;
