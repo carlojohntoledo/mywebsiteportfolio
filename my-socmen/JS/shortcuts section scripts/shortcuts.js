@@ -406,15 +406,6 @@ async function renderShortcutsSection() {
                 <h2>Recent Projects</h2>
                 <ul class="recent-projects-list"></ul>
             </div>
-            <div class="recent-search-panel blue-bordered">
-                <h2>Recent Search</h2>
-                <ul class="recent-search-list">
-                    <a href="#"><li>Recent Search Title 1</li></a>
-                    <a href="#"><li>Recent Search Title 2</li></a>
-                    <a href="#"><li>Recent Search Title 3</li></a>
-                    <a href="#"><li>Recent Search Title 4</li></a>
-                </ul>
-            </div>
         </div>
     `;
 
@@ -431,23 +422,33 @@ async function renderShortcutsSection() {
 
 
 
-
 document.addEventListener("DOMContentLoaded", async () => {
-    // 1. Build structure first
+    // 1. Build base HTML
     await renderShortcutsSection();
 
-    // 2. Then fill data
+    // 2. Load posts for search
+    await loadAllPosts();
+
+    // 3. Render pinned/recent shortcuts
     await renderPinnedActivities();
     await renderRecentActivities();
     await renderPinnedServices();
     await renderPinnedProjects();
     await renderRecentProjects();
+
+    // 4. Setup search functionality
+    setupSearch();
+
+    await loadAllPosts();
+
 });
 
-async function loadAllPosts() {
-    allPosts = []; // reset before loading
 
+async function loadAllPosts() {
     const types = ["activities", "projects", "services"];
+    const seen = new Set();   // ✅ track unique posts
+    allPosts = [];
+
     for (const type of types) {
         const snapshot = await db.collection(type)
             .orderBy("pinned", "desc")
@@ -456,66 +457,120 @@ async function loadAllPosts() {
 
         snapshot.forEach(doc => {
             const data = doc.data();
-            allPosts.push({
-                id: doc.id,
-                type,
-                title: data.title || "",
-                description: data.description || "",
-                tags: data.tags || [],
-                link: `${type}.html#${doc.id}`,
-                createdAt: data.createdAt || null
-            });
+            const uniqueKey = `${type}_${doc.id}`; // ✅ unique key per type+id
+
+            if (!seen.has(uniqueKey)) {
+                seen.add(uniqueKey);
+
+                allPosts.push({
+                    id: doc.id,
+                    type,
+                    title: data.title || "",
+                    description: data.description || "",
+                    tags: data.tags || [],
+                    link: `${type}.html#${doc.id}`,
+                    createdAt: data.createdAt || null
+                });
+            }
         });
     }
 
     console.log("✅ All posts loaded for search:", allPosts.length);
 }
-
-document.addEventListener("DOMContentLoaded", async () => {
-    await loadAllPosts(); // load everything for searching
-});
-
 function searchPosts(query) {
     query = query.toLowerCase().trim();
     if (!query) return [];
 
-    return allPosts.filter(post => {
+    const results = allPosts.filter(post => {
         const inTags = post.tags.some(tag => tag.toLowerCase().includes(query));
         const inTitle = post.title.toLowerCase().includes(query);
         const inDesc = post.description.toLowerCase().includes(query);
         return inTags || inTitle || inDesc;
     });
+
+    // ✅ remove duplicates by "id"
+    const seen = new Set();
+    return results.filter(post => {
+        if (seen.has(post.id)) return false;
+        seen.add(post.id);
+        return true;
+    });
 }
+
 
 document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("shortcuts-search-input");
     const resultsContainer = document.getElementById("shortcuts-search-results");
 
+    // live search as user types
     searchInput.addEventListener("input", () => {
         const query = searchInput.value;
         const results = searchPosts(query);
+        showSearchResults(query, results, resultsContainer);
+    });
 
-        resultsContainer.innerHTML = `<h1 class="serach-label" style="margin: 0 0.5rem; position: sticky;">Search Results</h1>`;
-        if (!query || results.length === 0) {
-            resultsContainer.style.display = "none";
-            return;
+    // ❌ remove saving on Enter, only save when result is clicked
+    searchInput.addEventListener("keydown", e => {
+        if (e.key === "Enter") {
+            e.preventDefault();
         }
-
-        const ul = document.createElement("ul");
-        results.forEach(post => {
-            const li = document.createElement("li");
-            li.innerHTML = `
-        <strong>${post.title || "(No Title)"}</strong>
-        <small>(${post.type})</small><br>
-        <span>${post.description.substring(0, 60)}...</span>
-      `;
-            li.addEventListener("click", () => {
-                window.location.href = post.link;
-            });
-            ul.appendChild(li);
-        });
-
-        resultsContainer.appendChild(ul);
-        resultsContainer.style.display = "block";
     });
 });
+// =============================================================
+// ✅ Search Helper (no recent search list, just popup results)
+// =============================================================
+function showSearchResults(query, results, container) {
+    container.innerHTML = `<h1 class="search-label" style="margin: 0 0.5rem; position: sticky;">Search Results</h1>`;
+
+    if (!query || results.length === 0) {
+        container.style.display = "none";
+        return;
+    }
+
+    const ul = document.createElement("ul");
+    results.forEach(post => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+            <strong>${post.title || "(No Title)"}</strong>
+            <small>(${post.type})</small><br>
+            <span>${post.description.substring(0, 60)}...</span>
+        `;
+
+        li.addEventListener("click", () => {
+            // ✅ Hide popup
+            container.style.display = "none";
+
+            // ✅ Navigate to clicked post
+            window.location.href = post.link;
+        });
+
+        ul.appendChild(li);
+    });
+
+    container.appendChild(ul);
+    container.style.display = "block";
+}
+
+// =============================================================
+// ✅ Setup Search
+// =============================================================
+function setupSearch() {
+    const searchInput = document.getElementById("shortcuts-search-input");
+    const resultsContainer = document.getElementById("shortcuts-search-results");
+
+    if (!searchInput || !resultsContainer) return;
+
+    // live search as user types
+    searchInput.addEventListener("input", () => {
+        const query = searchInput.value;
+        const results = searchPosts(query);
+        showSearchResults(query, results, resultsContainer);
+    });
+
+    // prevent Enter from submitting
+    searchInput.addEventListener("keydown", e => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+        }
+    });
+}
