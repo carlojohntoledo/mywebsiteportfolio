@@ -14,46 +14,39 @@ const SHORTCUTS_LOADER_HTML = `
 // =============================================================
 // ✅ Render Recent Projects List (hash mode compatible)
 // =============================================================
+// =============================================================
+// ✅ Render Recent Projects List (manual date compatible)
+// =============================================================
 async function renderRecentProjects() {
     const recentList = document.querySelector(".recent-projects-list");
     if (!recentList) return;
 
     recentList.innerHTML = SHORTCUTS_LOADER_HTML;
 
-
     try {
-        const snapshot = await db.collection("projects").get();
+        const snapshot = await db.collection("projects").get(); // ❌ no orderBy
         let projects = [];
-
-        recentList.innerHTML = '';
-
         snapshot.forEach(doc => {
-            const data = doc.data();
-            projects.push({ id: doc.id, ...data });
+            projects.push({ id: doc.id, ...doc.data() });
         });
 
-        // Sort: prefer createdAt, else fall back to string date field
-        projects.sort((a, b) => {
-            const aDate = a.createdAt?.toDate?.() || new Date(a.date || 0);
-            const bDate = b.createdAt?.toDate?.() || new Date(b.date || 0);
-            return bDate - aDate; // newest first
-        });
+        // ✅ Sort with your postSorter (uses manual date)
+        projects = postSorter("projects", projects).slice(0, 4);
 
-        // Take latest 4
-        projects.slice(0, 4).forEach(proj => {
+        recentList.innerHTML = "";
+
+        projects.forEach(data => {
             const link = document.createElement("a");
-            if (window.location.pathname.endsWith("projects.html")) {
-                link.href = `#${proj.id}`;
-            } else {
-                link.href = `projects.html#${proj.id}`;
-            }
+            link.href = window.location.pathname.endsWith("projects.html")
+                ? `#${data.id}`
+                : `projects.html#${data.id}`;
 
             const li = document.createElement("li");
-            li.textContent = proj.title || "Untitled Project";
+            li.textContent = data.title || "Untitled Project";
             link.appendChild(li);
             recentList.appendChild(link);
 
-            // smooth scroll on projects page
+            // smooth scroll if already on projects page
             link.addEventListener("click", e => {
                 if (link.hash && window.location.pathname.endsWith("projects.html")) {
                     e.preventDefault();
@@ -70,49 +63,46 @@ async function renderRecentProjects() {
 }
 
 // =============================================================
-// ✅ Render Pinned Projects in Shortcuts (max 5)
+// ✅ Render Pinned Projects (manual date compatible)
 // =============================================================
 async function renderPinnedProjects() {
     const pinnedList = document.querySelector(".pinned-projects-list");
     if (!pinnedList) return;
 
-    pinnedList.innerHTML = SHORTCUTS_LOADER_HTML; // clear old list
+    pinnedList.innerHTML = SHORTCUTS_LOADER_HTML;
 
     try {
-
         const snapshot = await db.collection("projects")
             .where("pinned", "==", true)
-            .orderBy("createdAt", "desc")
-            .limit(5)
-            .get();
+            .get(); // ❌ no orderBy
+
+        let projects = [];
+        snapshot.forEach(doc => {
+            projects.push({ id: doc.id, ...doc.data() });
+        });
+
+        // ✅ Sort pinned projects using manual date
+        projects = postSorter("projects", projects).slice(0, 5);
 
         pinnedList.innerHTML = "";
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            const uid = doc.id;
 
+        projects.forEach(data => {
             const link = document.createElement("a");
-
-            // if on projects page → use hash; else → full URL
-            if (window.location.pathname.endsWith("projects.html")) {
-                link.href = `#${uid}`;
-            } else {
-                link.href = `projects.html#${uid}`;
-            }
+            link.href = window.location.pathname.endsWith("projects.html")
+                ? `#${data.id}`
+                : `projects.html#${data.id}`;
 
             const li = document.createElement("li");
             li.textContent = data.title || "Untitled Project";
             link.appendChild(li);
             pinnedList.appendChild(link);
 
-            // smooth scroll when already on projects page
+            // smooth scroll if already on projects page
             link.addEventListener("click", e => {
                 if (link.hash && window.location.pathname.endsWith("projects.html")) {
                     e.preventDefault();
                     const target = document.querySelector(link.hash);
-                    if (target) {
-                        target.scrollIntoView({ behavior: "smooth", block: "center" });
-                    }
+                    if (target) target.scrollIntoView({ behavior: "smooth", block: "center" });
                 }
             });
         });
@@ -122,6 +112,7 @@ async function renderPinnedProjects() {
 
     togglePanelVisibility(".pinned-projects-panel", ".pinned-projects-list");
 }
+
 
 // =============================================================
 // ✅ Handle scrolling to hash AFTER page loaded (projects, services, activities)
@@ -157,7 +148,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     // highlight briefly
                     target.style.transition = "background 0.5s";
                     target.style.backgroundColor = "var(--accent-color)";
-                    setTimeout(() => target.style.backgroundColor = "", 500);
+                    setTimeout(() => target.style.backgroundColor = "", 1000);
 
                     if (typeof hideLoader === "function") hideLoader();
                     return true;
@@ -449,6 +440,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     await renderPinnedActivities();
     await renderRecentActivities();
     await renderPinnedServices();
+    await renderPinnedProjects();
+    await renderRecentProjects();
 });
 
 async function loadAllPosts() {
