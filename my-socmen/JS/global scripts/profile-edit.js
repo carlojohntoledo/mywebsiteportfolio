@@ -82,13 +82,6 @@ function showMessage(msg) {
     alert(msg);
 }
 
-/**
- * getProfileDisplayElements
- * returns references to top-of-page profile display fields (if present)
- */
-
-
-
 // =============================================================
 // ================= Load Skills & Render ======================
 // =============================================================
@@ -155,7 +148,7 @@ async function loadSkillsFromFirestore(selectedCategory = "All") {
                                 <img src="${s.logoUrl}" alt="${s.name}">
                             </div>
                             <div class="skill-name">${s.name}</div>
-                            <div class="skill-actions">
+                            <div class="skill-actions admin-only">
                                 <div class="skill-card-edit" title="Edit skill">Edit</div>
                                 <div class="skill-card-remove" title="Remove skill">x</div>
                             </div>
@@ -211,9 +204,6 @@ async function loadSkillsFromFirestore(selectedCategory = "All") {
         hideLoader();
     }
 }
-
-
-
 // Example edit function
 function editSkill(docId) {
     db.collection(SKILLS_COLLECTION).doc(docId).get().then(doc => {
@@ -227,13 +217,6 @@ function editSkill(docId) {
 // =============================================================
 // ================= Load Certificates & Render ===============
 // =============================================================
-/**
- * loadCertificatesFromFirestore()
- * Loads certificates and injects cards into #certificates-content
- * Each certificate-card will include data-id and data-public-id for deletion
- * We will mimic the card structure to fit your CSS and visual design.
- */
-
 document.querySelectorAll('input[name="certificates-filter"]').forEach(radio => {
     radio.addEventListener("change", () => {
         const sort = document.querySelector('input[name="certificates-filter"]:checked').value;
@@ -280,7 +263,7 @@ async function loadCertificatesFromFirestore(sort = "default") {
 
             const cardHtml = `
                 <div class="certificate-card" data-id="${docId}" data-public-id="${publicId}">
-                    <div class="certificate-actions">
+                    <div class="certificate-actions admin-only">
                         <div class="certificate-card-edit" title="Edit certificate">Edit</div>
                         <div class="certificate-card-remove" title="Remove certificate">x</div>
                     </div>
@@ -332,8 +315,6 @@ async function loadCertificatesFromFirestore(sort = "default") {
     }
 }
 
-
-
 // ================= REMOVE CERTIFICATE BUTTON =================
 // =============================================================
 // ✅ Certificate Remove Handler
@@ -372,7 +353,6 @@ async function handleCertificateRemove(e) {
         }
     }
 }
-
 
 // =============================================================
 // ================= Injected forms (original HTML kept) =======
@@ -516,8 +496,6 @@ function showAddSkillForm(existingData = null) {
         }
     });
 }
-
-
 
 // ---------- showCertificateEditForm (kept your original injected markup) ----------
 function showCertificateEditForm(docId = null, cert = {}) {
@@ -663,7 +641,6 @@ function showCertificateEditForm(docId = null, cert = {}) {
         });
     }
 }
-
 
 // ---------- showProfileEditForm (kept your original injected markup but enhanced to prefill and save) ----------
 function showProfileEditForm() {
@@ -1086,13 +1063,3 @@ document.addEventListener("click", async (e) => {
         return;
     }
 });
-
-// =============================================================
-// ================= Exported (optional) =======================
-// =============================================================
-// window.showProfileEditForm = showProfileEditForm;
-// window.showAddSkillForm = showAddSkillForm;
-// window.showCertificateEditForm = showCertificateEditForm;
-// window.loadSkillsFromFirestore = loadSkillsFromFirestore;
-// window.loadCertificatesFromFirestore = loadCertificatesFromFirestore;
-
