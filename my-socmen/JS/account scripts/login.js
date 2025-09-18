@@ -44,20 +44,22 @@ if (viewerLoginBtn) {
   });
 }
 
-// ✅ Email Login (basic, using Email/Password)
+// ✅ Email Login (real password from form)
 const loginForm = document.querySelector(".form");
 if (loginForm) {
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = e.target.email.value.trim();
-    const password = "defaultPassword"; // replace with real password auth if needed
+    const password = e.target.password.value.trim(); // ✅ use real password
 
-    if (!email) return alert("Please enter an email");
+    if (!email || !password) {
+      return alert("Please enter both email and password");
+    }
 
     firebase.auth().signInWithEmailAndPassword(email, password)
       .catch(err => {
         console.error("Email login error:", err);
-        alert("Email login failed. Make sure password auth is enabled in Firebase.");
+        alert(err.message); // ✅ show real Firebase error (not generic one)
       });
   });
 }
@@ -130,7 +132,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
       } else {
         window.location.replace("/activities.html");
       }
-    }, 600); // small delay ensures popup cleanup is done
+    }, 600);
   }
 });
 
