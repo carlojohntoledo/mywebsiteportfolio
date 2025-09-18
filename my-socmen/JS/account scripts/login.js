@@ -11,10 +11,19 @@ if (!sessionStorage.getItem("guestAssigned")) {
 // ✅ Role-based UI toggle
 function applyRoleUI(user) {
   const adminElements = document.querySelectorAll(".admin-only");
-  if (user && ADMIN_EMAILS.includes(user.email)) {
-    adminElements.forEach(el => el.style.display = "block");
-  } else {
+
+  if (!user || user.isAnonymous) {
+    // Guest → hide admin elements
     adminElements.forEach(el => el.style.display = "none");
+    document.body.classList.remove("admin");
+  } else if (ADMIN_EMAILS.includes(user.email)) {
+    // Admin → show admin elements
+    adminElements.forEach(el => el.style.display = "block");
+    document.body.classList.add("admin");
+  } else {
+    // Viewer → hide admin elements
+    adminElements.forEach(el => el.style.display = "none");
+    document.body.classList.remove("admin");
   }
 }
 
