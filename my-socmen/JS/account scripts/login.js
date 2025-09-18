@@ -12,20 +12,17 @@ if (!sessionStorage.getItem("guestAssigned")) {
 function applyRoleUI(user) {
   const adminElements = document.querySelectorAll(".admin-only");
 
-  if (!user || user.isAnonymous) {
-    // Guest → hide admin elements
-    adminElements.forEach(el => el.style.display = "none");
-    document.body.classList.remove("admin");
-  } else if (ADMIN_EMAILS.includes(user.email)) {
-    // Admin → show admin elements
+  if (user && !user.isAnonymous && ADMIN_EMAILS.includes(user.email)) {
+    // Admin → show
     adminElements.forEach(el => el.style.display = "block");
     document.body.classList.add("admin");
   } else {
-    // Viewer → hide admin elements
+    // Guest or viewer → hide
     adminElements.forEach(el => el.style.display = "none");
     document.body.classList.remove("admin");
   }
 }
+
 
 // ✅ Google Sign-in
 document.getElementById("adminLoginBtn").addEventListener("click", async (e) => {
