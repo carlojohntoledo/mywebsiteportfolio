@@ -64,13 +64,14 @@ if (loginForm) {
 
 // ✅ Auth state listener
 // ✅ Auth state listener
+// ✅ Auth state listener
 firebase.auth().onAuthStateChanged(async (user) => {
   if (!user) return;
 
   applyRoleUI(user);
   const isLoginPage = window.location.pathname.endsWith("login.html");
 
-  // 🚨 Handle Firestore registration (runs once per login)
+  // 🚨 Register to Firestore (one-time per session)
   if (user.isAnonymous) {
     if (sessionStorage.getItem("guestAssigned") === "false") {
       const counterRef = firebase.firestore().collection("meta").doc("viewerCounter");
@@ -115,17 +116,20 @@ firebase.auth().onAuthStateChanged(async (user) => {
     console.log("Viewer signed in");
   }
 
-  // 🚨 Redirect ALWAYS if on login.html
+  // 🚨 Do redirect *once* if on login.html
   if (isLoginPage) {
-    if (user.isAnonymous) {
-      window.location.href = "/activities.html";
-    } else if (ADMIN_EMAILS.includes(user.email)) {
-      window.location.href = "/profile.html";
-    } else {
-      window.location.href = "/activities.html";
-    }
+    setTimeout(() => {
+      if (user.isAnonymous) {
+        window.location.replace("/activities.html");
+      } else if (ADMIN_EMAILS.includes(user.email)) {
+        window.location.replace("/profile.html");
+      } else {
+        window.location.replace("/activities.html");
+      }
+    }, 500); // small delay to let Firestore complete
   }
 });
+
 
 // ✅ Logout button handler
 document.addEventListener("DOMContentLoaded", () => {
