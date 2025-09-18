@@ -63,7 +63,8 @@ if (loginForm) {
 }
 
 // ✅ Auth state listener
-// ✅ Auth state listener
+let redirectDone = false; // ✅ prevent double redirects
+
 firebase.auth().onAuthStateChanged(async (user) => {
   if (!user) return;
 
@@ -71,11 +72,9 @@ firebase.auth().onAuthStateChanged(async (user) => {
   const isLoginPage = window.location.pathname.endsWith("login.html");
 
   try {
-    // 🚨 Register user in Firestore
     if (user.isAnonymous) {
       if (sessionStorage.getItem("guestAssigned") === "false") {
         const counterRef = firebase.firestore().collection("meta").doc("viewerCounter");
-
         await firebase.firestore().runTransaction(async (tx) => {
           const doc = await tx.get(counterRef);
           let count = doc.exists ? doc.data().count : 0;
@@ -88,11 +87,9 @@ firebase.auth().onAuthStateChanged(async (user) => {
             loggedAt: firebase.firestore.FieldValue.serverTimestamp()
           });
         });
-
         sessionStorage.setItem("guestAssigned", "true");
       }
       console.log("Guest signed in");
-
     } else if (ADMIN_EMAILS.includes(user.email)) {
       await firebase.firestore().collection("viewers").doc(user.uid).set({
         uid: user.uid,
@@ -101,9 +98,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
         role: "admin",
         loggedAt: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true });
-
       console.log("Admin signed in");
-
     } else {
       await firebase.firestore().collection("viewers").doc(user.uid).set({
         uid: user.uid,
@@ -114,26 +109,28 @@ firebase.auth().onAuthStateChanged(async (user) => {
         role: "viewer",
         loggedAt: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true });
-
       console.log("Viewer signed in");
     }
   } catch (err) {
     console.error("❌ Firestore logging failed:", err);
   }
 
-  // 🚨 Do redirect once, after everything is done
-  if (isLoginPage) {
+  // ✅ Only redirect once, after auth stabilizes
+  if (isLoginPage && !redirectDone) {
+    redirectDone = true;
+
     setTimeout(() => {
       if (user.isAnonymous) {
         window.location.replace("/activities.html");
       } else if (ADMIN_EMAILS.includes(user.email)) {
-        window.location.replace("/activities.html");
+        window.location.replace("/profile.html");
       } else {
         window.location.replace("/activities.html");
       }
-    }, 300); // give Firebase a short moment before navigating
+    }, 500); // give Firebase popup cleanup a little buffer
   }
 });
+
 
 
 // ✅ Logout button handler
