@@ -64,69 +64,64 @@ if (loginForm) {
 
 // ✅ Auth state listener
 firebase.auth().onAuthStateChanged(async (user) => {
-  if (user) {
-    applyRoleUI(user);
-    const isLoginPage = window.location.pathname.endsWith("login.html");
+  if (!user) return;
 
-    if (isLoginPage) {
-      if (user.isAnonymous) {
-        window.location.href = "/activities.html";
-      } else if (ADMIN_EMAILS.includes(user.email)) {
-        window.location.href = "/profile.html";
-      } else {
-        window.location.href = "/activities.html";
-      }
-    }
+  applyRoleUI(user);
 
-    if (user.isAnonymous) {
-      // Guest flow
-      if (sessionStorage.getItem("guestAssigned") === "false") {
-        const counterRef = firebase.firestore().collection("meta").doc("viewerCounter");
+  const isLoginPage = window.location.pathname.endsWith("login.html");
 
-        await firebase.firestore().runTransaction(async (tx) => {
-          const doc = await tx.get(counterRef);
-          let count = doc.exists ? doc.data().count : 0;
-          count++;
-          tx.set(counterRef, { count }, { merge: true });
+  // 🚨 Handle Firestore registration (runs once per login)
+  if (user.isAnonymous) {
+    if (sessionStorage.getItem("guestAssigned") === "false") {
+      const counterRef = firebase.firestore().collection("meta").doc("viewerCounter");
 
-          await firebase.firestore().collection("viewers").add({
-            name: `Anonymous-${count}`,
-            role: "guest",
-            loggedAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
+      await firebase.firestore().runTransaction(async (tx) => {
+        const doc = await tx.get(counterRef);
+        let count = doc.exists ? doc.data().count : 0;
+        count++;
+        tx.set(counterRef, { count }, { merge: true });
+
+        await firebase.firestore().collection("viewers").add({
+          name: `Anonymous-${count}`,
+          role: "guest",
+          loggedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
+      });
 
-        sessionStorage.setItem("guestAssigned", "true");
-      }
-      console.log("Guest signed in");
+      sessionStorage.setItem("guestAssigned", "true");
+    }
+    console.log("Guest signed in");
+  } else if (ADMIN_EMAILS.includes(user.email)) {
+    await firebase.firestore().collection("viewers").doc(user.uid).set({
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName || "",
+      role: "admin",
+      loggedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    console.log("Admin signed in");
+  } else {
+    await firebase.firestore().collection("viewers").doc(user.uid).set({
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName || "",
+      firstName: user.displayName?.split(" ")[0] || "",
+      lastName: user.displayName?.split(" ").slice(-1)[0] || "",
+      role: "viewer",
+      loggedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    console.log("Viewer signed in");
+  }
+
+  // 🚨 Redirect ONLY on login page
+  if (isLoginPage) {
+    if (user.isAnonymous) {
       window.location.href = "/activities.html";
-
     } else if (ADMIN_EMAILS.includes(user.email)) {
-      // Admin flow
-      await firebase.firestore().collection("viewers").doc(user.uid).set({
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName || "",
-        role: "admin",
-        loggedAt: firebase.firestore.FieldValue.serverTimestamp()
-      }, { merge: true });
-
-      console.log("Admin signed in");
       window.location.href = "/profile.html";
-
     } else {
-      // Viewer flow
-      await firebase.firestore().collection("viewers").doc(user.uid).set({
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName || "",
-        firstName: user.displayName?.split(" ")[0] || "",
-        lastName: user.displayName?.split(" ").slice(-1)[0] || "",
-        role: "viewer",
-        loggedAt: firebase.firestore.FieldValue.serverTimestamp()
-      }, { merge: true });
-
-      console.log("Viewer signed in");
       window.location.href = "/activities.html";
     }
   }

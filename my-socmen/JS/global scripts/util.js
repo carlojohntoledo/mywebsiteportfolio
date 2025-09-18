@@ -141,3 +141,59 @@ window.hideContentLoader = window.hideContentLoader || function () {
     });
 
 })();
+
+
+// =============================================================
+// Helper: Render images in grid for activities (with hidden extras)
+// =============================================================
+function renderActivityImages(images) {
+    if (!images || images.length === 0) return "";
+
+    const urls = images.map(img =>
+        typeof img === "string"
+            ? img
+            : img.imageUrl || img.url || img.secure_url || ""
+    ).filter(Boolean);
+
+    if (urls.length === 0) return "";
+
+    let html = "";
+    const count = urls.length;
+
+    if (count === 1) {
+        html = `<div class="grid-1"><img src="${urls[0]}" alt="activity image"></div>`;
+    } else if (count === 2) {
+        html = `<div class="grid-2">
+                  <img src="${urls[0]}" alt="">
+                  <img src="${urls[1]}" alt="">
+                </div>`;
+    } else if (count === 3) {
+        html = `<div class="grid-3">
+                  <div class="big"><img src="${urls[0]}" alt=""></div>
+                  <div class="small">
+                    <img src="${urls[1]}" alt="">
+                    <img src="${urls[2]}" alt="">
+                  </div>
+                </div>`;
+    } else if (count === 4) {
+        html = `<div class="grid-4">
+                  ${urls.map(u => `<img src="${u}" alt="">`).join("")}
+                </div>`;
+    } else {
+        // 5+ → show first 4, overlay on 4th, hide the rest
+        const extra = count - 4;
+        html = `<div class="grid-5">
+                  <img src="${urls[0]}" alt="">
+                  <img src="${urls[1]}" alt="">
+                  <img src="${urls[2]}" alt="">
+                  <div class="overlay-wrapper">
+                    <img src="${urls[3]}" alt="">
+                    <div class="overlay">+${extra}</div>
+                  </div>
+                  ${urls.slice(4).map(u => `<img src="${u}" alt="" style="display:none;">`).join("")}
+                </div>`;
+    }
+
+    return `<div class="activity-images">${html}</div>`;
+}
+
