@@ -285,6 +285,8 @@ async function getProfileFullName() {
 function showMenuNav() {
     const menuNav = document.querySelector(".menu-nav");
 
+    if (!menuNav) return;
+
     const bodyData = document.body.getAttribute("data-page");
 
     menuNav.innerHTML = `
