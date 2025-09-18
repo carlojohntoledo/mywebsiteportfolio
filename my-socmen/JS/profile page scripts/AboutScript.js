@@ -106,11 +106,13 @@ async function showOccupationDetails() {
     const rowTwo = document.getElementById("row-two");
     if (!rowTwo) return;
 
+    const addNew = isAdmin ? `<div class="add-new-form-btn admin-only" id="add-new-occupation">+</div>` : "";
+
     // 🔹 Inject header + add button
     rowTwo.innerHTML = `
         <div class="abt-flex-container">
             <h1>Employment History</h1>
-            <div class="add-new-form-btn admin-only" id="add-new-occupation">+</div>
+            ${addNew}
         </div>
         <div id="row-two-container" class="flex justify-center items-center min-h-[200px]"></div>
     `;
@@ -266,11 +268,13 @@ async function showEducationDetails() {
     const rowTwo = document.getElementById("row-two");
     if (!rowTwo) return;
 
+    const addNew = isAdmin ? `<div class="add-new-form-btn admin-only" id="add-new-education">+</div>` : "";
+
     // Header layout
     rowTwo.innerHTML = `
         <div class="abt-flex-container">
             <h1>Educational Background</h1>
-            <div class="add-new-form-btn admin-only" id="add-new-education">+</div>
+            ${addNew}
         </div>
         <div id="row-two-container" class="edu-details-group"></div>
     `;
@@ -474,11 +478,13 @@ async function showContactInfoDetails() {
     const rowTwo = document.getElementById("row-two");
     if (!rowTwo) return;
 
+    const addNew = isAdmin ? `<div class="add-new-form-btn admin-only" id="add-new-contact">+</div>` : "";
+
     // Header layout
     rowTwo.innerHTML = `
         <div class="abt-flex-container">
             <h1>Contact Information</h1>
-            <div class="add-new-form-btn admin-only" id="add-new-contact">+</div>
+            ${addNew}
         </div>
         <div id="row-two-container" class="contact-details-group"></div>
     `;
@@ -651,10 +657,12 @@ function showPersonalInfoDetails() {
     var rowTwo = document.getElementById('row-two');
     if (!rowTwo) return;
 
+    const addNew = isAdmin ? `<div class="add-new-form-btn admin-only" id="edit-personal-details">✎</div>` : "";
+
     rowTwo.innerHTML = `
         <div class="abt-flex-container">
             <h1>Personal Details</h1>
-            <div class="add-new-form-btn admin-only" id="edit-personal-details">✎</div>
+            ${addNew}
         </div>
         <div id="row-two-container" class="flex justify-center items-center min-h-[200px]"></div>
     `;
