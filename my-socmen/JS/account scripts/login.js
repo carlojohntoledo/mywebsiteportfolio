@@ -1,66 +1,89 @@
+// =========================
 // ✅ Define admin accounts
+// =========================
 const ADMIN_EMAILS = [
   "toledocarlojohn@gmail.com"
 ];
 
+// =========================
 // ✅ Session flag for guest
+// =========================
 if (!sessionStorage.getItem("guestAssigned")) {
   sessionStorage.setItem("guestAssigned", "false");
 }
 
+// =========================
 // ✅ Role-based UI toggle
+// =========================
 function applyRoleUI(user) {
   const adminElements = document.querySelectorAll(".admin-only");
 
   if (user && !user.isAnonymous && ADMIN_EMAILS.includes(user.email)) {
-    // Admin → show
+    // Admin → show admin-only elements
     adminElements.forEach(el => el.style.display = "block");
-    document.body.classList.add("admin");
   } else {
-    // Guest or viewer → hide
+    // Guest or viewer → hide admin-only elements
     adminElements.forEach(el => el.style.display = "none");
-    document.body.classList.remove("admin");
   }
 }
 
+// =========================
+// ✅ Google Sign-in button
+// =========================
+const adminLoginBtn = document.getElementById("adminLoginBtn");
+if (adminLoginBtn) {
+  adminLoginBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithPopup(provider)
+      .catch(err => console.error("Google login error:", err));
+  });
+}
 
-// ✅ Google Sign-in
-document.getElementById("adminLoginBtn").addEventListener("click", async (e) => {
-  e.preventDefault();
-  const provider = new firebase.auth.GoogleAuthProvider();
-  firebase.auth().signInWithPopup(provider)
-    .catch(err => console.error("Google login error:", err));
-});
+// =========================
+// ✅ Guest Sign-in button
+// =========================
+const viewerLoginBtn = document.getElementById("viewerLoginBtn");
+if (viewerLoginBtn) {
+  viewerLoginBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    firebase.auth().signInAnonymously()
+      .catch(err => console.error("Guest login error:", err));
+  });
+}
 
-// ✅ Guest Login
-document.getElementById("viewerLoginBtn").addEventListener("click", async (e) => {
-  e.preventDefault();
-  firebase.auth().signInAnonymously()
-    .catch(err => console.error("Guest login error:", err));
-});
+// =========================
+// ✅ Email/Password Sign-in form
+// =========================
+const emailForm = document.querySelector(".form");
+if (emailForm) {
+  emailForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = e.target.email.value.trim();
+    const password = "defaultPassword"; // Replace if using real passwords
 
-// ✅ Email Login (basic, using Email/Password)
-document.querySelector(".form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const email = e.target.email.value.trim();
-  const password = "defaultPassword"; // Replace if using real passwords
+    if (!email) return alert("Please enter an email");
 
-  if (!email) return alert("Please enter an email");
+    firebase.auth().signInWithEmailAndPassword(email, password)
+      .catch(err => {
+        console.error("Email login error:", err);
+        alert("Email login failed. Make sure password auth is enabled in Firebase.");
+      });
+  });
+}
 
-  firebase.auth().signInWithEmailAndPassword(email, password)
-    .catch(err => {
-      console.error("Email login error:", err);
-      alert("Email login failed. Make sure password auth is enabled in Firebase.");
-    });
-});
-
+// =========================
 // ✅ Auth state listener
+// =========================
 firebase.auth().onAuthStateChanged(async (user) => {
   if (user) {
+    // Apply role-based UI
     applyRoleUI(user);
 
+    // -------------------------
+    // Guest flow
+    // -------------------------
     if (user.isAnonymous) {
-      // Guest flow
       if (sessionStorage.getItem("guestAssigned") === "false") {
         const counterRef = firebase.firestore().collection("meta").doc("viewerCounter");
 
@@ -79,11 +102,14 @@ firebase.auth().onAuthStateChanged(async (user) => {
 
         sessionStorage.setItem("guestAssigned", "true");
       }
+
       console.log("Guest signed in");
       window.location.href = "/activities.html";
 
-    } else if (ADMIN_EMAILS.includes(user.email)) {
+      // -------------------------
       // Admin flow
+      // -------------------------
+    } else if (ADMIN_EMAILS.includes(user.email)) {
       await firebase.firestore().collection("viewers").doc(user.uid).set({
         uid: user.uid,
         email: user.email,
@@ -95,8 +121,10 @@ firebase.auth().onAuthStateChanged(async (user) => {
       console.log("Admin signed in");
       window.location.href = "/profile.html";
 
-    } else {
+      // -------------------------
       // Viewer flow
+      // -------------------------
+    } else {
       await firebase.firestore().collection("viewers").doc(user.uid).set({
         uid: user.uid,
         email: user.email,
@@ -113,6 +141,9 @@ firebase.auth().onAuthStateChanged(async (user) => {
   }
 });
 
+// =========================
+// ✅ Logout button
+// =========================
 document.addEventListener("DOMContentLoaded", () => {
   const logoutBtn = document.getElementById("logoutBtn");
 
@@ -121,7 +152,6 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         await firebase.auth().signOut();
         console.log("✅ User logged out");
-        // Redirect to login page after logout
         window.location.href = "/login.html";
       } catch (err) {
         console.error("❌ Logout failed:", err);
