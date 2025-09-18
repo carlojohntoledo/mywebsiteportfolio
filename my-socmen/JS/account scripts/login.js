@@ -63,7 +63,7 @@ if (loginForm) {
 }
 
 // ✅ Auth state listener
-let redirectDone = false; // ✅ prevent double redirects
+let redirectDone = false; // prevent multiple redirects
 
 firebase.auth().onAuthStateChanged(async (user) => {
   if (!user) return;
@@ -73,6 +73,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
 
   try {
     if (user.isAnonymous) {
+      // Guest flow
       if (sessionStorage.getItem("guestAssigned") === "false") {
         const counterRef = firebase.firestore().collection("meta").doc("viewerCounter");
         await firebase.firestore().runTransaction(async (tx) => {
@@ -91,6 +92,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
       }
       console.log("Guest signed in");
     } else if (ADMIN_EMAILS.includes(user.email)) {
+      // Admin flow
       await firebase.firestore().collection("viewers").doc(user.uid).set({
         uid: user.uid,
         email: user.email,
@@ -100,6 +102,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
       }, { merge: true });
       console.log("Admin signed in");
     } else {
+      // Viewer flow
       await firebase.firestore().collection("viewers").doc(user.uid).set({
         uid: user.uid,
         email: user.email,
@@ -115,7 +118,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
     console.error("❌ Firestore logging failed:", err);
   }
 
-  // ✅ Only redirect once, after auth stabilizes
+  // ✅ Only redirect once, after Firebase finishes auth cleanup
   if (isLoginPage && !redirectDone) {
     redirectDone = true;
 
@@ -127,11 +130,9 @@ firebase.auth().onAuthStateChanged(async (user) => {
       } else {
         window.location.replace("/activities.html");
       }
-    }, 500); // give Firebase popup cleanup a little buffer
+    }, 600); // small delay ensures popup cleanup is done
   }
 });
-
-
 
 // ✅ Logout button handler
 document.addEventListener("DOMContentLoaded", () => {
@@ -142,7 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         await firebase.auth().signOut();
         console.log("✅ User logged out");
-        window.location.href = "/login.html";
+        window.location.replace("/login.html");
       } catch (err) {
         console.error("❌ Logout failed:", err);
         alert("Logout failed. Try again.");
