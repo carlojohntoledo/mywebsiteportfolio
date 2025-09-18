@@ -1,7 +1,5 @@
 // ✅ Define admin accounts
-const ADMIN_EMAILS = [
-  "toledocarlojohn@gmail.com"
-];
+const ADMIN_EMAILS = ["toledocarlojohn@gmail.com"];
 
 // ✅ Session flag for guest
 if (!sessionStorage.getItem("guestAssigned")) {
@@ -23,35 +21,62 @@ function applyRoleUI(user) {
   }
 }
 
+// ✅ Wait for DOM before attaching events
+document.addEventListener("DOMContentLoaded", () => {
+  const adminBtn = document.getElementById("adminLoginBtn");
+  const viewerBtn = document.getElementById("viewerLoginBtn");
+  const form = document.querySelector(".form");
+  const logoutBtn = document.getElementById("logoutBtn");
 
-// ✅ Google Sign-in
-document.getElementById("adminLoginBtn").addEventListener("click", async (e) => {
-  e.preventDefault();
-  const provider = new firebase.auth.GoogleAuthProvider();
-  firebase.auth().signInWithPopup(provider)
-    .catch(err => console.error("Google login error:", err));
-});
-
-// ✅ Guest Login
-document.getElementById("viewerLoginBtn").addEventListener("click", async (e) => {
-  e.preventDefault();
-  firebase.auth().signInAnonymously()
-    .catch(err => console.error("Guest login error:", err));
-});
-
-// ✅ Email Login (basic, using Email/Password)
-document.querySelector(".form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const email = e.target.email.value.trim();
-  const password = "defaultPassword"; // Replace if using real passwords
-
-  if (!email) return alert("Please enter an email");
-
-  firebase.auth().signInWithEmailAndPassword(email, password)
-    .catch(err => {
-      console.error("Email login error:", err);
-      alert("Email login failed. Make sure password auth is enabled in Firebase.");
+  // Google Sign-in
+  if (adminBtn) {
+    adminBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      const provider = new firebase.auth.GoogleAuthProvider();
+      firebase.auth().signInWithPopup(provider)
+        .catch(err => console.error("Google login error:", err));
     });
+  }
+
+  // Guest Login
+  if (viewerBtn) {
+    viewerBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      firebase.auth().signInAnonymously()
+        .catch(err => console.error("Guest login error:", err));
+    });
+  }
+
+  // Email Login
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = e.target.email.value.trim();
+      const password = "defaultPassword"; // Replace with real password if needed
+
+      if (!email) return alert("Please enter an email");
+
+      firebase.auth().signInWithEmailAndPassword(email, password)
+        .catch(err => {
+          console.error("Email login error:", err);
+          alert("Email login failed. Make sure password auth is enabled in Firebase.");
+        });
+    });
+  }
+
+  // Logout
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        await firebase.auth().signOut();
+        console.log("✅ User logged out");
+        window.location.href = "/login.html";
+      } catch (err) {
+        console.error("❌ Logout failed:", err);
+        alert("Logout failed. Try again.");
+      }
+    });
+  }
 });
 
 // ✅ Auth state listener
@@ -110,23 +135,5 @@ firebase.auth().onAuthStateChanged(async (user) => {
       console.log("Viewer signed in");
       window.location.href = "/activities.html";
     }
-  }
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  const logoutBtn = document.getElementById("logoutBtn");
-
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", async () => {
-      try {
-        await firebase.auth().signOut();
-        console.log("✅ User logged out");
-        // Redirect to login page after logout
-        window.location.href = "/login.html";
-      } catch (err) {
-        console.error("❌ Logout failed:", err);
-        alert("Logout failed. Try again.");
-      }
-    });
   }
 });
