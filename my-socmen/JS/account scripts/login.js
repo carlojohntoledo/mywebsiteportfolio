@@ -28,9 +28,10 @@ const adminLoginBtn = document.getElementById("adminLoginBtn");
 if (adminLoginBtn) {
   adminLoginBtn.addEventListener("click", async (e) => {
     e.preventDefault();
+    showLoader();
     const provider = new firebase.auth.GoogleAuthProvider();
     firebase.auth().signInWithPopup(provider)
-      .catch(err => console.error("Google login error:", err));
+      .catch(err => { hideLoader(); console.error("Google login error:", err) });
   });
 }
 
@@ -39,8 +40,9 @@ const viewerLoginBtn = document.getElementById("viewerLoginBtn");
 if (viewerLoginBtn) {
   viewerLoginBtn.addEventListener("click", async (e) => {
     e.preventDefault();
+    showLoader();
     firebase.auth().signInAnonymously()
-      .catch(err => console.error("Guest login error:", err));
+      .catch(err => { hideLoader(); console.error("Guest login error:", err) });
   });
 }
 
@@ -49,15 +51,18 @@ const loginForm = document.querySelector(".form");
 if (loginForm) {
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+    showLoader();
     const email = e.target.email.value.trim();
     const password = e.target.password.value.trim(); // ✅ use real password
 
     if (!email || !password) {
+      hideLoader();
       return alert("Please enter both email and password");
     }
 
     firebase.auth().signInWithEmailAndPassword(email, password)
       .catch(err => {
+        hideLoader();
         console.error("Email login error:", err);
         alert(err.message); // ✅ show real Firebase error (not generic one)
       });
@@ -75,7 +80,6 @@ firebase.auth().onAuthStateChanged(async (user) => {
   const isLoginPage = window.location.pathname.endsWith("login.html");
 
   try {
-    showLoader();
     if (user.isAnonymous) {
       // Guest flow
       isAdmin = false;
@@ -123,9 +127,8 @@ firebase.auth().onAuthStateChanged(async (user) => {
     }
   } catch (err) {
     console.error("❌ Firestore logging failed:", err);
-  } finally {
-    hideLoader();
   }
+
 
   // ✅ Only redirect once, after Firebase finishes auth cleanup
   if (isLoginPage && !redirectDone) {
@@ -140,7 +143,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
         window.location.replace("/activities.html");
       }
     }, 600);
-  }
+  } else { hideLoader(); }
 });
 
 // ✅ Logout button handler
