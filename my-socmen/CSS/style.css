@@ -150,10 +150,6 @@ body:not(.admin) .admin-only {
 }
 
 
-.admin-only {
-    display: none;
-}
-
 .hidden {
     display: none;
 }
