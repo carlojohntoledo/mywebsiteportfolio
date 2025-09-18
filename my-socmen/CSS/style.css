@@ -143,6 +143,13 @@ body {
 
 }
 
+body:not(.admin) .admin-only {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+
 .admin-only {
     display: none;
 }

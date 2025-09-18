@@ -138,6 +138,12 @@ async function loadSkillsFromFirestore(selectedCategory = "All") {
 
         // Render function
         function renderSkills(category) {
+
+            const actionsHtml = isAdmin ? `
+            <div class="skill-actions admin-only">
+                <div class="skill-card-edit" title="Edit skill">Edit</div>
+                <div class="skill-card-remove" title="Remove skill">x</div>
+            </div>` : "";
             container.innerHTML = "";
             skills
                 .filter(s => category === "All" || s.category === category)
@@ -148,10 +154,7 @@ async function loadSkillsFromFirestore(selectedCategory = "All") {
                                 <img src="${s.logoUrl}" alt="${s.name}">
                             </div>
                             <div class="skill-name">${s.name}</div>
-                            <div class="skill-actions admin-only">
-                                <div class="skill-card-edit" title="Edit skill">Edit</div>
-                                <div class="skill-card-remove" title="Remove skill">x</div>
-                            </div>
+                            ${actionsHtml}
                         </div>
                     `;
                     container.insertAdjacentHTML("beforeend", cardHtml);
@@ -186,6 +189,8 @@ async function loadSkillsFromFirestore(selectedCategory = "All") {
                     }
                 });
             });
+
+
         }
 
         // ✅ Initial render
@@ -252,6 +257,12 @@ async function loadCertificatesFromFirestore(sort = "default") {
 
         const snapshot = await query.get();
 
+        const actionsHtml = isAdmin ? `
+        <div class="certificate-actions admin-only">
+            <div class="certificate-card-edit" title="Edit certificate">Edit</div>
+            <div class="certificate-card-remove" title="Remove certificate">x</div>
+        </div>` : "";
+
         snapshot.forEach(doc => {
             const c = doc.data();
             const docId = doc.id;
@@ -263,10 +274,7 @@ async function loadCertificatesFromFirestore(sort = "default") {
 
             const cardHtml = `
                 <div class="certificate-card" data-id="${docId}" data-public-id="${publicId}">
-                    <div class="certificate-actions admin-only">
-                        <div class="certificate-card-edit" title="Edit certificate">Edit</div>
-                        <div class="certificate-card-remove" title="Remove certificate">x</div>
-                    </div>
+                    ${actionsHtml}
                     <div class="certificate-container noselect">
                         <div class="canvas">
                             ${[...Array(25).keys()].map(i => `<div class="tracker tr-${i + 1}"></div>`).join("")}

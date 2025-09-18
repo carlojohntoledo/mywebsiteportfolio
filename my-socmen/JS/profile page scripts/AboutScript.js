@@ -165,6 +165,13 @@ async function showOccupationDetails() {
                 occupationDiv.classList.add("content-container");
                 occupationDiv.dataset.id = doc.id;
 
+
+                const actionsHtml = isAdmin ? `
+                <div class="occupation-actions admin-only">
+                        <button class="occupation-edit admin-only">Edit</button>
+                        <button class="occupation-delete admin-only">✖</button>
+                </div>` : "";
+
                 occupationDiv.innerHTML = `
                     <svg class="icons" xmlns="http://www.w3.org/2000/svg" fill="none" 
                         viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -191,10 +198,7 @@ async function showOccupationDetails() {
                         <p>${fromDate} - ${displayToDate} <br><br>
                         ${data.description || ""}</p>
                     </div>
-                    <div class="occupation-actions">
-                        <button class="occupation-edit admin-only">Edit</button>
-                        <button class="occupation-delete admin-only">✖</button>
-                    </div>
+                    ${actionsHtml}
                 `;
 
                 container.appendChild(occupationDiv);
@@ -329,6 +333,12 @@ async function showEducationDetails() {
                 eduDiv.className = "content-container";
                 eduDiv.style.position = "relative";
 
+                const actionsHtml = isAdmin ? `
+                <div class="education-actions admin-only">
+                        <button class="education-edit admin-only">Edit</button>
+                        <button class="education-delete admin-only">✖</button>
+                    </div>` : "";
+
                 eduDiv.innerHTML = `
                     <svg class="icons" xmlns="http://www.w3.org/2000/svg" fill="none" 
                          viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -360,10 +370,7 @@ async function showEducationDetails() {
                     </div>
 
                     <!-- 🔹 Actions -->
-                    <div class="education-actions">
-                        <button class="education-edit admin-only">Edit</button>
-                        <button class="education-delete admin-only">✖</button>
-                    </div>
+                    ${actionsHtml}
                 `;
 
                 section.appendChild(eduDiv);
@@ -545,6 +552,12 @@ async function showContactInfoDetails() {
                     platform = info.contactLinkPlatform || "";
                 }
 
+                const actionsHtml = isAdmin ? `
+                <div class="contact-actions admin-only">
+                    <button class="contact-edit admin-only">Edit</button>
+                    <button class="contact-delete admin-only">✖</button>
+                </div>` : "";
+
                 infoDiv.innerHTML = `
                     <div class="icon">${svgIcon}</div>
                     <div class="text-container">
@@ -554,10 +567,7 @@ async function showContactInfoDetails() {
                         <p>${platform}</p>
                     </div>
 
-                    <div class="contact-actions">
-                        <button class="contact-edit admin-only">Edit</button>
-                        <button class="contact-delete admin-only">✖</button>
-                    </div>
+                    ${actionsHtml}
                 `;
 
                 section.appendChild(infoDiv);
