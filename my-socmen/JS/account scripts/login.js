@@ -66,6 +66,17 @@ if (loginForm) {
 firebase.auth().onAuthStateChanged(async (user) => {
   if (user) {
     applyRoleUI(user);
+    const isLoginPage = window.location.pathname.endsWith("login.html");
+
+    if (isLoginPage) {
+      if (user.isAnonymous) {
+        window.location.href = "/activities.html";
+      } else if (ADMIN_EMAILS.includes(user.email)) {
+        window.location.href = "/profile.html";
+      } else {
+        window.location.href = "/activities.html";
+      }
+    }
 
     if (user.isAnonymous) {
       // Guest flow
