@@ -501,6 +501,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("shortcuts-search-input");
     const resultsContainer = document.getElementById("shortcuts-search-results");
 
+    if (!searchInput) return;
+
     // live search as user types
     searchInput.addEventListener("input", () => {
         const query = searchInput.value;
