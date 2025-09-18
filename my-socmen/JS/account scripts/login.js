@@ -63,60 +63,64 @@ if (loginForm) {
 }
 
 // ✅ Auth state listener
-// ✅ Auth state listener
-// ✅ Auth state listener
 firebase.auth().onAuthStateChanged(async (user) => {
   if (!user) return;
 
   applyRoleUI(user);
   const isLoginPage = window.location.pathname.endsWith("login.html");
 
-  // 🚨 Register to Firestore (one-time per session)
-  if (user.isAnonymous) {
-    if (sessionStorage.getItem("guestAssigned") === "false") {
-      const counterRef = firebase.firestore().collection("meta").doc("viewerCounter");
+  try {
+    // 🚨 Register user in Firestore
+    if (user.isAnonymous) {
+      if (sessionStorage.getItem("guestAssigned") === "false") {
+        const counterRef = firebase.firestore().collection("meta").doc("viewerCounter");
 
-      await firebase.firestore().runTransaction(async (tx) => {
-        const doc = await tx.get(counterRef);
-        let count = doc.exists ? doc.data().count : 0;
-        count++;
-        tx.set(counterRef, { count }, { merge: true });
+        await firebase.firestore().runTransaction(async (tx) => {
+          const doc = await tx.get(counterRef);
+          let count = doc.exists ? doc.data().count : 0;
+          count++;
+          tx.set(counterRef, { count }, { merge: true });
 
-        await firebase.firestore().collection("viewers").add({
-          name: `Anonymous-${count}`,
-          role: "guest",
-          loggedAt: firebase.firestore.FieldValue.serverTimestamp()
+          await firebase.firestore().collection("viewers").add({
+            name: `Anonymous-${count}`,
+            role: "guest",
+            loggedAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
         });
-      });
 
-      sessionStorage.setItem("guestAssigned", "true");
+        sessionStorage.setItem("guestAssigned", "true");
+      }
+      console.log("Guest signed in");
+
+    } else if (ADMIN_EMAILS.includes(user.email)) {
+      await firebase.firestore().collection("viewers").doc(user.uid).set({
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || "",
+        role: "admin",
+        loggedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+
+      console.log("Admin signed in");
+
+    } else {
+      await firebase.firestore().collection("viewers").doc(user.uid).set({
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || "",
+        firstName: user.displayName?.split(" ")[0] || "",
+        lastName: user.displayName?.split(" ").slice(-1)[0] || "",
+        role: "viewer",
+        loggedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+
+      console.log("Viewer signed in");
     }
-    console.log("Guest signed in");
-  } else if (ADMIN_EMAILS.includes(user.email)) {
-    await firebase.firestore().collection("viewers").doc(user.uid).set({
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName || "",
-      role: "admin",
-      loggedAt: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
-
-    console.log("Admin signed in");
-  } else {
-    await firebase.firestore().collection("viewers").doc(user.uid).set({
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName || "",
-      firstName: user.displayName?.split(" ")[0] || "",
-      lastName: user.displayName?.split(" ").slice(-1)[0] || "",
-      role: "viewer",
-      loggedAt: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
-
-    console.log("Viewer signed in");
+  } catch (err) {
+    console.error("❌ Firestore logging failed:", err);
   }
 
-  // 🚨 Do redirect *once* if on login.html
+  // 🚨 Do redirect once, after everything is done
   if (isLoginPage) {
     setTimeout(() => {
       if (user.isAnonymous) {
@@ -126,9 +130,10 @@ firebase.auth().onAuthStateChanged(async (user) => {
       } else {
         window.location.replace("/activities.html");
       }
-    }, 500); // small delay to let Firestore complete
+    }, 300); // give Firebase a short moment before navigating
   }
 });
+
 
 
 // ✅ Logout button handler
