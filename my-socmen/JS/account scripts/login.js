@@ -1,20 +1,3 @@
-// ✅ Import Firebase
-import { auth, db } from "../../firebase-config.js";
-import {
-  GoogleAuthProvider,
-  signInWithPopup,
-  signInAnonymously,
-  signInWithEmailAndPassword,
-  onAuthStateChanged,
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-
-import {
-  doc,
-  setDoc,
-  serverTimestamp,
-  runTransaction
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
 // ✅ Define admin accounts
 const ADMIN_EMAILS = [
   "toledocarlojohn@gmail.com"
@@ -38,60 +21,53 @@ function applyRoleUI(user) {
 // ✅ Google Sign-in
 document.getElementById("adminLoginBtn").addEventListener("click", async (e) => {
   e.preventDefault();
-  try {
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
-  } catch (err) {
-    console.error("Google login error:", err);
-  }
+  const provider = new firebase.auth.GoogleAuthProvider();
+  firebase.auth().signInWithPopup(provider)
+    .catch(err => console.error("Google login error:", err));
 });
 
 // ✅ Guest Login
 document.getElementById("viewerLoginBtn").addEventListener("click", async (e) => {
   e.preventDefault();
-  try {
-    await signInAnonymously(auth);
-  } catch (err) {
-    console.error("Guest login error:", err);
-  }
+  firebase.auth().signInAnonymously()
+    .catch(err => console.error("Guest login error:", err));
 });
 
-// ✅ Email Login (very simple)
+// ✅ Email Login (basic, using Email/Password)
 document.querySelector(".form").addEventListener("submit", async (e) => {
   e.preventDefault();
   const email = e.target.email.value.trim();
-  const password = "defaultPassword"; // ⚠️ replace with real password input if needed
+  const password = "defaultPassword"; // Replace if using real passwords
 
   if (!email) return alert("Please enter an email");
 
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-  } catch (err) {
-    console.error("Email login error:", err);
-    alert("Email login failed. Did you configure password auth in Firebase?");
-  }
+  firebase.auth().signInWithEmailAndPassword(email, password)
+    .catch(err => {
+      console.error("Email login error:", err);
+      alert("Email login failed. Make sure password auth is enabled in Firebase.");
+    });
 });
 
 // ✅ Auth state listener
-onAuthStateChanged(auth, async (user) => {
+firebase.auth().onAuthStateChanged(async (user) => {
   if (user) {
     applyRoleUI(user);
 
     if (user.isAnonymous) {
       // Guest flow
       if (sessionStorage.getItem("guestAssigned") === "false") {
-        const counterRef = doc(db, "meta", "viewerCounter");
+        const counterRef = firebase.firestore().collection("meta").doc("viewerCounter");
 
-        await runTransaction(db, async (tx) => {
-          const snap = await tx.get(counterRef);
-          let count = snap.exists() ? snap.data().count : 0;
+        await firebase.firestore().runTransaction(async (tx) => {
+          const doc = await tx.get(counterRef);
+          let count = doc.exists ? doc.data().count : 0;
           count++;
           tx.set(counterRef, { count }, { merge: true });
 
-          await setDoc(doc(db, "viewers", `guest-${count}`), {
+          await firebase.firestore().collection("viewers").add({
             name: `Anonymous-${count}`,
             role: "guest",
-            loggedAt: serverTimestamp()
+            loggedAt: firebase.firestore.FieldValue.serverTimestamp()
           });
         });
 
@@ -99,28 +75,30 @@ onAuthStateChanged(auth, async (user) => {
       }
       console.log("Guest signed in");
       window.location.href = "/activities.html";
+
     } else if (ADMIN_EMAILS.includes(user.email)) {
       // Admin flow
-      await setDoc(doc(db, "viewers", user.uid), {
+      await firebase.firestore().collection("viewers").doc(user.uid).set({
         uid: user.uid,
         email: user.email,
         displayName: user.displayName || "",
         role: "admin",
-        loggedAt: serverTimestamp()
+        loggedAt: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true });
 
       console.log("Admin signed in");
       window.location.href = "/profile.html";
+
     } else {
       // Viewer flow
-      await setDoc(doc(db, "viewers", user.uid), {
+      await firebase.firestore().collection("viewers").doc(user.uid).set({
         uid: user.uid,
         email: user.email,
         displayName: user.displayName || "",
         firstName: user.displayName?.split(" ")[0] || "",
         lastName: user.displayName?.split(" ").slice(-1)[0] || "",
         role: "viewer",
-        loggedAt: serverTimestamp()
+        loggedAt: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true });
 
       console.log("Viewer signed in");
