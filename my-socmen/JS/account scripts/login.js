@@ -113,19 +113,20 @@ firebase.auth().onAuthStateChanged(async (user) => {
   }
 });
 
-// Logout button event
-const logoutBtn = document.getElementById("logoutBtn");
+document.addEventListener("DOMContentLoaded", () => {
+  const logoutBtn = document.getElementById("logoutBtn");
 
-if (logoutBtn) {
-  logoutBtn.addEventListener("click", async () => {
-    try {
-      await firebase.auth().signOut();
-      console.log("✅ User logged out");
-      // Redirect to login page after logout
-      window.location.href = "/login.html";
-    } catch (err) {
-      console.error("❌ Logout failed:", err);
-      alert("Logout failed. Try again.");
-    }
-  });
-}
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        await firebase.auth().signOut();
+        console.log("✅ User logged out");
+        // Redirect to login page after logout
+        window.location.href = "/login.html";
+      } catch (err) {
+        console.error("❌ Logout failed:", err);
+        alert("Logout failed. Try again.");
+      }
+    });
+  }
+});
