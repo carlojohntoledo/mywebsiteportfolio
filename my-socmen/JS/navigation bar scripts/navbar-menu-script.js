@@ -113,9 +113,9 @@ function showMenuNav() {
                     <a href="#">
                         <li>Option 1</li>
                     </a>
-                    <a id="logoutBtn" class="oauthButton">
+                    <button id="logoutBtn" class="oauthButton">
                         <li>Log out</li>
-                    </a>
+                    </button>
                 </ul>
             </div>
         </div>
