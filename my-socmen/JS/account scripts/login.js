@@ -66,6 +66,7 @@ if (loginForm) {
 
 // ✅ Auth state listener
 let redirectDone = false; // prevent multiple redirects
+let isAdmin = false;
 
 firebase.auth().onAuthStateChanged(async (user) => {
   if (!user) return;
@@ -76,6 +77,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
   try {
     if (user.isAnonymous) {
       // Guest flow
+      isAdmin = false;
       if (sessionStorage.getItem("guestAssigned") === "false") {
         const counterRef = firebase.firestore().collection("meta").doc("viewerCounter");
         await firebase.firestore().runTransaction(async (tx) => {
@@ -95,6 +97,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
       console.log("Guest signed in");
     } else if (ADMIN_EMAILS.includes(user.email)) {
       // Admin flow
+      isAdmin = true;
       await firebase.firestore().collection("viewers").doc(user.uid).set({
         uid: user.uid,
         email: user.email,
@@ -105,6 +108,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
       console.log("Admin signed in");
     } else {
       // Viewer flow
+      isAdmin = false;
       await firebase.firestore().collection("viewers").doc(user.uid).set({
         uid: user.uid,
         email: user.email,
