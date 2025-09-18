@@ -63,11 +63,11 @@ if (loginForm) {
 }
 
 // ✅ Auth state listener
+// ✅ Auth state listener
 firebase.auth().onAuthStateChanged(async (user) => {
   if (!user) return;
 
   applyRoleUI(user);
-
   const isLoginPage = window.location.pathname.endsWith("login.html");
 
   // 🚨 Handle Firestore registration (runs once per login)
@@ -115,7 +115,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
     console.log("Viewer signed in");
   }
 
-  // 🚨 Redirect ONLY on login page
+  // 🚨 Redirect ALWAYS if on login.html
   if (isLoginPage) {
     if (user.isAnonymous) {
       window.location.href = "/activities.html";
