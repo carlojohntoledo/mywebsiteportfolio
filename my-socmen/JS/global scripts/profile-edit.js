@@ -168,6 +168,7 @@ async function loadSkillsFromFirestore(selectedCategory = "All") {
 
                 // Edit
                 card.querySelector(".skill-card-edit").addEventListener("click", async () => {
+                    if (!card.querySelector(".skill-card-edit")) return;
                     const doc = await db.collection(SKILLS_COLLECTION).doc(id).get();
                     if (doc.exists) {
                         showAddSkillForm({ id: doc.id, ...doc.data() });
