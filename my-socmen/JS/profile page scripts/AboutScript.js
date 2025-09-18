@@ -207,6 +207,8 @@ async function showOccupationDetails() {
                 // 🔹 DELETE Handler
                 // =============================================================
                 const delBtn = occupationDiv.querySelector(".occupation-delete");
+                if (!delBtn) return;
+
                 if (delBtn) {
                     delBtn.addEventListener("click", async () => {
                         if (confirm("Delete this occupation?")) {
@@ -220,6 +222,7 @@ async function showOccupationDetails() {
                 // 🔹 EDIT Handler
                 // =============================================================
                 const editBtn = occupationDiv.querySelector(".occupation-edit");
+                if (!editBtn) return;
                 if (editBtn) {
                     editBtn.addEventListener("click", () => {
                         showAddOccupationForm({
@@ -379,6 +382,7 @@ async function showEducationDetails() {
                 // 🔹 DELETE Handler (with loader)
                 // =============================================================
                 const delBtn = eduDiv.querySelector(".education-delete");
+                if (!delBtn) return;
                 delBtn.addEventListener("click", async () => {
                     if (confirm("Delete this education record?")) {
                         try {
@@ -398,6 +402,7 @@ async function showEducationDetails() {
                 // 🔹 EDIT Handler (with loader)
                 // =============================================================
                 const editBtn = eduDiv.querySelector(".education-edit");
+                if (!editBtn) return;
                 editBtn.addEventListener("click", async () => {
                     try {
                         showLoader();
@@ -574,6 +579,7 @@ async function showContactInfoDetails() {
 
                 // Delete
                 const delBtn = infoDiv.querySelector(".contact-delete");
+                if (!delBtn) return;
                 delBtn.addEventListener("click", async () => {
                     if (confirm("Delete this contact info?")) {
                         try {
@@ -591,6 +597,7 @@ async function showContactInfoDetails() {
 
                 // Edit
                 const editBtn = infoDiv.querySelector(".contact-edit");
+                if (!editBtn) return;
                 editBtn.addEventListener("click", () => {
                     showAddContactInfoForm(info);
                 });
