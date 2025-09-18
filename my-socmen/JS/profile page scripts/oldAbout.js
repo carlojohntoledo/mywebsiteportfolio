@@ -506,27 +506,27 @@ function showAboutmeDetails() {
         <div class="biography-content-container">
             <div class="biography-text-container">
                 <p>
-                <strong>Carlo John Toledo Pabien</strong>, born on May 12, 1999, in Bacoor City, Cavite, came into this world as the third of four siblings,
+                Carlo John Toledo Pabien, born on May 12, 1999, in Bacoor City, Cavite, came into this world as the third of four siblings,
                 raised by his parents Dynna Pabien and Jovito Pabien. His early years were shaped by the vibrant atmosphere of Imus Cavite, 
-                where he developed a curiosity and eagerness to explore. <br> <br>
+                where he developed a curiosity and eagerness to explore.
 
                 Carlo embarked on his academic journey in Malagasang 1-E Elementary School, Imus, Cavite, for his elementary education. Later, 
                 he transitioned to Luis Aguado National High School in Trece Martires City during his first year of high school. Throughout his 
-                formative years, Carlo exhibited a keen interest in various skills, particularly in the realm of music and arts. <br> <br>
+                formative years, Carlo exhibited a keen interest in various skills, particularly in the realm of music and arts.
                 
                 In pursuit of his passion, Carlo initially set his sights on a career in architecture when he entered college. However, 
                 his journey took an unexpected turn, leading him to a different path—Bachelor of Science in Information Technology (BSIT). 
                 Despite the initial deviation from his original plan, Carlo discovered his aptitude for working with computers, turning the 
-                change of course into a valuable and fulfilling experience. <br> <br>
+                change of course into a valuable and fulfilling experience.
                 
                 Carlo successfully navigated the challenges of college life and emerged as a proud graduate of Cavite State University Trece 
                 Martires City Campus, belonging to the class of 2017 to 2022. His dedication and perseverance were further exemplified when he 
-                achieved success in the Civil Service Commission exam of 2023, showcasing his commitment to personal and professional development. <br> <br>
+                achieved success in the Civil Service Commission exam of 2023, showcasing his commitment to personal and professional development.
                 
                 Now equipped with a solid educational foundation and the distinction of a BSIT graduate, Carlo is poised to embark on a promising 
                 career in Information Technology. Fueled by a passion for delivering efficient and impactful services, he is actively seeking opportunities 
                 to elevate his IT career to new heights. With a blend of skills, education, and determination, Carlo John Toledo Pabien is ready to make meaningful 
-                contributions to the dynamic world of Information Technology. <br> <br>
+                contributions to the dynamic world of Information Technology.
                 </p>
             </div>
         </div>
