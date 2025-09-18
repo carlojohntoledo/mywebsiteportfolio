@@ -75,6 +75,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
   const isLoginPage = window.location.pathname.endsWith("login.html");
 
   try {
+    showLoader();
     if (user.isAnonymous) {
       // Guest flow
       isAdmin = false;
@@ -122,6 +123,8 @@ firebase.auth().onAuthStateChanged(async (user) => {
     }
   } catch (err) {
     console.error("❌ Firestore logging failed:", err);
+  } finally {
+    hideLoader();
   }
 
   // ✅ Only redirect once, after Firebase finishes auth cleanup

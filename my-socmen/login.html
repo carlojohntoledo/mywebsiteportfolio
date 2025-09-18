@@ -145,6 +145,14 @@
 </style>
 
 <body>
+    <div class="loader-container dim" style="display: none; background-color: rgba(0, 0, 0, 0.487);">
+        <div class="loader">
+            <div class="progress"></div>
+            <div class="progress"></div>
+            <div class="progress"></div>
+        </div>
+    </div>
+
     <div class="background-container"></div>
     <!-- From Uiverse.io by D3OXY -->
     <div class="form-container-parent">
@@ -203,6 +211,14 @@
         </form>
     </div>
 
+    <!-- ================= LIGHTBOX VIEWER ================= -->
+    <div id="lightbox" class="lightbox hidden">
+        <span class="lightbox-close">&times;</span>
+        <img class="lightbox-img" src="" alt="Fullscreen image">
+        <button class="lightbox-prev">&#10094;</button>
+        <button class="lightbox-next">&#10095;</button>
+    </div>
+
     <!-- Firebase App (required) -->
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
 
@@ -213,6 +229,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
 
     <script src="JS/global scripts/index.js"></script>
+
+    <script src="JS/global scripts/util.js"></script>
 
     <script src="JS/account scripts/login.js"></script>
 
