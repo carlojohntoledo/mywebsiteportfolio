@@ -63,6 +63,7 @@ if (loginForm) {
 }
 
 // ✅ Auth state listener
+// ✅ Auth state listener
 firebase.auth().onAuthStateChanged(async (user) => {
   if (!user) return;
 
@@ -126,14 +127,13 @@ firebase.auth().onAuthStateChanged(async (user) => {
       if (user.isAnonymous) {
         window.location.replace("/activities.html");
       } else if (ADMIN_EMAILS.includes(user.email)) {
-        window.location.replace("/profile.html");
+        window.location.replace("/activities.html");
       } else {
         window.location.replace("/activities.html");
       }
     }, 300); // give Firebase a short moment before navigating
   }
 });
-
 
 
 // ✅ Logout button handler
