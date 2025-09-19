@@ -1,14 +1,23 @@
+document.addEventListener("DOMContentLoaded", () => {
+    const toggleBtn = document.getElementById("theme-toggle");
 
-document.querySelector('.projects-section').addEventListener('click', function (e) {
-    if (e.target.id === 'theme-toggle') {
-        const body = document.body;
-        body.classList.toggle('light-theme');
-        localStorage.setItem('theme', body.classList.contains('light-theme') ? 'light-theme' : '');
+    if (toggleBtn) {
+        toggleBtn.addEventListener("click", (e) => {
+            e.preventDefault(); // if <a>, prevents navigation
+
+            document.body.classList.toggle("light-theme");
+
+            // Save preference
+            localStorage.setItem(
+                "theme",
+                document.body.classList.contains("light-theme") ? "light-theme" : ""
+            );
+        });
+    }
+
+    // Apply saved theme on load
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+        document.body.classList.add(savedTheme);
     }
 });
-
-// 2. Keep saved theme on reload
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme) {
-    document.body.classList.add(savedTheme);
-}
