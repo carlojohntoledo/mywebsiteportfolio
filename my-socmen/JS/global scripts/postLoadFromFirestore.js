@@ -108,7 +108,7 @@ async function loadPostsFromFirestore(type) {
                             </div>
 
                             <!-- Extra Menu -->
-                            <div class="post-extra-popup">
+                            <div class="post-extra-popup admin-only">
                                 <input type="checkbox" id="${toggleId}" class="checkbox">
                                 <label for="${toggleId}" class="post-extra-btn"><strong>. . .</strong></label>
                                 <div class="post-extra-list-container">
@@ -146,7 +146,7 @@ async function loadPostsFromFirestore(type) {
                     <div class="${type}-card">
                         <div class="${type}-content" style="position: relative;">
                             <!-- Extra Menu -->
-                            <div class="post-extra-popup">
+                            <div class="post-extra-popup admin-only">
                                 <input type="checkbox" id="${toggleId}" class="checkbox">
                                 <label for="${toggleId}" class="post-extra-btn"><strong>. . .</strong></label>
                                 <div class="post-extra-list-container">
@@ -213,7 +213,7 @@ async function loadPostsFromFirestore(type) {
                     <div class="${type}-card">
                         <div class="${type}-content" style="position: relative;">
                             <!-- Extra Menu -->
-                            <div class="post-extra-popup">
+                            <div class="post-extra-popup admin-only">
                                 <input type="checkbox" id="${toggleId}" class="checkbox">
                                 <label for="${toggleId}" class="post-extra-btn"><strong>. . .</strong></label>
                                 <div class="post-extra-list-container">

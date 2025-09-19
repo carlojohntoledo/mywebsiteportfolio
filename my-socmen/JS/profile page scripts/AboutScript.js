@@ -697,7 +697,7 @@ function showPersonalInfoDetails() {
                 const data = doc.data();
 
                 container.innerHTML = `
-                        <h1>Personal Summary</h1>
+                        <h1>Professional Summary</h1>
                         <div class="biography-content-container">
                             <div class="biography-text-container">
                                 <p>
