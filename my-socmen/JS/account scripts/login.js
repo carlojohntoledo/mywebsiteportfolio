@@ -74,10 +74,21 @@ let redirectDone = false; // prevent multiple redirects
 let isAdmin = false;
 
 firebase.auth().onAuthStateChanged(async (user) => {
-  if (!user) return;
+  const path = window.location.pathname;
+  const isLoginPage = path.endsWith("login.html") || path === "/" || path === "/index.html";
 
+  if (!user) {
+    // Not logged in → always force login.html
+    if (!isLoginPage) {
+      window.location.replace("/login.html");
+    } else {
+      hideLoader();
+    }
+    return;
+  }
+
+  // User logged in → apply role UI
   applyRoleUI(user);
-  const isLoginPage = window.location.pathname.endsWith("login.html");
 
   try {
     if (user.isAnonymous) {
@@ -129,8 +140,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
     console.error("❌ Firestore logging failed:", err);
   }
 
-
-  // ✅ Only redirect once, after Firebase finishes auth cleanup
+  // ✅ Redirect only if they are on the login page (or root)
   if (isLoginPage && !redirectDone) {
     redirectDone = true;
 
@@ -143,8 +153,11 @@ firebase.auth().onAuthStateChanged(async (user) => {
         window.location.replace("/activities.html");
       }
     }, 600);
-  } else { hideLoader(); }
+  } else {
+    hideLoader();
+  }
 });
+
 
 // ✅ Logout button handler
 document.addEventListener("DOMContentLoaded", () => {
