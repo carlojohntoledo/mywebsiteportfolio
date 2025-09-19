@@ -20,6 +20,7 @@ section.skills-section {
 
 .skills-menu-container {
   display: grid;
+  grid-template-columns: 100%;
   /* border: 1px solid red; */
   border-bottom: 0.1rem solid var(--primary-color);
   /* border: 1px solid; */
@@ -27,19 +28,30 @@ section.skills-section {
   width: 95%;
   align-items: start;
   margin: auto;
-
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  /* snap scroll */
+  scrollbar-width: none;
 }
 
 .skills-menu {
   display: grid;
-  grid-template-columns: auto auto auto auto;
+  grid-auto-flow: column;
+  grid-template-columns: auto;
+  grid-template-rows: 100%;
   color: var(--text-color);
   /* border: 1px solid; */
+  width: max-content;
   height: 100%;
-  width: fit-content;
+  max-width: max-content;
   align-items: center;
 }
 
+.skills-menu label {
+  margin: 0;
+}
 
 .skills-menu-container input {
   display: none;
@@ -52,7 +64,8 @@ section.skills-section {
   transition: all 0.3s ease;
   color: var(--text-color);
   cursor: pointer;
-  /* border: 1px solid; */
+  line-clamp: 1;
+  text-wrap: nowrap;
 }
 
 .skills-menu-container span:hover {
@@ -122,16 +135,17 @@ section.skills-section {
   flex-shrink: 0;
   border-radius: 0.5rem;
   overflow: hidden;
-  /* background-color: white; */
+  background-color: white;
   display: flex;
   align-items: center;
   justify-content: center;
+  object-fit: cover;
 }
 
 .skill-img img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   /* background-color: white; */
 }
 
