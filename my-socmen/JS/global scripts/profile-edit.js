@@ -89,7 +89,9 @@ async function loadSkillsFromFirestore(selectedCategory = "All") {
     const container = document.getElementById("skills-content");
     const menuContainer = document.querySelector(".skills-menu");
 
-    if (!container || !menuContainer) return console.warn("⚠️ Skills container not found");
+    if (!container || !menuContainer) {
+        return console.warn("⚠️ Skills container not found");
+    }
 
     try {
         showLoader();
@@ -125,7 +127,7 @@ async function loadSkillsFromFirestore(selectedCategory = "All") {
             </label>
         `);
 
-        // Build menu dynamically from categories
+        // ✅ Build menu dynamically from categories
         categories.forEach(cat => {
             const labelHtml = `
                 <label>
@@ -136,15 +138,16 @@ async function loadSkillsFromFirestore(selectedCategory = "All") {
             menuContainer.insertAdjacentHTML("beforeend", labelHtml);
         });
 
-        // Render function
+        // ✅ Render function
         function renderSkills(category) {
+            container.innerHTML = "";
 
             const actionsHtml = isAdmin ? `
-            <div class="skill-actions admin-only">
-                <div class="skill-card-edit" title="Edit skill">Edit</div>
-                <div class="skill-card-remove" title="Remove skill">x</div>
-            </div>` : "";
-            container.innerHTML = "";
+                <div class="skill-actions admin-only">
+                    <div class="skill-card-edit" title="Edit skill">Edit</div>
+                    <div class="skill-card-remove" title="Remove skill">x</div>
+                </div>` : "";
+
             skills
                 .filter(s => category === "All" || s.category === category)
                 .forEach(s => {
@@ -160,44 +163,48 @@ async function loadSkillsFromFirestore(selectedCategory = "All") {
                     container.insertAdjacentHTML("beforeend", cardHtml);
                 });
 
-            // Hook edit & delete events for all rendered cards
-            const cards = container.querySelectorAll(".skill-card");
-            cards.forEach(card => {
-                const id = card.dataset.id;
-                const publicId = card.dataset.publicId;
+            // ✅ Attach events only if admin
+            if (isAdmin) {
+                const cards = container.querySelectorAll(".skill-card");
+                cards.forEach(card => {
+                    const id = card.dataset.id;
+                    const publicId = card.dataset.publicId;
 
-                // Edit
-                card.querySelector(".skill-card-edit").addEventListener("click", async () => {
-                    if (!card.querySelector(".skill-card-edit")) return;
-                    const doc = await db.collection(SKILLS_COLLECTION).doc(id).get();
-                    if (doc.exists) {
-                        showAddSkillForm({ id: doc.id, ...doc.data() });
+                    const editBtn = card.querySelector(".skill-card-edit");
+                    const removeBtn = card.querySelector(".skill-card-remove");
+
+                    if (editBtn) {
+                        editBtn.addEventListener("click", async () => {
+                            const doc = await db.collection(SKILLS_COLLECTION).doc(id).get();
+                            if (doc.exists) {
+                                showAddSkillForm({ id: doc.id, ...doc.data() });
+                            }
+                        });
+                    }
+
+                    if (removeBtn) {
+                        removeBtn.addEventListener("click", async () => {
+                            if (!confirm("Are you sure you want to delete this skill?")) return;
+                            try {
+                                await db.collection(SKILLS_COLLECTION).doc(id).delete();
+                                if (publicId) {
+                                    await deleteFromCloudinary(publicId); // optional cleanup
+                                }
+                                showMessage("🗑️ Skill deleted");
+                                await loadSkillsFromFirestore(category); // reload same category
+                            } catch (err) {
+                                console.error("❌ Error deleting skill:", err);
+                            }
+                        });
                     }
                 });
-
-                // Delete
-                card.querySelector(".skill-card-remove").addEventListener("click", async () => {
-                    if (!confirm("Are you sure you want to delete this skill?")) return;
-                    try {
-                        await db.collection(SKILLS_COLLECTION).doc(id).delete();
-                        if (publicId) {
-                            await deleteFromCloudinary(publicId); // optional cleanup
-                        }
-                        showMessage("🗑️ Skill deleted");
-                        await loadSkillsFromFirestore(category); // reload same category
-                    } catch (err) {
-                        console.error("❌ Error deleting skill:", err);
-                    }
-                });
-            });
-
-
+            }
         }
 
         // ✅ Initial render
         renderSkills(selectedCategory);
 
-        // Handle menu switching
+        // ✅ Handle menu switching
         menuContainer.querySelectorAll("input[name='skills-category']").forEach(input => {
             input.addEventListener("change", e => {
                 renderSkills(e.target.value);
@@ -210,6 +217,7 @@ async function loadSkillsFromFirestore(selectedCategory = "All") {
         hideLoader();
     }
 }
+
 // Example edit function
 function editSkill(docId) {
     db.collection(SKILLS_COLLECTION).doc(docId).get().then(doc => {
